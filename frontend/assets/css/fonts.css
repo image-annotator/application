@@ -2,14 +2,16 @@
   font-family: 'Open Sans Regular';
   /* font-style: normal; */
   /* font-weight: normal; */
-  src: url('../../static/fonts/OpenSans-Regular.woff') format('woff');
+  /* src: url('../../static/fonts/OpenSans-Regular.woff') format('woff'); */
+  src: url('../../static/fonts/OpenSans-Light.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Open Sans Bold';
   /* font-style: normal; */
   /* font-weight: normal; */
-  src: url('../../static/fonts/OpenSans-Bold.woff') format('woff');
+  /* src: url('../../static/fonts/OpenSans-Bold.woff') format('woff'); */
+  src: url('../../static/fonts/OpenSans-SemiBold.ttf') format('truetype');
 }
 
 /* @font-face {

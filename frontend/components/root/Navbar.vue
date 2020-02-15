@@ -174,7 +174,7 @@ export default {
     height: auto;
     left: 0;
 
-    min-height: 100vh;
+    min-height: calc(100vh);
     width: 250px;
 
     padding-right: 30px;
@@ -190,6 +190,8 @@ export default {
   .side-bar-font {
     font-family: 'Open Sans Regular';
     font-size: 0.95rem;
+
+    letter-spacing: 0.035rem;
   }
 
   #user-name {
