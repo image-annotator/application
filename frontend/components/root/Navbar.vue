@@ -1,15 +1,219 @@
 <template>
-  <div>
-    
-  </div>
+  <b-nav vertical class="side-bar-layout side-bar-bg side-bar-font side-bar-padding">
+    <!-- User profile info -->
+    <b-nav-item link-classes="side-bar-color mt-5 ml-4">
+      <!-- Username -->
+      <div id="user-name">
+        {{ username }}
+      </div>
+      <!-- Role -->
+      <div id="role">
+        Role: {{ role }}
+      </div>
+    </b-nav-item>
+
+    <!-- Label Dataset -->
+    <b-nav-item link-classes="side-bar-color mt-5 ml-4" @click="changeActiveElmtID('label-dataset')">
+      <div id="label-dataset">
+        Label Dataset
+      </div>
+    </b-nav-item>
+
+    <!-- JSON Outputs -->
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('json-outputs')">
+      <div id="json-outputs">
+        JSON Outputs
+      </div>
+    </b-nav-item>
+
+    <!-- Edit Dataset -->
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
+      <div id="edit-dataset">
+        Edit Dataset
+      </div>
+    </b-nav-item>
+
+    <!-- User Management -->
+    <b-nav-item
+      v-b-toggle.collapse-user-management
+      link-classes="side-bar-color mt-3 ml-4">
+      <div class="icon-text-wrapper">
+        User Management
+        <i class="ml-3 mt-1 fas fa-caret-down" />
+      </div>
+    </b-nav-item>
+
+    <b-collapse id="collapse-user-management" visible role="tabpanel">
+      <!-- Show All Users -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('show-all-users')">
+        <div class="icon-text-wrapper">
+          <i class="mt-1 mr-3 fas fa-users" />
+          <div id="show-all-users">
+            Show All Users
+          </div>
+        </div>
+      </b-nav-item>
+
+      <!-- Add User -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('add-user')">
+        <div class="icon-text-wrapper">
+          <i class="mt-1 mr-3 fas fa-plus-circle" />
+          <div id="add-user">
+            Add User
+          </div>
+        </div>
+      </b-nav-item>
+
+      <!-- Edit User -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-user')">
+        <div class="icon-text-wrapper">
+          <i class="mt-1 mr-3 fas fa-pen" />
+          <div id="edit-user">
+            Edit User
+          </div>
+        </div>
+      </b-nav-item>
+
+      <!-- Delete User -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
+        <div class="icon-text-wrapper">
+          <i class="mt-1 mr-3 fas fa-trash" />
+          <div id="delete-user">
+            Delete User
+          </div>
+        </div>
+      </b-nav-item>
+    </b-collapse>
+  </b-nav>
 </template>
 
 <script>
 export default {
-  
+  props: {
+    username: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      required: true
+    }
+  },
+  data () {
+    return {
+      activeElmtID: 'label-dataset'
+    }
+  },
+  watch: {
+    activeElmtID (newElmtID, oldElmtID) {
+      this.setClass(oldElmtID, '')
+      this.setClass(newElmtID, 'active')
+    }
+  },
+  mounted () {
+    this.onPathChangeHandler(window.location.pathname)
+    console.log(/^\/main\/label(\/|(\?)|$)/.test(window.location.pathname))
+  },
+  methods: {
+    setClass (elmtID, className) {
+      let elmt = document.getElementById(elmtID)
+      elmt.className = className
+    },
+    changeActiveElmtID (elmtID) {
+      this.activeElmtID = elmtID
+      this.redirectRoute(elmtID)
+    },
+    redirectRoute (elmtID) {
+      switch (elmtID) {
+      case 'label-dataset':
+        this.$nuxt.$router.replace({ path: '/main/label'})
+        break
+      case 'json-outputs':
+        this.$nuxt.$router.replace({ path: '/main/json'})
+        break
+      case 'edit-dataset':
+        this.$nuxt.$router.replace({ path: '/main/edit'})
+        break
+      case 'show-all-users':
+        this.$nuxt.$router.replace({ path: '/main/show-user'})
+        break
+      case 'add-user':
+        this.$nuxt.$router.replace({ path: '/main/add-user'})
+        break
+      case 'edit-user':
+        this.$nuxt.$router.replace({ path: '/main/edit-user'})
+        break
+      case 'delete-user':
+        this.$nuxt.$router.replace({ path: '/main/delete-user'})
+        break
+      }
+    },
+    onPathChangeHandler (browserURL) {
+      if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('label-dataset')
+      } else if ((/^\/main\/json(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('json-outputs')
+      } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('edit-dataset')
+      } else if ((/^\/main\/show-user(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('show-all-users')
+      } else if ((/^\/main\/add-user(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('add-user')
+      } else if ((/^\/main\/edit-user(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('edit-user')
+      } else if (((/^\/main\/delete-user(\/|(\?)|$)/.test(browserURL)))) {
+        this.changeActiveElmtID('delete-user')
+      }
+    }
+  }
 }
 </script>
 
 <style scoped>
-  
+  .side-bar-layout {
+    height: auto;
+    left: 0;
+
+    min-height: 100vh;
+    width: 250px;
+
+    padding-right: 30px;
+
+    overflow-y: scroll;
+    position: relative;    
+  }
+
+  .side-bar-bg {
+    background-color: #1E889B;
+  }
+
+  .side-bar-font {
+    font-family: 'Open Sans Regular';
+    font-size: 0.95rem;
+  }
+
+  #user-name {
+    /* font-size: 1.15rem; */
+    font-size: 1.6rem;
+    font-weight: 700;
+
+    font-family: 'Open Sans Bold';
+  }
+
+  .icon-text-wrapper {
+    display: flex;
+  }
+
+  .active {
+    font-family: 'Open Sans Bold';
+  }
+
+  .side-bar-color {
+    color: white;
+  }
+
+  .side-bar-color:hover {
+    background-color: #166472;
+  }
+
 </style>

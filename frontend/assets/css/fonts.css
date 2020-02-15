@@ -1,14 +1,14 @@
 @font-face {
   font-family: 'Open Sans Regular';
-  font-style: normal;
-  font-weight: normal;
+  /* font-style: normal; */
+  /* font-weight: normal; */
   src: url('../../static/fonts/OpenSans-Regular.woff') format('woff');
 }
 
 @font-face {
   font-family: 'Open Sans Bold';
-  font-style: normal;
-  font-weight: normal;
+  /* font-style: normal; */
+  /* font-weight: normal; */
   src: url('../../static/fonts/OpenSans-Bold.woff') format('woff');
 }
 
