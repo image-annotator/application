@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col">
           <h5 class="title users-margin"> 
-            All Users 
+            Edit User 
           </h5>
         </div>
       </div>
@@ -53,27 +53,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-    .title {
-        font-family: 'Open Sans Bold';
-        color: #1E889B;
-        letter-spacing: 0.035rem;
-    }
-
-    .users-margin {
-        margin-top: 3.7rem;
-    }
-
-    .paragraph {
-        font-size: 0.8rem;
-        max-width: 70vw;
-    }
-
-    .sub-title {
-        font-size: 1rem;
-        /* font-weight: 300; */
-    }
-
-</style>

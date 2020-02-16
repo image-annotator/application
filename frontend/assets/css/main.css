@@ -14,6 +14,51 @@
         width: calc(80vw - 260px);
     }
 }
+
+.title {
+    font-family: 'Open Sans Bold';
+    color: #1E889B;
+    letter-spacing: 0.035rem;
+}
+
+.users-margin {
+    margin-top: 3.7rem;
+}
+
+.paragraph {
+    font-size: 0.8rem;
+    max-width: 70vw;
+}
+
+.sub-title {
+    font-size: 1rem;
+    /* font-weight: 300; */
+}
+
+/* Forms */
+
+.field-length {
+    width: 16.5rem;
+    height: 2.25rem;
+    padding-left: 1rem;
+    margin-bottom: 0.65rem;
+}
+
+.form-border, .btn-border {
+    border-radius: 8px;
+    border: 1px solid #1E889B;
+}
+
+.btn-action {
+    background-color: #1E889B;
+    height: 2.3rem;
+}
+
+.btn-action:hover {
+    background-color: #23B1CB;
+}
+
+
 .page-item .page-link {
     color: #1E889B !important;
     border: 1px #d6d6d6 solid !important;

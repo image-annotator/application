@@ -44,8 +44,6 @@ export default {
           if (result.value) {
             this.deleteRowContent(id)
             this.showDeletedAlert()
-          } else {
-            this.showCancelledAlert()
           }
         })
       } else {
