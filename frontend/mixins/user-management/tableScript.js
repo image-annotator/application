@@ -12,7 +12,9 @@ export default {
   data () {
     return {
       rows: [],
-      columns: []
+      columns: [],
+      currentPage: 1,
+      perPage: 5
     }
   },
   computed: {

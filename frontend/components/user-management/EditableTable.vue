@@ -1,11 +1,20 @@
 <template>
   <div>
-    <ReadOnlyTable :prop-rows="rows" :prop-columns="columns">
+    <b-table id="table-component" responsive striped
+             hover
+             :per-page="perPage"
+             :current-page="currentPage"
+             :items="rows"
+             :fields="columns"
+             class="table table-width table-borderless"
+    >
       <!-- Role in Table -->
       <template v-slot:cell(role)="row">
         <div v-if="!row.item.isRoleEditMode" @click="handleRoleChange(row.item.id)">
           {{ row.item.role }}
-          <i class="fas fa-caret-down" />
+          <div class="icon-layout">
+            <i class="fas fa-caret-down icon" />
+          </div>
         </div>
         <div v-else>
           <b-form-select
@@ -18,30 +27,22 @@
           />
         </div>
       </template>
-      <!-- Delete row -->
-      <!-- <template v-slot:cell(delete)="row">
-        <div class="icon-layout">
-          <i 
-            class="fas fa-trash trash-icon"
-            @mouseover="row.item['_rowVariant'] = 'danger'"
-            @mouseleave="row.item['_rowVariant'] = ''"
-            @click="handleOnDelete(row.item.id, row.item.name)"
-          />
-        </div>
-      </template> -->
-    </ReadOnlyTable>
+    </b-table>
+    <b-pagination
+      v-model="currentPage"
+      :total-rows="numberOfRows"
+      :per-page="perPage"
+      aria-controls="table-component"
+      pills
+    />
   </div>
 </template>
 
 <script>
 
 import tableScript from '~/mixins/user-management/tableScript'
-import ReadOnlyTable from '~/components/user-management/ReadOnlyTable'
 
 export default {
-  components: {
-    ReadOnlyTable
-  },
   mixins: [tableScript],
   data () {
     return {
@@ -57,7 +58,7 @@ export default {
       var index = this.rows.findIndex(function (val) {
         return val.id === id
       })
-      this.rows[index].isDeptEditMode = true
+      this.rows[index].isRoleEditMode = true
 
     },
     showConfirmation (title, text) {
@@ -119,4 +120,14 @@ export default {
     .select-font {
         font-size: 0.83rem;
     }
+
+    .icon-layout {
+      display: flex;
+    }
+
+    .icon {
+      margin-top: -15px;
+      margin-left: auto;
+    }
+
 </style>

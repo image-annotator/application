@@ -24,7 +24,8 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/css/fonts.css', 
+    '@/assets/css/fonts.css',
+    '@/assets/css/main.css',
     '@/static/fontawesome-free-5.9.0-web/css/all.css'
   ],
   /*
