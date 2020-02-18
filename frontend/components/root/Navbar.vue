@@ -36,7 +36,8 @@
     <!-- User Management -->
     <b-nav-item
       v-b-toggle.collapse-user-management
-      link-classes="side-bar-color mt-3 ml-4">
+      link-classes="side-bar-color mt-3 ml-4"
+    >
       <div class="icon-text-wrapper">
         User Management
         <i class="ml-3 mt-1 fas fa-caret-down" />
