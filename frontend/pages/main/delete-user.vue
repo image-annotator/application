@@ -23,20 +23,14 @@
 <script>
 
 import DeleteableTable from '~/components/user-management/DeleteableTable'
+import getAllUsers from '~/mixins/user-management/getAllUsers'
 export default {
   components: {
     DeleteableTable
   },
+  mixins: [getAllUsers],
   data () {
     return {
-      rows: [
-        { id: 1, isRoleEditMode: false, username: 'Edward Alexander Jaya', role: 'Labeler', passcode: 'ABCD', _rowVariant: '' },
-        { id: 2, isRoleEditMode: false, username: 'Rayza Mahendra', role: 'Labeler', passcode: 'DEFG', _rowVariant: ''},
-        { id: 3, isRoleEditMode: false, username: 'Muhammad Nurdin Husen', role: 'Editor', passcode: 'HIJK', _rowVariant: '' },
-        { id: 4, isRoleEditMode: false, username: 'Eka Sunandika', role: 'Editor', passcode: 'LMNO', _rowVariant: '' },
-        { id: 5, isRoleEditMode: false, username: 'Ahmad Rizal Alifio', role: 'Labeler', passcode: 'PQRS', _rowVariant: '' },
-        { id: 6, isRoleEditMode: false, username: 'Ardian Umam', role: 'Admin', passcode: 'TUVW', _rowVariant: ''}
-      ],
       columns: [
         {
           key: 'username',
@@ -44,7 +38,7 @@ export default {
           sortable: true
         },
         {
-          key: 'role',
+          key: 'user_role',
           label: 'Role',
           sortable: true
         },

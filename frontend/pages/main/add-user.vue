@@ -91,11 +91,9 @@ export default {
           'user_role': this.role
         }
         var url = '/api/user/register'
-        console.log(payload)
         // Send to backend
         var response = await this.$axios.post(url, payload).catch(error => console.log(error))
         if (response && response.status === 200) {
-          console.log(response)
           this.showInfo(this.username, response.data.data.passcode)
         } else {
           this.handleIncorrectResponse()
@@ -113,7 +111,7 @@ export default {
     },
     handleIncorrectResponse () {
       this.$swal.fire({
-        title: "Wrong format!",
+        title: "User already exists",
         icon: 'error',
         text: 'Please try with another user!'
       })
