@@ -13,7 +13,7 @@
         <div class="col">
           <input
             id="imagesID"
-            v-model="images"
+            v-model="search"
             type="text"
             class="form-control form-border field-length form-content"
             placeholder="Search for Images ID..."
@@ -23,7 +23,7 @@
       </div>
       <br>
       <b-row> 
-          <b-col v-for="labs in label" v-bind:key="labs">
+          <b-col v-for="labs in filterImages" v-bind:key="labs">
           <div id="container">
               <Images
               :imageID="labs.name"
@@ -66,8 +66,19 @@ export default {
         { name: ',,k,,l,,kp', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: 'gggggggg', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: '028azzz', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'}
-      ]
+      ],
+      search: ''
     }
+  },
+  methods: {
+
+  },
+  computed: {
+    filterImages: function(){
+          return this.label.filter((labs) => {
+              return labs.name.match(this.search);
+          });
+      }
   }
 }
 </script>
