@@ -1,5 +1,5 @@
 // This is a nuxtjs' axios-module configuration
-import cookieParser from 'cookie-parser'
+import cookieParser from 'cookieparser'
 import cookies from 'js-cookie'
 
 import { frontendURL } from '~/config.js'
@@ -9,9 +9,9 @@ export default function ({ $axios, req, redirect, route }) {
   $axios.onRequest((config) => {
     var token = ''
     if (process.server) {
-      token = 'Cookie ' + cookieParser.parse(req.headers.cookie || '')['Authorization']
+      token = 'Basic ' + cookieParser.parse(req.headers.cookie || '')['Authorization']
     } else {
-      token = ' Cookie ' + cookies.get('Authorization')
+      token = 'Basic ' + cookies.get('Authorization')
     }
     config.headers.common['Authorization'] = token
   })
@@ -19,14 +19,14 @@ export default function ({ $axios, req, redirect, route }) {
   // Handle on error
   $axios.onError((error) => {
     const code = parseInt(error.response && error.response.status)
-    if (code === 401 || code === 429 || code === 422) {
+    if (code === 401 || code === 429) {
       // Remove all cookies
       if (process.server) {
-        if (route.fullPath !== '') {
-          redirect('')
+        if (route.fullPath !== '/') {
+          redirect('/')
         }
       } else {
-        if (window.location.pathname !== '') {
+        if (window.location.pathname !== '/') {
           window.location.href = frontendURL + ''
         }
       }

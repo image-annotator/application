@@ -107,13 +107,15 @@ export default {
   },
   watch: {
     activeElmtID (newElmtID, oldElmtID) {
+      console.log("newElmtID: ", newElmtID)
+      console.log("oldElmtID: ", oldElmtID)
       this.setClass(oldElmtID, '')
       this.setClass(newElmtID, 'active')
     }
   },
   mounted () {
     this.onPathChangeHandler(window.location.pathname)
-    console.log(/^\/main\/label(\/|(\?)|$)/.test(window.location.pathname))
+    // console.log(/^\/main\/label(\/|(\?)|$)/.test(window.location.pathname))
   },
   methods: {
     setClass (elmtID, className) {
@@ -125,6 +127,7 @@ export default {
       this.redirectRoute(elmtID)
     },
     redirectRoute (elmtID) {
+      console.log("elmtID: ", elmtID)
       switch (elmtID) {
       case 'label-dataset':
         this.$nuxt.$router.replace({ path: '/main/label'})
@@ -150,7 +153,9 @@ export default {
       }
     },
     onPathChangeHandler (browserURL) {
+      console.log(browserURL)
       if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
+        console.log("dataset panggil")
         this.changeActiveElmtID('label-dataset')
       } else if ((/^\/main\/json(\/|(\?)|$)/.test(browserURL))) {
         this.changeActiveElmtID('json-outputs')

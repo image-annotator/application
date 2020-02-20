@@ -56,7 +56,7 @@
         <div class="row mt-2">
           <div class="col">
             <button
-              :class="['btn-border', isUsernameEmpty ? 'btn-disabled': 'btn-action', 'field-length', 'form-content']" @click="handleOnLogin()"
+              :class="['btn-border', 'btn-action', 'field-length', 'form-content']" @click="handleOnLogin()"
             > 
               <p class="btn-content">
                 Login
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import cookies from 'js-cookie'
 
 export default {
   data () {
@@ -94,21 +95,47 @@ export default {
   },
   methods: {
     async handleOnLogin () {
-      var payload = {
-        "username": this.usernameForm.name,
-        "passcode": this.passcodeForm.name
+      if (!this.isUsernameFormEmpty && !this.isPasscodeFormEmpty) {
+        var payload = {
+          "username": this.usernameForm.name,
+          "passcode": this.passcodeForm.name
+        }
+        var url = '/api/user/login'
+        const response = await this.$axios.post(url, payload).catch(error => console.error(error))
+        console.log("Response: ", response)
+        this.handleResponse(response) 
+      } else {
+        this.usernameForm.isDirty = true
+        this.passcodeForm.isDirty = true
       }
-      var url = '/'
-      await this.$axios.post(url, payload).catch(error => console.error(error))
-      
-    }
+    },
+    handleResponse (response) {
+      if (response && response.status === 200) {
+        this.handleSuccessResponse(response)
+      } else {
+        this.handleIncorrectResponse()
+      }
+    },
+    handleSuccessResponse (response) {
+      // Set cookie
+      cookies.remove('Authorization')
+      cookies.set('Authorization', response.data.data.cookie)
+      this.$router.push('/main/label')
+    },
+    handleIncorrectResponse () {
+      this.$swal.fire({
+        title: "Wrong Credentials",
+        icon: 'error',
+        text: 'Please fill your credentials again.'
+      })
+    }   
   }
 }
 </script>
 
 <style scoped>
   .bg-auth {
-    background-color: #1E889B;
+    background-color: #005362;
     height: 100vh;
   }
 
@@ -138,4 +165,11 @@ export default {
     border: 1px solid white;
   }
 
+  .btn-action {
+    background-color: #005362;
+  }
+
+  .btn-action:hover {
+    background-color: #11616F;
+  }
 </style>

@@ -90,17 +90,32 @@ export default {
           'username': this.username,
           'user_role': this.role
         }
-        var url = ''
-        await this.sendToBackend(url, payload)
+        var url = '/api/user/register'
+        console.log(payload)
         // Send to backend
-        this.showInfo(this.username)
+        var response = await this.$axios.post(url, payload).catch(error => console.log(error))
+        if (response && response.status === 200) {
+          console.log(response)
+          this.showInfo(this.username, response.data.data.passcode)
+        } else {
+          this.handleIncorrectResponse()
+        }
+      } else {
+        this.isFormDirty = true
       }
     },
-    showInfo (username) {
+    showInfo (username, passcode) {
       this.$swal.fire({
         title: username + ' is Added!',
         icon: 'success',
-        text: 'Passcode : ...'
+        text: 'Passcode : ' + passcode
+      })
+    },
+    handleIncorrectResponse () {
+      this.$swal.fire({
+        title: "Wrong format!",
+        icon: 'error',
+        text: 'Please try with another user!'
       })
     }
   }

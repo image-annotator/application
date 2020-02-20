@@ -80,6 +80,7 @@
 }
 
 .btn-action {
+    cursor: pointer;
     background-color: #1E889B;
     height: 2.3rem;
 }
