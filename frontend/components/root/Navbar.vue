@@ -8,7 +8,7 @@
       </div>
       <!-- Role -->
       <div id="role">
-        Role: {{ role }}
+        Role: {{ role.charAt(0).toUpperCase() + role.slice(1) }}
       </div>
     </b-nav-item>
 
@@ -26,65 +26,69 @@
       </div>
     </b-nav-item>
 
-    <!-- Edit Dataset -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
-      <div id="edit-dataset">
-        Edit Dataset
-      </div>
-    </b-nav-item>
+    <div v-if="role === 'editor' || role === 'admin'">
+      <!-- Edit Dataset -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
+        <div id="edit-dataset">
+          Edit Dataset
+        </div>
+      </b-nav-item>
+    </div>
 
-    <!-- User Management -->
-    <b-nav-item
-      v-b-toggle.collapse-user-management
-      link-classes="side-bar-color mt-3 ml-4"
-    >
-      <div class="icon-text-wrapper">
-        User Management
-        <i class="ml-3 mt-1 fas fa-caret-down" />
-      </div>
-    </b-nav-item>
-
-    <b-collapse id="collapse-user-management" visible role="tabpanel">
-      <!-- Show All Users -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('show-all-users')">
+    <div v-if="role === 'admin'">
+      <!-- User Management -->
+      <b-nav-item
+        v-b-toggle.collapse-user-management
+        link-classes="side-bar-color mt-3 ml-4"
+      >
         <div class="icon-text-wrapper">
-          <i class="mt-1 mr-3 fas fa-users" />
-          <div id="show-all-users">
-            Show All Users
-          </div>
+          User Management
+          <i class="ml-3 mt-1 fas fa-caret-down" />
         </div>
       </b-nav-item>
 
-      <!-- Add User -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('add-user')">
-        <div class="icon-text-wrapper">
-          <i class="mt-1 mr-3 fas fa-plus-circle" />
-          <div id="add-user">
-            Add User
+      <b-collapse id="collapse-user-management" visible role="tabpanel">
+        <!-- Show All Users -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('show-all-users')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-users" />
+            <div id="show-all-users">
+              Show All Users
+            </div>
           </div>
-        </div>
-      </b-nav-item>
+        </b-nav-item>
 
-      <!-- Edit User -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-user')">
-        <div class="icon-text-wrapper">
-          <i class="mt-1 mr-3 fas fa-pen" />
-          <div id="edit-user">
-            Edit User
+        <!-- Add User -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('add-user')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-plus-circle" />
+            <div id="add-user">
+              Add User
+            </div>
           </div>
-        </div>
-      </b-nav-item>
+        </b-nav-item>
 
-      <!-- Delete User -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
-        <div class="icon-text-wrapper">
-          <i class="mt-1 mr-3 fas fa-trash" />
-          <div id="delete-user">
-            Delete User
+        <!-- Edit User -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-user')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-pen" />
+            <div id="edit-user">
+              Edit User
+            </div>
           </div>
-        </div>
-      </b-nav-item>
-    </b-collapse>
+        </b-nav-item>
+
+        <!-- Delete User -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-trash" />
+            <div id="delete-user">
+              Delete User
+            </div>
+          </div>
+        </b-nav-item>
+      </b-collapse>
+    </div>
   </b-nav>
 </template>
 

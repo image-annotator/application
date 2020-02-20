@@ -13,7 +13,7 @@
         <div class="icon-layout">
           <div v-if="row.item['user_id'] !== 1">
             <i 
-              class="fas fa-trash trash-icon"
+              class="margin-icon fas fa-trash trash-icon"
               @mouseover="row.item['_rowVariant'] = 'danger'"
               @mouseleave="row.item['_rowVariant'] = ''"
               @click="handleOnDelete(row.item.user_id, row.item.username)"
@@ -109,6 +109,11 @@ export default {
 
     .icon-layout {
         display: flex;
+    }
+
+    .margin-icon {
+      margin-right: -30px;
+      /* margin-lefet: 30px; */
     }
 
 </style>

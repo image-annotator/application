@@ -34,13 +34,13 @@ export default {
     return {
       columns: [
         {
-          key: 'user_role',
-          label: 'Role',
+          key: 'username',
+          label: 'Username',
           sortable: true
         },
         {
-          key: 'username',
-          label: 'Username',
+          key: 'user_role',
+          label: 'Role',
           sortable: true
         },
         {

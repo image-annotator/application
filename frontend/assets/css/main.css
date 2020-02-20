@@ -79,6 +79,8 @@
     border: 1px solid red;
 }
 
+/* Buttons */
+
 .btn-action {
     cursor: pointer;
     background-color: #1E889B;
@@ -92,6 +94,21 @@
 .btn-action:hover {
     background-color: #23B1CB;
 }
+
+/* Center */
+.center {
+    align-items: center;
+    display: flex;
+  }
+
+  .center-inside {
+    margin-left: calc(50vw - 8.25rem);
+  }
+
+  .center-inside-add-user {
+    margin-left: calc(50vw - 300px);
+    margin-top: -160px;
+  }
 
 
 .page-item .page-link {

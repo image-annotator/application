@@ -1,5 +1,5 @@
 <template>
-  <div class="col">
+  <div class="col center center-inside-add-user">
     <div class="ml-4">
       <div class="row">
         <div class="col">
@@ -74,7 +74,7 @@ export default {
     return {
       username: '',
       role: 'Labeler',
-      roles: ['Labeler', 'Editor'],
+      roles: ['Admin', 'Labeler', 'Editor'],
       isFormDirty: false
     }
   },
@@ -88,7 +88,7 @@ export default {
       if (!this.isUsernameEmpty) {
         var payload = {
           'username': this.username,
-          'user_role': this.role
+          'user_role': this.role.toLowerCase()
         }
         var url = '/api/user/register'
         // Send to backend

@@ -143,15 +143,6 @@ export default {
     color: white;
   }
 
-  .center {
-    align-items: center;
-    display: flex;
-  }
-
-  .center-inside {
-    margin-left: calc(50vw - 8.25rem);
-  }
-
   .form-error {
     color: white;
     font-family: "Open Sans Regular";

@@ -10,21 +10,23 @@
     >
       <!-- Role in Table -->
       <template v-slot:cell(user_role)="row">
-        <div v-if="!row.item.isRoleEditMode" @click="handleRoleChange(row.item.user_id)">
-          {{ row.item.user_role }}
-          <div class="icon-layout">
-            <i class="fas fa-caret-down icon" />
+        <div v-if="row.item.user_id !== 1">
+          <div v-if="!row.item.isRoleEditMode" @click="handleRoleChange(row.item.user_id)">
+            {{ row.item.user_role }}
+            <div class="icon-layout">
+              <i class="fas fa-caret-down icon" />
+            </div>
           </div>
-        </div>
-        <div v-else>
-          <b-form-select
-            class="form-height select-font"
-            :options="roles" 
-            :value="row.item.role"
-            autofocus
-            @change.native="handleOnChange($event, row.item.user_id, 'user_role', row.item.user_role)"
-            @blur.native="row.item.isRoleEditMode = false"
-          />
+          <div v-else>
+            <b-form-select
+              class="form-height select-font"
+              :options="roles" 
+              :value="row.item.user_role"
+              autofocus
+              @change.native="handleOnChange($event, row.item.user_id, 'user_role', row.item.user_role)"
+              @blur.native="row.item.isRoleEditMode = false"
+            />
+          </div>
         </div>
       </template>
     </b-table>
@@ -84,7 +86,7 @@ export default {
       var url = 'api/user/' + id
       this.$axios.put(url, {
         username: payloadUsername,
-        user_role: role
+        user_role: role.toLowerCase()
       }).then(
         this.showApprovedAlert()
       ).catch(error => console.error(error))

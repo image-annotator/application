@@ -22,6 +22,8 @@ export default {
       usersData.forEach(user => {
         user['_rowVariant'] = ''
         user['isRoleEditMode'] = false
+        var role = user['user_role']
+        user['user_role'] = role.charAt(0).toUpperCase() + role.slice(1)
         this.rows.push(user)
       })
     }
