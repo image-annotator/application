@@ -13,7 +13,7 @@
         <div class="col">
           <input
             id="imagesID"
-            v-model="images"
+            v-model="search"
             type="text"
             class="form-control form-border field-length form-content"
             placeholder="Search for Images ID..."
@@ -23,7 +23,7 @@
       </div>
       <br>
       <b-row> 
-          <b-col v-for="labs in label" v-bind:key="labs">
+          <b-col v-for="labs in filterImages" v-bind:key="labs">
           <div id="container">
               <Images
               :imageID="labs.name"
@@ -41,7 +41,7 @@
 export default {
   data () {
     return {
-      images: ''
+    //   search: ''
     }
   }
 }
@@ -57,17 +57,28 @@ export default {
   data () {
     return {
       label: [
-        { name: 'labelled1', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled2', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled3', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled4', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled5', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled6', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled7', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled8', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'labelled9', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'}
-      ]
+        { name: 'sdfdosfhdauofhd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: 'sdfudjfijdieesi', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: 'sdsfjifjdifjdid', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: 'ssdsidinnddsass', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: '93893ashdjhfuff', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: '28948suduhduhfg', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: '23454edjfidjfdf', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: 'dsdssifjir84443', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: '2343fndjnfdjnjd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'}
+      ],
+      search: ''
     }
+  },
+  methods: {
+
+  },
+  computed: {
+      filterImages: function(){
+          return this.label.filter((labs) => {
+              return labs.name.match(this.search);
+          });
+      }
   }
 }
 </script>
