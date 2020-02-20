@@ -49,7 +49,7 @@ export default {
     '@nuxtjs/axios'
   ],
   router: {
-    
+    middleware: ['auth']
   },
   axios: {
     // See https://github.com/nuxt-community/axios-module#options

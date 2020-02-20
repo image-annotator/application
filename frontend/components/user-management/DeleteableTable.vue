@@ -11,12 +11,14 @@
       <!-- Delete row -->
       <template v-slot:cell(delete)="row">
         <div class="icon-layout">
-          <i 
-            class="fas fa-trash trash-icon"
-            @mouseover="row.item['_rowVariant'] = 'danger'"
-            @mouseleave="row.item['_rowVariant'] = ''"
-            @click="handleOnDelete(row.item.id, row.item.username)"
-          />
+          <div v-if="row.item['user_id'] !== 1">
+            <i 
+              class="margin-icon fas fa-trash trash-icon"
+              @mouseover="row.item['_rowVariant'] = 'danger'"
+              @mouseleave="row.item['_rowVariant'] = ''"
+              @click="handleOnDelete(row.item.user_id, row.item.username)"
+            />
+          </div>
         </div>
       </template>
     </b-table>
@@ -42,8 +44,7 @@ export default {
         var text = name + " will be deleted."
         this.showDeleteConfirmation("Are You Sure?", text).then((result) => {
           if (result.value) {
-            this.deleteRowContent(id)
-            this.showDeletedAlert()
+            this.sendDeleteToBackEnd(id)
           }
         })
       } else {
@@ -62,15 +63,21 @@ export default {
       })
     },
 
+    sendDeleteToBackEnd (id) {
+      var url = '/api/user/' + id
+      this.$axios.delete(url).then(
+        this.deleteRowContent(id),
+        this.showDeletedAlert()
+      )
+    },
+
     deleteRowContent (id) {
       for (let idx = 0; idx < this.rows.length; idx++) {
-        if (this.rows[idx].id === id) {
+        if (this.rows[idx].user_id === id) {
           this.rows.splice(idx, 1)
           break
         }
       }
-      // TO DO:
-      // Send changes to backend!
     },
 
     showDeletedAlert () {
@@ -102,6 +109,11 @@ export default {
 
     .icon-layout {
         display: flex;
+    }
+
+    .margin-icon {
+      margin-right: -30px;
+      /* margin-lefet: 30px; */
     }
 
 </style>

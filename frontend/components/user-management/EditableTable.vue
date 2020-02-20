@@ -9,22 +9,24 @@
              class="table table-width table-borderless"
     >
       <!-- Role in Table -->
-      <template v-slot:cell(role)="row">
-        <div v-if="!row.item.isRoleEditMode" @click="handleRoleChange(row.item.id)">
-          {{ row.item.role }}
-          <div class="icon-layout">
-            <i class="fas fa-caret-down icon" />
+      <template v-slot:cell(user_role)="row">
+        <div v-if="row.item.user_id !== 1">
+          <div v-if="!row.item.isRoleEditMode" @click="handleRoleChange(row.item.user_id)">
+            {{ row.item.user_role }}
+            <div class="icon-layout">
+              <i class="fas fa-caret-down icon" />
+            </div>
           </div>
-        </div>
-        <div v-else>
-          <b-form-select
-            class="form-height select-font"
-            :options="roles" 
-            :value="row.item.role"
-            autofocus
-            @change.native="handleOnChange($event, row.item.id, 'role', row.item.role)"
-            @blur.native="row.item.isRoleEditMode = false"
-          />
+          <div v-else>
+            <b-form-select
+              class="form-height select-font"
+              :options="roles" 
+              :value="row.item.user_role"
+              autofocus
+              @change.native="handleOnChange($event, row.item.user_id, 'user_role', row.item.user_role)"
+              @blur.native="row.item.isRoleEditMode = false"
+            />
+          </div>
         </div>
       </template>
     </b-table>
@@ -56,7 +58,7 @@ export default {
   methods: {
     handleRoleChange (id) {
       var index = this.rows.findIndex(function (val) {
-        return val.id === id
+        return val.user_id === id
       })
       this.rows[index].isRoleEditMode = true
 
@@ -71,14 +73,23 @@ export default {
       })
     },
     
-    approveConfirmation (value, id, type) {
+    approveConfirmation (role, id, type) {
+      var payloadUsername = ''
+
       this.rows.forEach((row) => {
-        if (row.id === id) {
-          row[type] = value
+        if (row.user_id === id) {
+          row[type] = role
+          payloadUsername = row['username']
         }
       })
-      // TO DO:
-      // Send changes to backend!
+
+      var url = 'api/user/' + id
+      this.$axios.put(url, {
+        username: payloadUsername,
+        user_role: role.toLowerCase()
+      }).then(
+        this.showApprovedAlert()
+      ).catch(error => console.error(error))
     },
     
     showApprovedAlert () {
@@ -96,17 +107,17 @@ export default {
     },
     // Type can be: name, email, or department
     handleOnChange (event, id, type, originalValue) {
-      var text = "You will change " + originalValue + " to " + event.target.value
-      this.showConfirmation("Are You Sure?", text).then((result) => {
-        console.log("Result: ", result)
-        // If user confirms the changes:
-        if (result.value) {
-          this.approveConfirmation(event.target.value, id, type)
-          this.showApprovedAlert()
-        } else {
-          this.showCancelledAlert()
-        }
-      })
+      if (originalValue !== event.target.value) {
+        var text = "You will change " + originalValue + " to " + event.target.value
+        this.showConfirmation("Are You Sure?", text).then((result) => {
+          // If user confirms the changes:
+          if (result.value) {
+            this.approveConfirmation(event.target.value, id, type)
+          } else {
+            this.showCancelledAlert()
+          }
+        })
+      } 
     }
   }
 }

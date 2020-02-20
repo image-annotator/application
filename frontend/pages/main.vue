@@ -1,21 +1,24 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <Navbar username="Edward" role="Admin" />
+      <Navbar :username="user.username" :role="user.role" />
       <nuxt-child />
     </div>
   </div>
 </template>
 
-
-
 <script>
-// import { mapGetters } from 'vuex'
 import Navbar from '~/components/root/Navbar'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
     Navbar
-  } 
+  },
+  computed: {
+    ...mapGetters({
+      user: 'user/getUser'
+    }) 
+  }
 }
 </script>

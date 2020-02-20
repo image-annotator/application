@@ -1,7 +1,7 @@
 // Environment Variables
 
 // For development
-export const backendURL = "http://localhost:8080"
+export const backendURL = "http://localhost:8081"
 export const frontendURL = 'http://localhost:3000'
 
 // For deployment
