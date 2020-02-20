@@ -1,0 +1,87 @@
+.table {
+    font-size: 0.83rem;
+}
+
+.table-width {
+    width: calc(80vw - 60px);
+    max-width: 1000px;
+
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+    .table-width {
+        width: calc(80vw - 260px);
+    }
+}
+
+.title {
+    font-family: 'Open Sans Bold';
+    color: #1E889B;
+    letter-spacing: 0.035rem;
+}
+
+.users-margin {
+    margin-top: 3.7rem;
+}
+
+.paragraph {
+    font-size: 0.8rem;
+    max-width: 70vw;
+}
+
+.sub-title {
+    font-size: 1rem;
+    /* font-weight: 300; */
+}
+
+/* Forms */
+
+.field-length {
+    width: 16.5rem;
+    height: 2.25rem;
+    padding-left: 1rem;
+    margin-bottom: 0.65rem;
+}
+
+.form-border, .btn-border {
+    border-radius: 8px;
+    border: 1px solid #1E889B;
+}
+
+.btn-action {
+    background-color: #1E889B;
+    height: 2.3rem;
+}
+
+.btn-action:hover {
+    background-color: #23B1CB;
+}
+
+
+.page-item .page-link {
+    color: #1E889B !important;
+    border: 1px #d6d6d6 solid !important;
+}
+
+.page-item.active .page-link {  
+    background-color:#1E889B !important;  
+    color: white !important;
+
+    border: 0 !important;
+}
+
+.page-item.disabled .page-link {
+    background-color:#f6f6f6 !important;
+    border: 0 !important;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: #E9F4F6;
+
+}
+/* Font color of table */
+.table-striped>tbody,  .table-striped>thead {
+  color:#1E889B;
+}
