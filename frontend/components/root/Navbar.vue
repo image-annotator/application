@@ -35,6 +35,40 @@
       </b-nav-item>
     </div>
 
+    <div>
+      <b-nav-item
+        v-b-toggle.collapse-user-management
+        link-classes="side-bar-color mt-3 ml-4"
+      >
+        <div class="icon-text-wrapper">
+          Settings
+          <i class="ml-3 mt-1 fas fa-caret-down" />
+        </div>
+      </b-nav-item>
+
+      <b-collapse id="collapse-user-management" visible role="tabpanel">
+        <!-- Change Username -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-user" />
+            <div id="change-username">
+              Change Username
+            </div>
+          </div>
+        </b-nav-item>
+
+        <!-- Change Password -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-plus-cog" />
+            <div id="change-password">
+              Change Password
+            </div>
+          </div>
+        </b-nav-item>
+      </b-collapse>  
+    </div>
+
     <div v-if="role === 'admin'">
       <!-- User Management -->
       <b-nav-item
@@ -142,6 +176,12 @@ export default {
       case 'edit-dataset':
         this.$nuxt.$router.replace({ path: '/main/edit'})
         break
+      case 'change-username':
+        this.$nuxt.$router.replace({ path: '/main/change-username'})
+        break
+      case 'change-password':
+        this.$nuxt.$router.replace({ path: '/main/change-password'})
+        break
       case 'show-all-users':
         this.$nuxt.$router.replace({ path: '/main/show-user'})
         break
@@ -165,6 +205,10 @@ export default {
         this.changeActiveElmtID('json-outputs')
       } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
         this.changeActiveElmtID('edit-dataset')
+      } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('change-password')
+      } else if ((/^\/main\/change-password(\/|(\?)|$)/.test(browserURL))) {
+        this.changeActiveElmtID('change-password')
       } else if ((/^\/main\/show-user(\/|(\?)|$)/.test(browserURL))) {
         this.changeActiveElmtID('show-all-users')
       } else if ((/^\/main\/add-user(\/|(\?)|$)/.test(browserURL))) {
