@@ -60,7 +60,7 @@
         <!-- Change Password -->
         <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
           <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-plus-cog" />
+            <i class="mt-1 mr-3 fas fa-cog" />
             <div id="change-password">
               Change Password
             </div>

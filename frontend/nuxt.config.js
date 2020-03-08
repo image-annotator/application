@@ -55,6 +55,10 @@ export default {
     // See https://github.com/nuxt-community/axios-module#options
     baseURL: backendURL
   },
+  server: {
+    port: 6969, // default: 3000
+    host: '0.0.0.0' // default: localhost
+  },
   /*
   ** Build configuration
   */
