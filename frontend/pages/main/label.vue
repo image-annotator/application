@@ -24,13 +24,16 @@
       <br>
       <b-row> 
           <b-col v-for="labs in filterImages" v-bind:key="labs">
-          <div id="container">
-              <Images
-              :imageID="labs.name"
-              :imageURL="labs.image"
-              ></Images>
-              <br>
-          </div>
+            <div id="container">
+              <nuxt-link :to="{ path: '/viewer', query: { url: labs.image }}">
+                <Images
+                  :src="labs.image"
+                  :imageID="labs.name"
+                  :imageURL="labs.image"
+                ></Images>
+              </nuxt-link>
+                <br>
+              </div>
           </b-col>
       </b-row>
     </div>
@@ -41,7 +44,7 @@
 export default {
   data () {
     return {
-      images: ''
+      images: '',
     }
   }
 }
@@ -49,16 +52,18 @@ export default {
 
 <script>
 import Images from '~/components/view/Images'
+import ImageViewer from '~/components/label/ImageViewer'
 
 export default {
   components: {
-    Images
+    Images,
+    ImageViewer
   },
   data () {
     return {
       label: [
         { name: '028asd1', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'ddddddd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
+        { name: 'ddddddd', image: 'https://labelprintingportland.com/wp-content/uploads/2016/10/Adhesive-Labels-Peeled-Corners.jpg'},
         { name: 'Zzzzzzzz', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: 'aqweqwew', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: '0112311', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
@@ -67,11 +72,11 @@ export default {
         { name: 'gggggggg', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: '028azzz', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'}
       ],
-      search: ''
+      search: '',
+      isViewerActive: false
     }
   },
   methods: {
-
   },
   computed: {
     filterImages: function(){
@@ -110,3 +115,7 @@ export default {
     width: 18rem;
   }
 </style>
+<!-- <div v-viewer="{navbar: false, title: true,
+                              toolbar: true, movable: true, zoomable: true, 
+                              rotatable: false, scalable: false, transition: false,
+                              fullscreen: true, keyboard: true}" :trigger="Images"> -->
