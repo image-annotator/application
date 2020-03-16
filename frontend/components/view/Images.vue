@@ -18,14 +18,19 @@ export default {
 
 <style scoped>
 .blog-card {
-  display: fix;
   background: #fff;
-  box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
+
+  -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+  box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+
   border-radius: 0.5rem;
   overflow: hidden;
   display: grid;
   grid-template-columns: 1fr 2fr;
   grid-template-rows: 1fr;
+
+  cursor: pointer;
 }
 
 .post-image {

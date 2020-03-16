@@ -33,7 +33,8 @@ export default {
   */
   plugins: [
     '~/plugins/axios',
-    { src: '~/plugins/vue-sweetalert2', ssr: false }
+    { src: '~/plugins/vue-sweetalert2', ssr: false },
+    '~/plugins/viewer'
   ],
   /*
   ** Nuxt.js dev-modules
