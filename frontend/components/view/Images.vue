@@ -1,10 +1,10 @@
 <template>
-    <article class="blog-card">
-      <img class="post-image" :src="imageURL" />
-      <div class="article-details">
-        <h3 class="post-title">{{ imageID }}</h3>
-      </div>
-    </article>
+  <article class="blog-card">
+    <img class="post-image" :src="imageURL">
+    <div class="article-details">
+      <h3 class="post-title">{{ imageID }}</h3>
+    </div>
+  </article>
 </template>
 
 <script>

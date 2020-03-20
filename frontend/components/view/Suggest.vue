@@ -4,8 +4,8 @@
       <vue-simple-suggest
         v-model="chosen"
         :list="simpleSuggestionList"
-        :filter-by-query="true">
-      </vue-simple-suggest>
+        :filter-by-query="true"
+      />
     </div>
     <br>
   </div>
