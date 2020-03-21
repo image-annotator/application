@@ -1,5 +1,5 @@
 <template>
-  <div class="viewer-background">
+  <div ref="imageWrapper" class="viewer-background" >
     <div class="btn-close-section">
       <button
         type="button"
@@ -10,33 +10,42 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="viewer-wrapper center center-horizontal">
-      <img
-        draggable="false"
-        class="image"
-        :src="imageURL"
-        @mousedown="onMouseDownHandler"
-        @mousemove="changeBox"
-        @mouseup="stopDrawingBox"
-      >
-      <Box
-        v-if="drawingBox.active"
-        :b-width="drawingBox.width"
-        :b-height="drawingBox.height"
-        :b-top="drawingBox.top"
-        :b-left="drawingBox.left"
-      />
-      <Box
-        v-for="(box, i) in boxes"
-        :key="i"
-        :b-width="box.width"
-        :b-height="box.height"
-        :b-top="box.top"
-        :b-left="box.left"
-      />
+    <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
+      <div id="image" ref="image">
+        <img
+          draggable="false"
+          class="image"
+          :src="image.url"
+          @mousedown="onMouseDownHandler"
+          @mousemove="changeBox"
+          @mouseup="stopDrawingBox"
+        >
+        <Box
+          v-if="drawingBox.active"
+          :b-width="drawingBox.width"
+          :b-height="drawingBox.height"
+          :b-top="drawingBox.top"
+          :b-left="drawingBox.left"
+        />
+        <Box
+          v-for="(box, i) in boxes"
+          :key="i"
+          :b-width="box.width"
+          :b-height="box.height"
+          :b-top="box.top"
+          :b-left="box.left"
+          :b-active="i === activeBoxIndex"
+          :b-index="i"
+          @onStopResize="changeBoxAttribute($event, i)"
+          @onDelete="deleteBox($event)"
+          @onSelect="makeCurrentBoxActive($event)"
+        />
+      </div>
     </div>
+    {{ width }}
+    {{ boxes }}
     <div class="btn-section">
-      <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text">
+      <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text" @click="saveImage">
         Save Image
       </button>
     </div>
@@ -45,14 +54,7 @@
 
 <script>
 import Box from '~/components/label/Box'
-
-const getLeftCursor = function (e) {
-  return e.pageX
-}
-
-const getTopCursor = function (e) {
-  return e.pageY
-}
+import { Cursors } from '~/mixins/label/getCursorPosition'
 
 export default {
   components: {
@@ -60,7 +62,6 @@ export default {
   },
   data () {
     return {
-      imageURL: '/',
       drawingBox: {
         active: false,
         top: 0,
@@ -68,11 +69,23 @@ export default {
         height: 0,
         width: 0
       },
-      boxes: []
+      activeBoxIndex: -1,
+      boxes: [],
+      image: {
+        url: ''
+      },
+      makeCurrentBoxActive(activeBoxIndex) {
+        this.activeBoxIndex = activeBoxIndex
+      },
+      deleteBox(index) {
+        var numOfDeletedElement = 1
+        this.boxes.splice(index, numOfDeletedElement)
+        this.activeBoxIndex = -1
+      }
     }
   },
   mounted() {
-    this.imageURL = this.$route.query.url
+    this.image.url = this.$route.query.url
   },
   methods: {
     closeViewer() {
@@ -90,18 +103,29 @@ export default {
       this.drawingBox = {
         width: 0,
         height: 0,
-        left: getLeftCursor(e),
-        top: getTopCursor(e),
+        left: Cursors.getLeftCursor(e),
+        top: Cursors.getTopCursor(e),
         active: true
       }
     },
     changeBox(e) {
       if (this.drawingBox.active) {
-        console.log("getLeftCursor: ", getLeftCursor(e))
-        this.drawingBox.width = getLeftCursor(e) - this.drawingBox.left
-        console.log("width: ", this.drawingBox.width)
-        this.drawingBox.height = getTopCursor(e) - this.drawingBox.top
+        this.drawingBox.width = Cursors.getLeftCursor(e) - this.drawingBox.left
+        this.drawingBox.height = Cursors.getTopCursor(e) - this.drawingBox.top
       }
+    },
+    changeBoxAttribute(attribute, index) {
+      console.log(index)
+      var idxBox = index
+      this.boxes[idxBox].left = attribute.bLeft
+      this.boxes[idxBox].top = attribute.bTop
+      this.boxes[idxBox].width = attribute.bWidth
+      this.boxes[idxBox].height = attribute.bHeight
+
+      // this.drawingBox.left = attribute.bLeft
+      // this.drawingBox.top = attribute.bTop
+      // this.drawingBox.width = attribute.bWidth
+      // this.drawingBox.height = attribute.Height
     },
     stopDrawingBox() {
       if (this.drawingBox.active) {
@@ -113,6 +137,7 @@ export default {
             top: this.drawingBox.top
           }
           this.boxes.push(newBox)
+          this.makeCurrentBoxActive((this.boxes).length -1)
           this.resetDrawingBox()
         }
       }
@@ -123,6 +148,19 @@ export default {
       this.drawingBox.left = 0
       this.drawingBox.top = 0
       this.drawingBox.active = false
+    },
+    saveImage() {
+      const width = this.$refs.image.clientWidth
+      const height = this.$refs.image.clientHeight
+      this.getPositionRelativeToImage(width, height)
+    },
+    getPositionRelativeToImage(width, height) {
+      const wrapperHeight = this.$refs.imageWrapper.clientHeight
+      const wrapperWidth = this.$refs.imageWrapper.clientWidth
+      const imageLeft = (wrapperWidth - width) / 2
+      const imageTop = (wrapperHeight - height) / 2
+      console.log(imageLeft)
+      console.log(imageTop)
     }
   }
 }
