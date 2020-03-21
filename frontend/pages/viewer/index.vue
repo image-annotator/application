@@ -11,8 +11,9 @@
       </button>
     </div>
     <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
-      <div id="image" ref="image">
+      <div id="image">
         <img
+          ref="image"
           draggable="false"
           class="image"
           :src="image.url"
@@ -37,12 +38,11 @@
           :b-active="i === activeBoxIndex"
           :b-index="i"
           @onStopResize="changeBoxAttribute($event, i)"
-          @onDelete="deleteBox($event)"
+          @onDelete="deleteBox(i)"
           @onSelect="makeCurrentBoxActive($event)"
         />
       </div>
     </div>
-    {{ width }}
     {{ boxes }}
     <div class="btn-section">
       <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text" @click="saveImage">
@@ -115,17 +115,11 @@ export default {
       }
     },
     changeBoxAttribute(attribute, index) {
-      console.log(index)
       var idxBox = index
       this.boxes[idxBox].left = attribute.bLeft
       this.boxes[idxBox].top = attribute.bTop
       this.boxes[idxBox].width = attribute.bWidth
       this.boxes[idxBox].height = attribute.bHeight
-
-      // this.drawingBox.left = attribute.bLeft
-      // this.drawingBox.top = attribute.bTop
-      // this.drawingBox.width = attribute.bWidth
-      // this.drawingBox.height = attribute.Height
     },
     stopDrawingBox() {
       if (this.drawingBox.active) {
@@ -152,15 +146,32 @@ export default {
     saveImage() {
       const width = this.$refs.image.clientWidth
       const height = this.$refs.image.clientHeight
-      this.getPositionRelativeToImage(width, height)
+
+      const realWidth = this.$refs.image.naturalHeight
+      const realHeight = this.$refs.image.naturalHeight
+
+      console.log(this.getRealPosition(width, height, realWidth, realHeight))
+      
     },
     getPositionRelativeToImage(width, height) {
       const wrapperHeight = this.$refs.imageWrapper.clientHeight
       const wrapperWidth = this.$refs.imageWrapper.clientWidth
       const imageLeft = (wrapperWidth - width) / 2
       const imageTop = (wrapperHeight - height) / 2
-      console.log(imageLeft)
-      console.log(imageTop)
+      return {
+        imageLeft: imageLeft,
+        imageTop: imageTop
+      }
+    },
+    getRealPosition (width, height, realWidth, realHeight) {
+      var relativePosition = this.getPositionRelativeToImage(width, height)
+      var realImageLeft = (realWidth / width) * relativePosition.imageLeft
+      var realImageTop = (realHeight / height) * relativePosition.imageTop
+
+      return {
+        imageLeft: realImageLeft,
+        imageTop: realImageTop
+      }
     }
   }
 }
