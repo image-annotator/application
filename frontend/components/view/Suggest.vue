@@ -3,7 +3,7 @@
     <div>
       <vue-simple-suggest
         ref="form"
-        v-model="data"
+        v-model="bContent"
         :list="simpleSuggestionList"
         :filter-by-query="true"
         :disabled="isDisabled"
@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      data: '',
+      bContent: '',
       isDisabled: false,
       maxSuggestions: 5
     }
@@ -41,20 +41,23 @@ export default {
         'Car',
         'Dog',
         'Sign',
-        'a',
-        'aaa',
-        'aaaa'
+        'LOL',
+        'NYEHEHE',
+        'JOHN CENA'
       ]
     },
     disableFocus() {
       this.isDisabled = true
       this.$refs["form"].isInFocus = false
+      this.$emit("onDisableForm", this.bContent)
       // this.$refs["form"].$el.querySelector(".default-input").blur()
     },
     enableForm() {
       this.isDisabled = false
-      this.$refs["form"].$el.querySelector(".default-input").focus()
-      // this.$refs["form"].isInFocus = true
+      this.$refs["form"].isInFocus = true
+      // this.$refs["form"].$el.querySelector(".default-input").focus()
+      this.$emit("onEnableForm")
+      
     }
   }
 }

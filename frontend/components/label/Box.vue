@@ -34,6 +34,8 @@
       v-show="bIndex !== -1 && !isOnResize"
       class="suggestion-form"
       :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth + -80 + 'px'}"
+      @onEnableForm="handleOnEnableForm"
+      @onDisableForm="handleOnDisableForm"
     />
 
     <div
@@ -80,33 +82,38 @@ export default {
     bIndex: {
       type: Number,
       default: -1
+    },
+    bContent: {
+      type: String,
+      default: ''
     }
   },
   data () {
     return {
       isLeftCircleActive: false,
       isRightCircleActive: false,
-      isOnResize: false
+      isOnResize: false,
+      isSuggestActive: false
     }
   },
   mounted () {
-    // window.addEventListener('keyup', (event) => {
-    //   // Delete key
-    //   if (event.keyCode === 8 || event.keyCode === 46) {
-    //     this.deleteBox()
-    //   }
-    // })
+    window.addEventListener('keyup', (event) => {
+      // Delete key
+      if (!this.isSuggestActive && (event.keyCode === 8 || event.keyCode === 46)) {
+        this.deleteBox()
+      }
+    })
   },
   methods: {
-    selectBox() {
+    selectBox () {
       this.$emit("onSelect", this.bIndex)
     },
-    deleteBox() {
+    deleteBox () {
       if (this.bActive) {
         this.$emit("onDelete", this.bIndex)
       }
     },
-    resizeBox(e) {
+    resizeBox (e) {
       if (this.bActive && this.isLeftCircleActive) {
         this.isOnResize = true
         var prevbLeft = this.bLeft
@@ -117,7 +124,7 @@ export default {
         this.bHeight -= (this.bTop - prevbTop)
       }
     },
-    resizeBoxFromBottomRight(e) {
+    resizeBoxFromBottomRight (e) {
       if (this.bActive && this.isRightCircleActive) {
         this.isOnResize = true
         var prevbRight = this.bLeft + this.bWidth
@@ -128,7 +135,7 @@ export default {
         this.bHeight += (bBottom - prevbBottom)
       }
     },
-    onStopResize() {
+    onStopResize () {
       this.isLeftCircleActive = false
       this.isRightCircleActive = false
       this.isOnResize = false
@@ -138,6 +145,13 @@ export default {
         bWidth: this.bWidth,
         bHeight: this.bHeight
       })
+    },
+    handleOnEnableForm () {
+      this.isSuggestActive = true
+    },
+    handleOnDisableForm (bContent) {
+      this.isSuggestActive = false
+      this.$emit("onDisableForm", bContent)
     }
   }
 }
@@ -181,7 +195,7 @@ export default {
       border-radius: 50%;
       border: 1px solid #1592E6;
 
-      cursor: pointer;
+      cursor: nwse-resize;
     }
 
     .suggestion-form {
