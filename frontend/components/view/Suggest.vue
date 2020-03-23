@@ -9,7 +9,7 @@
         :disabled="isDisabled"
         :max-suggestions="maxSuggestions"
         @click.native="enableForm"
-        @keyup.native.enter="disableFocus"
+        @keyup.native.enter="disableForm"
       />
     </div>
     <br>
@@ -27,37 +27,37 @@ export default {
     return {
       bContent: '',
       isDisabled: false,
-      maxSuggestions: 5
+      maxSuggestions: 5,
+      simpleSuggestionList: [
+      ]
     }
   },
-  mounted () {
+  async mounted () {
+    const response = await this.$axios.get('/api/content/?suggestion=').catch((error) => console.error(error))
+    response.data.data.forEach((content) => {
+      this.simpleSuggestionList.push(content['content_name'])
+    })
     this.enableForm()
+    this.$watch(() => {
+      if (this.$refs["form"].isInFocus) {
+        this.enableForm()
+      } else {
+        this.disableForm()
+      }
+    })
   },
   methods: {
-    simpleSuggestionList() {
-      return [
-        'Human',
-        'Traffic Light',
-        'Car',
-        'Dog',
-        'Sign',
-        'LOL',
-        'NYEHEHE',
-        'JOHN CENA'
-      ]
-    },
-    disableFocus() {
+    disableForm() {
       this.isDisabled = true
       this.$refs["form"].isInFocus = false
-      this.$emit("onDisableForm", this.bContent)
       // this.$refs["form"].$el.querySelector(".default-input").blur()
+      this.$emit("onDisableForm", this.bContent)
     },
     enableForm() {
       this.isDisabled = false
       this.$refs["form"].isInFocus = true
-      // this.$refs["form"].$el.querySelector(".default-input").focus()
+      this.$refs["form"].$el.querySelector(".default-input").focus()
       this.$emit("onEnableForm")
-      
     }
   }
 }

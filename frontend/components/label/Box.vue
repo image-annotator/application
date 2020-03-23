@@ -148,6 +148,7 @@ export default {
     },
     handleOnEnableForm () {
       this.isSuggestActive = true
+      this.$emit("onEnableForm")
     },
     handleOnDisableForm (bContent) {
       this.isSuggestActive = false

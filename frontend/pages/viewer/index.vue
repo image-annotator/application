@@ -42,6 +42,7 @@
           @onDelete="deleteBox(i)"
           @onSelect="makeCurrentBoxActive($event)"
           @onDisableForm="changeBoxContent($event, i)"
+          @onEnableForm="makeCurrentBoxActive(i)"
         />
       </div>
     </div>
