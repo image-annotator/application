@@ -23,18 +23,18 @@
       </div>
       <br>
       <b-row> 
-          <b-col v-for="labs in filterImages" v-bind:key="labs">
-            <div id="container">
-              <nuxt-link :to="{ path: '/viewer', query: { url: labs.image }}">
-                <Images
-                  :src="labs.image"
-                  :imageID="labs.name"
-                  :imageURL="labs.image"
-                ></Images>
-              </nuxt-link>
-                <br>
-              </div>
-          </b-col>
+        <b-col v-for="labs in filterImages" :key="labs">
+          <div id="container">
+            <nuxt-link :to="{ path: '/viewer', query: { url: labs.image }}">
+              <Images
+                :src="labs.image"
+                :image-i-d="labs.name"
+                :image-u-r-l="labs.image"
+              />
+            </nuxt-link>
+            <br>
+          </div>
+        </b-col>
       </b-row>
     </div>
   </div>
@@ -52,12 +52,10 @@ export default {
 
 <script>
 import Images from '~/components/view/Images'
-import ImageViewer from '~/components/label/ImageViewer'
 
 export default {
   components: {
-    Images,
-    ImageViewer
+    Images
   },
   data () {
     return {
