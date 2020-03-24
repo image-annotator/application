@@ -2,16 +2,45 @@
   <article class="blog-card">
     <img class="post-image" :src="imageURL">
     <div class="article-details">
-      <h3 class="post-title">{{ imageID }}</h3>
+      <h3 class="post-title"> 
+        {{ dataImageName }}
+      </h3>
     </div>
   </article>
 </template>
 
 <script>
 export default {
-  props: ["imageID", "imageURL"],
+  props: {
+    imageID: {
+      type: Number,
+      default: -1
+    },
+    imageURL: {
+      type: String,
+      default: ''
+    },
+    imageName: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
-    return {}
+    return {
+      dataImageName: ''
+    }
+  },
+  mounted () {
+    this.limitChars()
+  },
+  methods: {
+    limitChars() {
+      if (this.imageName.length > 20) {
+        this.dataImageName = this.imageName.slice(0, 15) + '...'
+      } else {
+        this.dataImageName = this.imageName
+      }
+    }
   }
 }  
 </script>

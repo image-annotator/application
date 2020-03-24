@@ -33,7 +33,8 @@
     <Suggest
       v-show="bIndex !== -1 && !isOnResize"
       class="suggestion-form"
-      :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth + -80 + 'px'}"
+      :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth * 0.3 + 'px', width: suggestWidth + 'px'}"
+      :class="{'suggest-active': isSuggestActive}"
       @onEnableForm="handleOnEnableForm"
       @onDisableForm="handleOnDisableForm"
     />
@@ -86,6 +87,10 @@ export default {
     bContent: {
       type: String,
       default: ''
+    },
+    canDelete: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -96,10 +101,19 @@ export default {
       isSuggestActive: false
     }
   },
+  computed: {
+    suggestWidth () {
+      if (this.bWidth < 80) {
+        return this.bWidth + 5
+      } else {
+        return 80
+      }
+    }
+  },
   mounted () {
     window.addEventListener('keyup', (event) => {
       // Delete key
-      if (!this.isSuggestActive && (event.keyCode === 8 || event.keyCode === 46)) {
+      if (this.canDelete && !this.isSuggestActive && (event.keyCode === 8 || event.keyCode === 46)) {
         this.deleteBox()
       }
     })
@@ -205,4 +219,14 @@ export default {
       z-index: 8;
       font-size: 9pt;
     }
+
+    .shrink-width {
+      width: 70px;
+    }
+
+    .suggest-active {
+      z-index: 20;
+    }
+
+    
 </style>

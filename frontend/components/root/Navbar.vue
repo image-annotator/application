@@ -34,10 +34,9 @@
         </div>
       </b-nav-item>
     </div>
-
     <div>
       <b-nav-item
-        v-b-toggle.collapse-user-management
+        v-b-toggle.collapse-settings
         link-classes="side-bar-color mt-3 ml-4"
       >
         <div class="icon-text-wrapper">
@@ -46,7 +45,7 @@
         </div>
       </b-nav-item>
 
-      <b-collapse id="collapse-user-management" visible role="tabpanel">
+      <b-collapse id="collapse-settings" visible role="tabpanel">
         <!-- Change Username -->
         <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
           <div class="icon-text-wrapper">
@@ -113,7 +112,7 @@
         </b-nav-item>
 
         <!-- Delete User -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4 mb-5" @click="changeActiveElmtID('delete-user')">
           <div class="icon-text-wrapper">
             <i class="mt-1 mr-3 fas fa-trash" />
             <div id="delete-user">
@@ -153,6 +152,7 @@ export default {
   },
   mounted () {
     this.onPathChangeHandler(window.location.pathname)
+    // this.activeElmtID = 'label-dataset'
     // console.log(/^\/main\/label(\/|(\?)|$)/.test(window.location.pathname))
   },
   methods: {
@@ -197,27 +197,29 @@ export default {
       }
     },
     onPathChangeHandler (browserURL) {
-      console.log(browserURL)
+      console.log("Browser: ", browserURL)
+      var elmtID = ''
       if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
-        console.log("dataset panggil")
-        this.changeActiveElmtID('label-dataset')
+        elmtID ='label-dataset'
       } else if ((/^\/main\/json(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('json-outputs')
+        elmtID ='json-outputs'
       } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('edit-dataset')
+        elmtID ='edit-dataset'
       } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('change-password')
+        elmtID ='change-username'
       } else if ((/^\/main\/change-password(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('change-password')
+        elmtID ='change-password'
       } else if ((/^\/main\/show-user(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('show-all-users')
+        elmtID ='show-all-users'
       } else if ((/^\/main\/add-user(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('add-user')
+        elmtID ='add-user'
       } else if ((/^\/main\/edit-user(\/|(\?)|$)/.test(browserURL))) {
-        this.changeActiveElmtID('edit-user')
+        elmtID ='edit-user'
       } else if (((/^\/main\/delete-user(\/|(\?)|$)/.test(browserURL)))) {
-        this.changeActiveElmtID('delete-user')
+        elmtID ='delete-user'
       }
+      this.changeActiveElmtID(elmtID)
+      this.setClass(elmtID, 'active')
     }
   }
 }
@@ -228,13 +230,13 @@ export default {
     height: auto;
     left: 0;
 
-    min-height: calc(100vh);
+    min-height: 100vh;
     width: 250px;
 
     padding-right: 30px;
 
     overflow-y: scroll;
-    position: relative;    
+    position: relative;
   }
 
   .side-bar-bg {
