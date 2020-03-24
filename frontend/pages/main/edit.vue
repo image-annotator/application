@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      label: [
+      edit: [
         { name: 'sdfdosfhdauofhd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: 'sdfudjfijdieesi', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
         { name: 'sdsfjifjdifjdid', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
       filterImages: function(){
-          return this.label.filter((labs) => {
+          return this.edit.filter((labs) => {
               return labs.name.match(this.search);
           });
       }

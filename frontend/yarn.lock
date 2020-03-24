@@ -8649,11 +8649,6 @@ throat@^4.0.0:
   resolved "https://registry.yarnpkg.com/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
   integrity sha1-iQN8vJLFarGJJua6TLsgDhVnKmo=
 
-throttle-debounce@^2.0.1:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.1.0.tgz#257e648f0a56bd9e54fe0f132c4ab8611df4e1d5"
-  integrity sha512-AOvyNahXQuU7NN+VVvOOX+uW6FPaWdAOdRP5HfwYxAfCzXTFKRMoIMk+n+po318+ktcChx+F1Dd91G3YHeMKyg==
-
 through2@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
@@ -9043,14 +9038,6 @@ uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-v-viewer@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/v-viewer/-/v-viewer-1.5.1.tgz#94804d83814cca566e691339fe1e64793486f200"
-  integrity sha512-Q5ICKzmYQD0qTf+hti2Lhgy6UYY2zgFr+YrN9a3yPgr7pOjYrG405Pz4+6Z6FXlhdhGysCWFJUNCI2tsIyvjWQ==
-  dependencies:
-    throttle-debounce "^2.0.1"
-    viewerjs "^1.5.0"
-
 v8-compile-cache@^2.0.3:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.1.0.tgz#e14de37b31a6d194f5690d67efc4e7f6fc6ab30e"
@@ -9083,20 +9070,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-viewerjs@^1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/viewerjs/-/viewerjs-1.5.0.tgz#debea9492189fa41223cc567de915d79435899d0"
-  integrity sha512-ZiJ0vrXDvomLSY3ixaZCJtmdenomsvPPQwZKwvtXUMCiO2HHtFGoB/KqpS9QzABSeKaRLfcENp1uRYJ7l1MkYQ==
-
 vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
-
-vue-autosuggest@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/vue-autosuggest/-/vue-autosuggest-2.0.4.tgz#ef1bc2eeac6f569d9b638d3af727400b34d19677"
-  integrity sha512-hKklFkSy80s9keIcYFlw52NC8kyhaCTV5K2iL2pxL39T8l7i3E4jdeLvz8H21Quix9oDVRO02bJy8GkUF42T/w==
 
 vue-client-only@^2.0.0:
   version "2.0.0"
@@ -9179,6 +9156,11 @@ vue-server-renderer@^2.6.11:
     serialize-javascript "^2.1.2"
     source-map "0.5.6"
 
+vue-simple-suggest@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/vue-simple-suggest/-/vue-simple-suggest-1.10.1.tgz#c536405c7324b624dd03626e26890ee102d59e69"
+  integrity sha512-oPpCF0KBhySOBEyxxFjsYh1DBMVypb6c7C4atLK3h8Bt8sdu+7kLgDHl2CcGGjqpMSFnmTFFDauPleYPNsaaDg==
+
 vue-style-loader@^4.1.0:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vue-style-loader/-/vue-style-loader-4.1.2.tgz#dedf349806f25ceb4e64f3ad7c0a44fba735fcf8"
@@ -9186,11 +9168,6 @@ vue-style-loader@^4.1.0:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
-
-vue-suggestion@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/vue-suggestion/-/vue-suggestion-1.1.0.tgz#b4ead658700b12c32e5f67f1a152c500a33551b9"
-  integrity sha512-l5NE8kyQj5p7nDzCuXTJLXXrz8WLfw92Ks+YY6ei4yhqQ0+fm+ok2wMDg1JqfapITVz3iq1sOxXpyv5XNVDOpw==
 
 vue-sweetalert2@^3.0.1:
   version "3.0.1"
