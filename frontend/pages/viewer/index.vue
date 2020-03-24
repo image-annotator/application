@@ -28,25 +28,28 @@
           :b-top="drawingBox.top"
           :b-left="drawingBox.left"
         />
-        <Box
-          v-for="(box, i) in boxes"
-          :key="i"
-          :b-width="box.width"
-          :b-height="box.height"
-          :b-top="box.top"
-          :b-left="box.left"
-          :b-active="i === activeBoxIndex"
-          :b-index="i"
-          :b-content="box.content"
-          @onStopResize="changeBoxAttribute($event, i)"
-          @onDelete="deleteBox(i)"
-          @onSelect="makeCurrentBoxActive($event)"
-          @onDisableForm="changeBoxContent($event, i)"
-          @onEnableForm="makeCurrentBoxActive(i)"
-        />
+        <div v-for="i in Object.keys(boxes)" :key="i">
+          {{ i }}
+          <Box
+            v-if="boxes[i]"
+            :key="i"
+            :b-width="boxes[i].width"
+            :b-height="boxes[i].height"
+            :b-top="boxes[i].top"
+            :b-left="boxes[i].left"
+            :b-active="i === activeBoxIndex"
+            :b-index="parseInt(i)"
+            :b-content="boxes[i].content"
+            :can-delete="canDelete"
+            @onStopResize="changeBoxAttribute($event, i)"
+            @onDelete="deleteBox(i)"
+            @onSelect="makeCurrentBoxActive(i)"
+            @onDisableForm="changeBoxContent($event, i)"
+            @onEnableForm="makeCurrentBoxActive(i)"
+          />
+        </div>
       </div>
     </div>
-    {{ boxes }}
     <div class="btn-section">
       <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text" @click="saveImage">
         Save Image
@@ -74,11 +77,13 @@ export default {
         content: ''
       },
       activeBoxIndex: -1,
-      boxes: [],
+      boxes: {},
       image: {
         id: -1,
         url: ''
-      }
+      },
+      canDelete: true,
+      labelCount: 0
     }
   },
   mounted () {
@@ -118,13 +123,13 @@ export default {
       this.boxes[idxBox].top = attribute.bTop
       this.boxes[idxBox].width = attribute.bWidth
       this.boxes[idxBox].height = attribute.bHeight
+      console.log("idxBox: ", this.boxes[idxBox])
     },
     makeCurrentBoxActive (activeBoxIndex) {
       this.activeBoxIndex = activeBoxIndex
     },
     deleteBox (index) {
-      var numOfDeletedElement = 1
-      this.boxes.splice(index, numOfDeletedElement)
+      delete this.boxes[index]
       this.activeBoxIndex = -1
     },
     changeBoxContent (content, index) {
@@ -141,8 +146,9 @@ export default {
             top: this.drawingBox.top,
             content: this.drawingBox.content
           }
-          this.boxes.push(newBox)
-          this.makeCurrentBoxActive((this.boxes).length -1)
+          this.labelCount++
+          this.boxes[this.labelCount] = newBox
+          this.makeCurrentBoxActive(this.labelCount)
           this.resetDrawingBox()
         }
       }
@@ -165,38 +171,49 @@ export default {
           realHeight: this.$refs.image.naturalHeight
         }
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
-        for (let idxBox = 0; idxBox < this.boxes.length; idxBox++) {
+        for (let idxBox in this.boxes) {
           var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, idxBox)
           var bWidth = this.boxes[idxBox].width
           var bHeight = this.boxes[idxBox].height
           var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
-          var content_id = await this.createLabelContent(this.boxes[idxBox].content)
-          var singleBackendObj = {
-            // TODO: change temporary image_id of 1 to real image_id
-            image_id: this.image.id,
-            label_x_center: realImageAttr.xCenter,
-            label_y_center: realImageAttr.yCenter,
-            label_width: realImageAttr.width,
-            label_height: realImageAttr.height,
-            label_content_id: content_id
-          }
-          labelPayload.push(singleBackendObj)
-          if (idxBox === this.boxes.length - 1) {
-            const status = await this.createAllLabelsInImage(labelPayload)
-            if (status === "success") {
-              this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
-                this.closeViewer()
-              })
+          try {
+            var content_id = await this.createLabelContent(this.boxes[idxBox].content)
+            var singleBackendObj = {
+              // TODO: change temporary image_id of 1 to real image_id
+              image_id: parseInt(this.image.id),
+              label_x_center: realImageAttr.xCenter,
+              label_y_center: realImageAttr.yCenter,
+              label_width: realImageAttr.width,
+              label_height: realImageAttr.height,
+              label_content_id: content_id
             }
+            labelPayload.push(singleBackendObj)
+            console.log('labelPayload: ', labelPayload)
+          } catch (error) {
+            this.showFailedAlert("Error!", error)
+            return
           }
+        }
+        try {
+          console.log("LABEL PAYLOAD: ", labelPayload)
+          await this.createAllLabelsInImage(labelPayload)
+          this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
+            this.closeViewer()
+          })
+        } catch (error) {
+          console.log(error)
+          this.showFailedAlert("Error!", error)
+          return
         }
       }
     },
     validateAllContents () {
-      for (let idxBox = 0; idxBox < this.boxes.length; idxBox++) {
-        if (this.boxes[idxBox].content === '' || !this.boxes[idxBox].content) {
-          this.showFailedAlert("Content cannot be empty!", "Please check box with id = " + idxBox)
-          return false
+      for (let idxBox in this.boxes) {
+        if (this.boxes[idxBox]) {
+          if (this.boxes[idxBox].content === '' || !this.boxes[idxBox].content) {
+            this.showFailedAlert("Content cannot be empty!", "Please check box with id = " + idxBox)
+            return false
+          }
         }
       }
       return true
@@ -205,7 +222,7 @@ export default {
       return this.$swal.fire({
         title: title,
         text: bodyText,
-        icon: 'danger'
+        icon: 'error'
       })
     },
     showSuccessAlert(title, bodyText) {
@@ -240,11 +257,6 @@ export default {
       }
     },
     getRealImageAttributes (imageAttributes, boxPosition, bWidth, bHeight) {
-      // console.log("IMAGE ATTR: ")
-      // console.log(imageAttributes)
-      // console.log(boxPosition)
-      // console.log(bWidth)
-      // console.log(bHeight)
       const widthRatio = (imageAttributes.realWidth / imageAttributes.screenWidth)
       const heightRatio = (imageAttributes.realHeight / imageAttributes.screenHeight)
       var realBoxWidth = widthRatio * bWidth
@@ -263,16 +275,24 @@ export default {
       var payload = {
         content_name: content
       }
-      var response = await this.$axios.post(url, payload).catch(error => console.log(error))
-      console.log("Content response: ", response)
-      var content_id = response.data.data['label_contents_id']
-      return content_id
+      try {
+        var response = await this.$axios.post(url, payload)
+        var content_id = response.data.data['label_contents_id']
+        return content_id
+      } catch (error) {
+        console.log("Content: ", error)
+        throw error
+      }
     },
     async createAllLabelsInImage (labelPayload) {
-      console.log("Label Payload: ", labelPayload)
       var url = '/api/label/many'
-      var response = await this.$axios.post(url, labelPayload).catch(error => console.log(error))
-      return response.data.status
+      try {
+        var response = await this.$axios.post(url, labelPayload)
+        return response.data.status
+      } catch (error) {
+        console.log("Label" , error)
+        throw error
+      }
     }
   }
 }

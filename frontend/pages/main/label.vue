@@ -66,13 +66,6 @@ export default {
       page: 1
     }
   },
-  computed: {
-    filterImages: function(){
-      return this.images.filter((labs) => {
-        return labs.name.match(this.search)
-      })
-    }
-  },
   watch: {
     async page () {
       await this.getAllImages(this.perPage, this.page, this.keyword)
@@ -104,8 +97,6 @@ export default {
       })
     },
     debounceWrapper (e) {
-      // this.loading = true
-      // this.$emit('loading', this.loading)
       console.log("event: ", e)
       this.page = 1
       this.debounceInput(e)
@@ -113,9 +104,6 @@ export default {
     // Only fires when user stops typing
     debounceInput: debounce(async function (e) {
       await this.getAllImages(this.perPage, this.page, e.target.value)
-      // this.fetchData(this.axiosURL + e.target.value)
-      // this.loading = false
-      // this.$emit('loading', this.loading)
     }, 500)
   }
 }
@@ -148,7 +136,3 @@ export default {
     width: 18rem;
   }
 </style>
-<!-- <div v-viewer="{navbar: false, title: true,
-                              toolbar: true, movable: true, zoomable: true, 
-                              rotatable: false, scalable: false, transition: false,
-                              fullscreen: true, keyboard: true}" :trigger="Images"> -->
