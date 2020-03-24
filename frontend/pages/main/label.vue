@@ -13,75 +13,110 @@
         <div class="col">
           <input
             id="imagesID"
-            v-model="search"
             type="text"
             class="form-control form-border field-length form-content"
-            placeholder="Search for Images ID..."
+            placeholder="Search for file name..."
             name="imagesID"
+            @input="debounceWrapper"
           >
         </div>
       </div>
       <br>
-      <b-row> 
-        <b-col v-for="labs in filterImages" :key="labs">
+      <b-row>
+        <b-col v-for="image in images" :key="image.id">
           <div id="container">
-            <nuxt-link :to="{ path: '/viewer', query: { url: labs.image }}">
+            <nuxt-link :to="{ path: '/viewer', query: { url: image.url, id: image.id }}">
               <Images
-                :src="labs.image"
-                :image-i-d="labs.name"
-                :image-u-r-l="labs.image"
+                class="animated fast fadeIn"
+                :src="image.url"
+                :image-i-d="image.id"
+                :image-u-r-l="image.url"
+                :image-name="image.name"
               />
             </nuxt-link>
             <br>
           </div>
         </b-col>
       </b-row>
+      <b-pagination
+        v-model="page"
+        class="mt-3"
+        :total-rows="100"
+        pills
+        :per-page="perPage"
+      />
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-      images: '',
-    }
-  }
-}
-</script>
-
-<script>
 import Images from '~/components/view/Images'
-
+import  { backendURL } from '~/config.js'
+import { debounce } from 'debounce'
 export default {
   components: {
     Images
   },
   data () {
     return {
-      label: [
-        { name: '028asd1', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'ddddddd', image: 'https://labelprintingportland.com/wp-content/uploads/2016/10/Adhesive-Labels-Peeled-Corners.jpg'},
-        { name: 'Zzzzzzzz', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'aqweqwew', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: '0112311', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'aDDD661a', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: ',,k,,l,,kp', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: 'gggggggg', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'},
-        { name: '028azzz', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg'}
-      ],
-      search: '',
-      isViewerActive: false
+      images: [],
+      keyword: '',
+      isViewerActive: false,
+      perPage: 12,
+      page: 1
     }
-  },
-  methods: {
   },
   computed: {
     filterImages: function(){
-          return this.label.filter((labs) => {
-              return labs.name.match(this.search);
-          });
-      }
+      return this.images.filter((labs) => {
+        return labs.name.match(this.search)
+      })
+    }
+  },
+  watch: {
+    async page () {
+      await this.getAllImages(this.perPage, this.page, this.keyword)
+    }
+  },
+  async mounted () {
+    await this.getAllImages(this.perPage, this.page, this.keyword)
+  },
+  methods: {
+    async getAllImages(perPage, page, keyword) {
+      var url = '/api/image'
+      const response = await this.$axios.get(url, {
+        params: {
+          PerPage: perPage,
+          Page: page,
+          search: keyword
+        }
+      }).catch((error) => console.error(error))
+      this.images = []
+      response.data.data.forEach((image) => {
+        if (!image.Labeled) {
+          var imageObj = {
+            id: image.ImageID,
+            name: image.Filename,
+            url: backendURL + '/api/' + image.ImagePath
+          }
+          this.images.push(imageObj)
+        }
+      })
+    },
+    debounceWrapper (e) {
+      // this.loading = true
+      // this.$emit('loading', this.loading)
+      console.log("event: ", e)
+      this.page = 1
+      this.debounceInput(e)
+    },
+    // Only fires when user stops typing
+    debounceInput: debounce(async function (e) {
+      await this.getAllImages(this.perPage, this.page, e.target.value)
+      // this.fetchData(this.axiosURL + e.target.value)
+      // this.loading = false
+      // this.$emit('loading', this.loading)
+    }, 500)
   }
 }
 </script>

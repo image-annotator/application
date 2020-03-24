@@ -37,7 +37,7 @@
 
     <div>
       <b-nav-item
-        v-b-toggle.collapse-user-management
+        v-b-toggle.collapse-settings
         link-classes="side-bar-color mt-3 ml-4"
       >
         <div class="icon-text-wrapper">
@@ -46,7 +46,7 @@
         </div>
       </b-nav-item>
 
-      <b-collapse id="collapse-user-management" visible role="tabpanel">
+      <b-collapse id="collapse-settings" visible role="tabpanel">
         <!-- Change Username -->
         <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
           <div class="icon-text-wrapper">
@@ -115,7 +115,7 @@
         <!-- Delete User -->
         <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
           <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-trash" />
+            <i class="mt-1 mr-3 mb-5 fas fa-trash" />
             <div id="delete-user">
               Delete User
             </div>
@@ -228,13 +228,13 @@ export default {
     height: auto;
     left: 0;
 
-    min-height: calc(100vh);
+    min-height: 100vh;
     width: 250px;
 
     padding-right: 30px;
 
     overflow-y: scroll;
-    position: relative;    
+    position: relative;
   }
 
   .side-bar-bg {

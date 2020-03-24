@@ -76,12 +76,14 @@ export default {
       activeBoxIndex: -1,
       boxes: [],
       image: {
+        id: -1,
         url: ''
       }
     }
   },
   mounted () {
     this.image.url = this.$route.query.url
+    this.image.id = this.$route.query.id
   },
   methods: {
     closeViewer () {
@@ -171,7 +173,7 @@ export default {
           var content_id = await this.createLabelContent(this.boxes[idxBox].content)
           var singleBackendObj = {
             // TODO: change temporary image_id of 1 to real image_id
-            image_id: 1,
+            image_id: this.image.id,
             label_x_center: realImageAttr.xCenter,
             label_y_center: realImageAttr.yCenter,
             label_width: realImageAttr.width,
