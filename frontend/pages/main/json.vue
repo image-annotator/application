@@ -34,11 +34,10 @@
       <b-row> 
           <b-col v-for="labs in filterImages" v-bind:key="labs">
           <div id="container">
-            <nuxt-link :to="{ path: '/main/json-view', query: {name: labs.name, json: labs.json}}">
+            <nuxt-link :to="{ path: '/main/json-view', query: {id: labs.ImageID, name: labs.Filename}}">
               <Images
-              :imageID="labs.name"
-              :imageURL="labs.image"
-              :JSONData="labs.json"
+              :imageID="labs.ImageID"
+              :imageURL="labs.ImagePath"
               ></Images>
             </nuxt-link>
               <br>
@@ -61,37 +60,39 @@ export default {
 
 <script>
 import Images from '~/components/view/Images.vue'
+import getAllLabeledImageID from '~/mixins/image/getAllLabeledImageID.js'
 
 export default {
   components: {
     Images
   },
+  mixins: [getAllLabeledImageID],
   data () {
     return {
-      edit: [
-        { name: 'sdfdosfhdauofhd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'ssasdassfggfgfd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'aaaaaaaaaaaaaas', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'ssssss222222222', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'ssssssssssssscs', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'wwwwweerr4r4444', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'asdefgtgbddfere', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'dsdfthththhttht', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: '111111111122222', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: '3333333333erees', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: '23243rfdvvvvvvv', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
-        { name: 'sssssssssdw2434', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'}
-      ],  
+      // edit: [
+      //   { name: 'sdfdosfhdauofhd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'ssasdassfggfgfd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'aaaaaaaaaaaaaas', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'ssssss222222222', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'ssssssssssssscs', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'wwwwweerr4r4444', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'asdefgtgbddfere', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'dsdfthththhttht', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: '111111111122222', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: '3333333333erees', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: '23243rfdvvvvvvv', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
+      //   { name: 'sssssssssdw2434', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'}
+      // ],
       search: ''
     }
   },
-  methods: {
-
+  methods: { 
+    
   },
   computed: {
       filterImages: function(){
-          return this.edit.filter((labs) => {
-              return labs.name.match(this.search);
+          return this.labeledImages.filter((labs) => {
+              return labs.Filename.match(this.search);
           });
       }
   }

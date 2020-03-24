@@ -3,7 +3,7 @@
     <div class="ml-4">
       <div class="row">
         <div class="col users-margin">
-            <h5 class="title">Image ID {{ name }}</h5>            
+            <h5 class="title">Image ID: {{ id }}</h5>            
         </div>
       </div>
       <br>
@@ -20,10 +20,12 @@
           <div class="col">
               <div class="json-container">
                   <div class="json-data">
-                      {{ json }}
+                      <h6 v-for="data in json.data" v-bind:key="data">
+                        {{data}}
+                      </h6>
                   </div>
                   <br>
-                  <button class="btn-action btn-right" @click="closeJSONViewe()">
+                  <button class="btn-action btn-right" @click="closeJSONViewer()">
                     <i class="ml-3 mt-1 fa fa-angle-left" />
                     Back
                   </button>
@@ -42,18 +44,30 @@ export default {
 //   },
   data () {
     return {
+      id: '',
       name: '',
-      json: ''
+      json: {}
     }
   },
   methods:{
-    closeJSONViewe() {
+    closeJSONViewer() {
       this.$router.push('/main/json')
+    },
+    async getLabelByID(){
+      var url = 'api/label/imagequery/'+ this.id
+      var response = await this.$axios(url).catch(error => console.log(error))
+      if(response && response.status === 200){
+        return response.data
+      }else{
+        return null
+      }
     }
   },
-  mounted() {
+  async mounted() {
+    this.id = this.$route.query.id
     this.name = this.$route.query.name
-    this.json = this.$route.query.json
+    this.json = await this.getLabelByID()
+    console.log("json:",this.json.data)
   }
 }
 </script>
