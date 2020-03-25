@@ -23,15 +23,15 @@
       </div>
       <br>
       <b-row> 
-          <b-col v-for="labs in filterImages" v-bind:key="labs">
+        <b-col v-for="labs in filterImages" :key="labs">
           <div id="container">
-              <Images
-              :imageID="labs.name"
-              :imageURL="labs.image"
-              ></Images>
-              <br>
+            <Images
+              :image-i-d="labs.name"
+              :image-u-r-l="labs.image"
+            />
+            <br>
           </div>
-          </b-col>
+        </b-col>
       </b-row>
     </div>
   </div>

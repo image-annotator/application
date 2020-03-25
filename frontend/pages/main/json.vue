@@ -3,11 +3,13 @@
     <div class="ml-4">
       <div class="row">
         <div class="col-3">
-            <h5 class="title users-margin">Complete JSON</h5>
+          <h5 class="title users-margin">
+            Complete JSON
+          </h5>
         </div>
         <button class="btn-white" @click="downloadJSON()">
-            JSONFile.json
-            <i class="ml-3 mt-1 fas fa-download" />
+          JSONFile.json
+          <i class="ml-3 mt-1 fas fa-download" />
         </button>
       </div>
       <div class="row">
@@ -32,17 +34,17 @@
       </div>
       <br>
       <b-row> 
-          <b-col v-for="labs in filterImages" v-bind:key="labs">
+        <b-col v-for="labs in filterImages" :key="labs">
           <div id="container">
             <nuxt-link :to="{ path: '/main/json-view', query: {id: labs.ImageID, name: labs.Filename}}">
               <Images
-              :imageID="labs.ImageID"
-              :imageURL="labs.ImagePath"
-              ></Images>
+                :image-i-d="labs.ImageID"
+                :image-u-r-l="labs.ImagePath"
+              />
             </nuxt-link>
-              <br>
+            <br>
           </div>
-          </b-col>
+        </b-col>
       </b-row>
     </div>
   </div>

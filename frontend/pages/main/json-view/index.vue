@@ -3,33 +3,35 @@
     <div class="ml-4">
       <div class="row">
         <div class="col users-margin">
-            <h5 class="title">Image ID: {{ id }}</h5>            
+          <h5 class="title">
+            Image ID: {{ id }}
+          </h5>            
         </div>
       </div>
       <br>
       <div class="row">
-          <div class="col">
-            <button class="btn-action btn-white" @click="downloadJSON()">
-                JSONFile.json
-                <i class="ml-3 mt-1 fas fa-download" />
-            </button>
-          </div>
+        <div class="col">
+          <button class="btn-action btn-white" @click="downloadJSON()">
+            JSONFile.json
+            <i class="ml-3 mt-1 fas fa-download" />
+          </button>
+        </div>
       </div>
       <br>
       <div class="row">
-          <div class="col">
-              <div class="json-container">
-                  <div class="json-data">
-                    <h6>{{json}}</h6>
-                  </div>
-                  <br>
-                  <button class="btn-action btn-right" @click="closeJSONViewer()">
-                    <i class="ml-3 mt-1 fa fa-angle-left" />
-                    Back
-                  </button>
-                  <br>
-              </div>
+        <div class="col">
+          <div class="json-container">
+            <div class="json-data">
+              <h6>{{ json }}</h6>
+            </div>
+            <br>
+            <button class="btn-action btn-right" @click="closeJSONViewer()">
+              <i class="ml-3 mt-1 fa fa-angle-left" />
+              Back
+            </button>
+            <br>
           </div>
+        </div>
       </div>
     </div>
   </div>
@@ -46,6 +48,12 @@ export default {
       name: '',
       json: {}
     }
+  },
+  async mounted() {
+    this.id = this.$route.query.id
+    this.name = this.$route.query.name
+    this.json = await this.getLabelByID()
+    
   },
   methods:{
     closeJSONViewer() {
@@ -71,12 +79,6 @@ export default {
       element.click()
       document.body.removeChild(element)
     }
-  },
-  async mounted() {
-    this.id = this.$route.query.id
-    this.name = this.$route.query.name
-    this.json = await this.getLabelByID()
-    
   }
 }
 </script>
