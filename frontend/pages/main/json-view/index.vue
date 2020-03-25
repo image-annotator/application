@@ -9,7 +9,7 @@
       <br>
       <div class="row">
           <div class="col">
-            <button class="btn-action btn-white">
+            <button class="btn-action btn-white" @click="downloadJSON()">
                 JSONFile.json
                 <i class="ml-3 mt-1 fas fa-download" />
             </button>
@@ -20,9 +20,7 @@
           <div class="col">
               <div class="json-container">
                   <div class="json-data">
-                      <h6 v-for="data in json.data" v-bind:key="data">
-                        {{data}}
-                      </h6>
+                    <h6>{{json}}</h6>
                   </div>
                   <br>
                   <button class="btn-action btn-right" @click="closeJSONViewer()">
@@ -57,17 +55,28 @@ export default {
       var url = 'api/label/imagequery/'+ this.id
       var response = await this.$axios(url).catch(error => console.log(error))
       if(response && response.status === 200){
-        return response.data
+        return response.data.data
       }else{
         return null
       }
+    },
+    downloadJSON(){
+      var filename = this.name.split('.',1)+'_JSONFile.json'
+      var element = document.createElement('a')
+      var text = JSON.stringify(this.json)
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+      element.setAttribute('download',filename)
+      element.style.display = 'none'
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
     }
   },
   async mounted() {
     this.id = this.$route.query.id
     this.name = this.$route.query.name
     this.json = await this.getLabelByID()
-    console.log("json:",this.json.data)
+    
   }
 }
 </script>
@@ -143,5 +152,6 @@ export default {
       padding-left: 1.5rem;
       padding-top: 1rem;
       overflow-y:scroll;
+      word-wrap:break-word;
   }
 </style>

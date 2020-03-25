@@ -5,7 +5,7 @@
         <div class="col-3">
             <h5 class="title users-margin">Complete JSON</h5>
         </div>
-        <button class="btn-white">
+        <button class="btn-white" @click="downloadJSON()">
             JSONFile.json
             <i class="ml-3 mt-1 fas fa-download" />
         </button>
@@ -60,13 +60,13 @@ export default {
 
 <script>
 import Images from '~/components/view/Images.vue'
-import getAllLabeledImageID from '~/mixins/image/getAllLabeledImageID.js'
+import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
 
 export default {
   components: {
     Images
   },
-  mixins: [getAllLabeledImageID],
+  mixins: [getAllLabeledImages],
   data () {
     return {
       // edit: [
@@ -83,11 +83,31 @@ export default {
       //   { name: '23243rfdvvvvvvv', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
       //   { name: 'sssssssssdw2434', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'}
       // ],
-      search: ''
+      search: '',
     }
   },
   methods: { 
-    
+    async getAllLabel(){
+      var url = '/api/label'
+      var response = await this.$axios(url).catch(error => console.log(error))
+      if (response && response.status === 200) {
+        return response.data.data
+      } else {
+        return null
+      }
+    },
+    async downloadJSON() {
+      var filename = 'JSONFile.json'
+      var element = document.createElement('a')
+      var label = await this.getAllLabel()
+      var text = JSON.stringify(label)
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+      element.setAttribute('download',filename)
+      element.style.display = 'none'
+      document.body.appendChild(element)
+      element.click()
+      document.body.removeChild(element)
+    } 
   },
   computed: {
       filterImages: function(){
