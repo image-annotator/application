@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col">
           <h5 class="title users-margin"> 
-            Choose Images
+            Label Unlabeled Images
           </h5>
         </div>
       </div>
@@ -85,19 +85,20 @@ export default {
         }
       }).catch((error) => console.error(error))
       this.images = []
-      response.data.data.forEach((image) => {
-        if (!image.Labeled) {
-          var imageObj = {
-            id: image.ImageID,
-            name: image.Filename,
-            url: backendURL + '/api/' + image.ImagePath
+      if (response.data.data) {
+        response.data.data.forEach((image) => {
+          if (!image.Labeled) {
+            var imageObj = {
+              id: image.ImageID,
+              name: image.Filename,
+              url: backendURL + '/api/' + image.ImagePath
+            }
+            this.images.push(imageObj)
           }
-          this.images.push(imageObj)
-        }
-      })
+        })
+      }
     },
     debounceWrapper (e) {
-      console.log("event: ", e)
       this.page = 1
       this.debounceInput(e)
     },
