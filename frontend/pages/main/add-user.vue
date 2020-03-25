@@ -96,7 +96,7 @@ export default {
         if (response && response.status === 200) {
           this.showInfo(this.username, response.data.data.passcode)
         } else {
-          this.handleIncorrectResponse()
+           this.handleIncorrectResponse()
         }
       } else {
         this.isFormDirty = true
