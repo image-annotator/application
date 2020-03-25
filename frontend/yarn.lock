@@ -808,6 +808,7 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
+<<<<<<< HEAD
 "@interactjs/actions@1.9.7":
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/@interactjs/actions/-/actions-1.9.7.tgz#b015931f406e090e48d3244343cf7b2cc53c90f1"
@@ -980,6 +981,8 @@
   resolved "https://registry.yarnpkg.com/@interactjs/vue/-/vue-1.9.7.tgz#9942407a144b4cd9d1f264ccaaf43d75f5a00a60"
   integrity sha512-Y1mjCB5tGxsaUkfYP/i1dIoBRnxkDpvZtmfKp38u1SRt3QCfNznKf4252QC7RBTSgIL/Cohi8c/oAq++ZpkTSQ==
 
+=======
+>>>>>>> 7c9f75bb06a7e3ceb923d479be42a0d03aff3b09
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -1402,11 +1405,6 @@
     cookie "^0.3.1"
     mustache "^2.3.0"
     stack-trace "0.0.10"
-
-"@svgdotjs/svg.js@^3.0.16":
-  version "3.0.16"
-  resolved "https://registry.yarnpkg.com/@svgdotjs/svg.js/-/svg.js-3.0.16.tgz#7044754e45daf62c8e2b115c45ca33ca5b967aff"
-  integrity sha512-yZ4jfP/SeLHEnCi9PIrzienKCrA4vW9+jm5uUV3N5DG2e9zgXLY5FgywK2u8/gMFIeKO0HuqTLFFfWJj+MfMLA==
 
 "@types/babel__core@^7.1.0":
   version "7.1.6"
@@ -4946,6 +4944,7 @@ inquirer@^7.0.0:
     strip-ansi "^6.0.0"
     through "^2.3.6"
 
+<<<<<<< HEAD
 interactjs@^1.9.4:
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/interactjs/-/interactjs-1.9.7.tgz#ebcbc3cab9c63f4cd66aa650a5918bcc2aaeeead"
@@ -4954,6 +4953,8 @@ interactjs@^1.9.4:
     "@interactjs/interactjs" "1.9.7"
     "@interactjs/types" "1.9.7"
 
+=======
+>>>>>>> 7c9f75bb06a7e3ceb923d479be42a0d03aff3b09
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
