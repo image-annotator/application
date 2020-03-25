@@ -57,7 +57,7 @@ export default {
     baseURL: backendURL
   },
   server: {
-    port: 3000, // default: 3000
+    port: 6969, // default: 3000
     host: 'localhost' // default: localhost
   },
   /*
