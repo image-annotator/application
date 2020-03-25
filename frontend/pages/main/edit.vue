@@ -25,7 +25,7 @@
       <b-row>
         <b-col v-for="image in images" :key="image.id">
           <div id="container">
-            <nuxt-link :to="{ path: '/viewer', query: { url: image.url, id: image.id }}">
+            <nuxt-link :to="{ path: '/viewer/index-edit', query: { url: image.url, id: image.id }}">
               <Images
                 class="animated fast fadeIn"
                 :src="image.url"
