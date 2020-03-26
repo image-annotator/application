@@ -11,8 +11,9 @@
       </button>
     </div>
     <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
-      <div id="image">
+      <div id="image" ref="img">
         <img
+          v-if="dataReady"
           ref="image"
           draggable="false"
           class="image"
@@ -29,7 +30,6 @@
           :b-left="drawingBox.left"
         />
         <div v-for="i in Object.keys(boxes)" :key="i">
-          {{ i }}
           <Box
             v-if="boxes[i]"
             :key="i"
@@ -78,18 +78,23 @@ export default {
       },
       activeBoxIndex: -1,
       boxes: {},
+      previouslyCreatedBox: {},
       image: {
         id: -1,
         url: ''
       },
       canDelete: true,
       labelCount: 0,
+      dataReady :true,
+      isEdited: false
     }
   },
   async mounted () {
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
     await this.drawAllBox()
+    this.dataReady = false
+    this.dataReady = true
   },
   methods: {
     async getAllLabels () {
@@ -121,6 +126,7 @@ export default {
         realHeight: this.$refs.image.naturalHeight
       }
       while(labeledCount > this.labelCount){
+        this.previouslyCreatedBox[this.labelCount + 1] = allLabels[this.labelCount].label_id
         var contentName = await this.getContentName(allLabels[this.labelCount].label_content_id)
         console.log(contentName)
         var screenImagesAttr = this.getScreenAttributes(imageAttributes, allLabels[this.labelCount].label_width, allLabels[this.labelCount].label_height, allLabels[this.labelCount].label_x_center, allLabels[this.labelCount].label_y_center)
@@ -138,6 +144,22 @@ export default {
         this.makeCurrentBoxActive(this.labelCount)
         this.resetDrawingBox()
       }
+      console.log('huhahuha', Object.keys(this.previouslyCreatedBox)[0], Object.values(this.previouslyCreatedBox)[0])
+      var i = 0
+      var tempArray = []
+      Object.keys(this.boxes).forEach((key) => {
+        console.log(key)
+        if (key == Object.keys(this.previouslyCreatedBox)[i] ) {
+          console.log('PUT' + i)
+          delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
+          console.log(this.previouslyCreatedBox)
+        } else {
+          console.log('POST' + i)
+          tempArray.push(Object.values(this.previouslyCreatedBox)[i])
+          console.log("asdasd", tempArray)       
+        }
+        i++
+      })
     },
     closeViewer () {
       this.$router.push('/main/edit')
@@ -209,6 +231,7 @@ export default {
       this.drawingBox.active = false
     },
     async saveImage () {
+
       // Validate all content name first
       if (this.validateAllContents()) {
         var labelPayload = []
