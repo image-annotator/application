@@ -62,7 +62,7 @@ export default {
       images: {},
       keyword: '',
       isViewerActive: false,
-      perPage: 2,
+      perPage: 12,
       totalRows: 0,
       page: 1,
       timer: '',
@@ -129,6 +129,7 @@ export default {
       this.updateUI = !this.updateUI
     },
     async getAllImagesWithLabelStatus() {
+      this.images = {}
       await this.getAllImages(this.perPage, this.page, this.keyword)
       await this.getImageCurrentlyBeingLabelled()
     },
@@ -149,19 +150,28 @@ export default {
         throw error
       }
     },
-    openViewer (image) {
+    async openViewer (image) {
       console.log(image)
       if (!image.isCurrentlyLabeled) {
-        this.$router.push({ path: '/viewer', query: { url: image.url, id: image.id }})
+        var url = '/api/accesscontrol/' + image.id
+        try {
+          await this.$axios.get(url)
+          alert("This image is currently Labeled")
+        } catch (e) {
+          this.$router.push({ path: '/viewer', query: { url: image.url, id: image.id }})
+        }
       }
     },
     debounceWrapper (e) {
       this.page = 1
+      this.keyword = e.target.value
+      // alert(this.keyword)
       this.debounceInput(e)
     },
     // Only fires when user stops typing
-    debounceInput: debounce(async function (e) {
-      await this.getAllImages(this.perPage, this.page, e.target.value)
+    debounceInput: debounce(async function () {
+      await this.getAllImagesWithLabelStatus()
+      // await this.getAllImages(this.perPage, this.page, e.target.value)
     }, 500)
   }
 }

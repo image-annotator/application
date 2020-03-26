@@ -89,7 +89,7 @@ export default {
   },
   async created () {
     await this.startHeartBeat()
-    this.timer = setInterval(this.startHeartBeat, 5000)
+    this.timer = setInterval(this.startHeartBeat, 90000)
   },
   mounted () {
     this.image.url = this.$route.query.url
@@ -101,7 +101,6 @@ export default {
     } catch(error) {
       console.log(error)
     }
-    
     clearInterval(this.timer)
   },
   methods: {
@@ -113,10 +112,17 @@ export default {
       } catch (error) {
         this.showFailedAlert("An error occured", error)
         await this.closeViewer()
-      }      
+      }
+    },
+    handler () {
+      alert("tET")
     },
     async closeViewer () {
-      await this.deleteImageAccessControlByImageID(this.image.id)
+      try {
+        await this.deleteImageAccessControlByImageID(this.image.id)
+      } catch (error) {
+        console.log(error)
+      }
       this.$router.push('/main/label')
     },
     onMouseDownHandler (e) {
