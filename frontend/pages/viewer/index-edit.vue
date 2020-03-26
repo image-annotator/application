@@ -101,6 +101,15 @@ export default {
         return null
       }
     },
+    async getContentName (id) {
+      var url = '/api/content/' + id
+      var response = await this.$axios.get(url).catch( error => console.error(error))
+      if(response.status === 200) {
+        return response.data.data.content_name
+      } else {
+        return null
+      }
+    },
     async drawAllBox () {
       var allLabels = await this.getAllLabels()
       console.log(allLabels)
@@ -112,16 +121,22 @@ export default {
         realHeight: this.$refs.image.naturalHeight
       }
       while(labeledCount > this.labelCount){
+        var contentName = await this.getContentName(allLabels[this.labelCount].label_content_id)
+        console.log(contentName)
         var screenImagesAttr = this.getScreenAttributes(imageAttributes, allLabels[this.labelCount].label_width, allLabels[this.labelCount].label_height, allLabels[this.labelCount].label_x_center, allLabels[this.labelCount].label_y_center)
         let newBox = {
           width: screenImagesAttr.width,
           height: screenImagesAttr.height,
           left: screenImagesAttr.left,
           top: screenImagesAttr.top,
-          content: ''
+          content: contentName
         }
         this.labelCount++
         this.boxes[this.labelCount] = newBox
+        // console.log(newBox.content)
+        this.changeBoxContent(newBox.content, this.labelCount)
+        this.makeCurrentBoxActive(this.labelCount)
+        this.resetDrawingBox()
       }
     },
     closeViewer () {

@@ -35,6 +35,7 @@
       class="suggestion-form"
       :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth * 0.3 + 'px', width: suggestWidth + 'px'}"
       :class="{'suggest-active': isSuggestActive}"
+      :initialData="bContent"
       @onEnableForm="handleOnEnableForm"
       @onDisableForm="handleOnDisableForm"
     />
@@ -53,7 +54,6 @@
 
 import Suggest from '~/components/view/Suggest'
 import { Cursors } from '~/mixins/label/getCursorPosition'
-
 export default {
   name: "Box",
   components: {
