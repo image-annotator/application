@@ -38,8 +38,9 @@
           <div id="container">
             <nuxt-link :to="{ path: '/main/json-view', query: {id: labs.ImageID, name: labs.Filename}}">
               <Images
+                :image-name="labs.Filename"
                 :image-i-d="labs.ImageID"
-                :image-u-r-l="labs.ImagePath"
+                :image-u-r-l="backendURL + '/api/' + labs.ImagePath"
               />
             </nuxt-link>
             <br>
@@ -63,7 +64,7 @@ export default {
 <script>
 import Images from '~/components/view/Images.vue'
 import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
-
+import  { backendURL } from '~/config.js'
 export default {
   components: {
     Images
@@ -71,6 +72,7 @@ export default {
   mixins: [getAllLabeledImages],
   data () {
     return {
+      backendURL: backendURL,
       // edit: [
       //   { name: 'sdfdosfhdauofhd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
       //   { name: 'ssasdassfggfgfd', image: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1159990/pike-place.jpg', json: '{id:1}'},
