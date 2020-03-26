@@ -20,7 +20,7 @@ export default {
       var url = '/api/image/?PerPage=9999999999&Page=1'
       var response = await this.$axios(url).catch(error => console.log(error))
       if (response && response.status === 200) {
-        return response.data.data
+        return response.data.data.images
       } else {
         return null
       }
@@ -29,6 +29,8 @@ export default {
   async mounted () {
     var labeled = await this.getAllLabeledImages()
     var allImg = await this.getAllImages()
+    console.log("label: ", labeled)
+    console.log("allImg: ", allImg)
     var labeledImageID = []
     if (labeled && allImg) {
       //Get Uniqe All of Labeled Image ID

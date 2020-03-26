@@ -88,6 +88,10 @@ export default {
     }
   },
   async created () {
+    window.addEventListener("beforeunload", async (event) => {
+      await this.closeViewer()
+      event.returnValue= "You have unsaved changes."
+    })
     await this.startHeartBeat()
     this.timer = setInterval(this.startHeartBeat, 90000)
   },
@@ -96,12 +100,8 @@ export default {
     this.image.id = this.$route.query.id
   },
   async beforeDestroy () {
-    try {
-      await this.deleteImageAccessControlByImageID(this.image.id)
-    } catch(error) {
-      console.log(error)
-    }
-    clearInterval(this.timer)
+    // window.removeEventListener("beforeunload", true)
+    await this.closeViewer()
   },
   methods: {
     async startHeartBeat() {
@@ -114,15 +114,13 @@ export default {
         await this.closeViewer()
       }
     },
-    handler () {
-      alert("tET")
-    },
     async closeViewer () {
       try {
         await this.deleteImageAccessControlByImageID(this.image.id)
       } catch (error) {
         console.log(error)
       }
+      clearInterval(this.timer)
       this.$router.push('/main/label')
     },
     onMouseDownHandler (e) {

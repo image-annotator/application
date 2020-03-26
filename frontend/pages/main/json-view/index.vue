@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col users-margin">
           <h5 class="title">
-            Image ID: {{ id }}
+            Image Name: {{ name }}
           </h5>            
         </div>
       </div>
