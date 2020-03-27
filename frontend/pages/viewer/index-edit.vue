@@ -144,21 +144,29 @@ export default {
         this.makeCurrentBoxActive(this.labelCount)
         this.resetDrawingBox()
       }
-      console.log('huhahuha', Object.keys(this.previouslyCreatedBox)[0], Object.values(this.previouslyCreatedBox)[0])
+      console.log('huhahuha', Object.keys(this.previouslyCreatedBox)[1], Object.values(this.previouslyCreatedBox)[1])
       var i = 0
       var tempArray = []
       Object.keys(this.boxes).forEach((key) => {
-        console.log(key)
+        console.log(key, this.boxes[key])
         if (key == Object.keys(this.previouslyCreatedBox)[i] ) {
-          console.log('PUT' + i)
-          delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
-          console.log(this.previouslyCreatedBox)
+          console.log('key', key)
+          console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
+          // console.log('PUT' + i)
+          // delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
+          console.log(this.previouslyCreatedBox)     
         } else {
+          console.log('key', key)
+          console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
           console.log('POST' + i)
-          tempArray.push(Object.values(this.previouslyCreatedBox)[i])
-          console.log("asdasd", tempArray)       
+          tempArray.push(this.boxes[i+1])
+          console.log('huyhuy',this.boxes[i+1])
+          console.log("asdasd", tempArray[i])        
         }
         i++
+      //   for (let idxBox in tempArray) {
+      //     console.log(tempArray[idxBox])
+      //   }
       })
     },
     closeViewer () {
@@ -231,7 +239,6 @@ export default {
       this.drawingBox.active = false
     },
     async saveImage () {
-
       // Validate all content name first
       if (this.validateAllContents()) {
         var labelPayload = []
@@ -242,39 +249,89 @@ export default {
           realHeight: this.$refs.image.naturalHeight
         }
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
-        for (let idxBox in this.boxes) {
-          var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, idxBox)
-          var bWidth = this.boxes[idxBox].width
-          var bHeight = this.boxes[idxBox].height
-          var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
-          try {
-            var content_id = await this.createLabelContent(this.boxes[idxBox].content)
-            var singleBackendObj = {
-              // TODO: change temporary image_id of 1 to real image_id
-              image_id: parseInt(this.image.id),
-              label_x_center: realImageAttr.xCenter,
-              label_y_center: realImageAttr.yCenter,
-              label_width: realImageAttr.width,
-              label_height: realImageAttr.height,
-              label_content_id: content_id
+        var i = 0
+        var tempArray = []
+        Object.keys(this.boxes).forEach((key) => {
+          console.log(key, this.boxes[key])
+          if (key == Object.keys(this.previouslyCreatedBox)[i] ) {
+            console.log('key', key)
+            console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
+            console.log('PUT' + i)
+            // edit
+            // var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, key, this.boxes)
+            // var bWidth = this.boxes[key].width
+            // var bHeight = this.boxes[key].height
+            // var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
+            // try {
+            //   var content_id = await this.createLabelContent(this.boxes[key].content)
+            //   var singleBackendObj = {
+            //     // TODO: change temporary image_id of 1 to real image_id
+            //     image_id: parseInt(this.image.id),
+            //     label_x_center: realImageAttr.xCenter,
+            //     label_y_center: realImageAttr.yCenter,
+            //     label_width: realImageAttr.width,
+            //     label_height: realImageAttr.height,
+            //     label_content_id: content_id
+            //   }
+            //   labelPayload.push(singleBackendObj)
+            //   console.log('labelPayload: ', labelPayload)
+            //   await this.changeLabelsInImage(labelPayload)
+            // } catch (error) {
+            //   this.showFailedAlert("Error!", error)
+            //   return
+            // }
+            delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
+            console.log(this.previouslyCreatedBox)   
+          } else {
+            console.log('key', key)
+            console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
+            console.log('POST' + i)
+            tempArray.push(this.boxes[i+1])
+            console.log('huyhuy',this.boxes[i+1])
+            console.log("asdasd", tempArray[i])        
+          }
+          i++
+        })
+        // push new label
+        if (tempArray != 0) {
+          for (let idxBox in tempArray) {
+            var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, idxBox, tempArray)
+            var bWidth = tempArray[idxBox].width
+            var bHeight = tempArray[idxBox].height
+            var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
+            try {
+              var content_id = await this.createLabelContent(tempArray[idxBox].content)
+              var singleBackendObj = {
+                // TODO: change temporary image_id of 1 to real image_id
+                image_id: parseInt(this.image.id),
+                label_x_center: realImageAttr.xCenter,
+                label_y_center: realImageAttr.yCenter,
+                label_width: realImageAttr.width,
+                label_height: realImageAttr.height,
+                label_content_id: content_id
+              }
+              labelPayload.push(singleBackendObj)
+              console.log('labelPayload: ', labelPayload)
+            } catch (error) {
+              this.showFailedAlert("Error!", error)
+              return
             }
-            labelPayload.push(singleBackendObj)
-            console.log('labelPayload: ', labelPayload)
+          }
+          try {
+            console.log("LABEL PAYLOAD: ", labelPayload)
+            await this.createAllLabelsInImage(labelPayload)
+            this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
+              this.closeViewer()
+            })
           } catch (error) {
+            console.log(error)
             this.showFailedAlert("Error!", error)
             return
           }
-        }
-        try {
-          console.log("LABEL PAYLOAD: ", labelPayload)
-          await this.createAllLabelsInImage(labelPayload)
+        } else {
           this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
             this.closeViewer()
           })
-        } catch (error) {
-          console.log(error)
-          this.showFailedAlert("Error!", error)
-          return
         }
       }
     },
@@ -313,9 +370,9 @@ export default {
         imageTop: imageTop
       }
     },
-    getBoxPositionRelativeToImage (imagePosition, idxBox) {
-      var bLeft = this.boxes[idxBox].left - imagePosition.imageLeft
-      var bTop = this.boxes[idxBox].top - imagePosition.imageTop
+    getBoxPositionRelativeToImage (imagePosition, idxBox, boxes) {
+      var bLeft = boxes[idxBox].left - imagePosition.imageLeft
+      var bTop = boxes[idxBox].top - imagePosition.imageTop
       if (bLeft < 0) {
         bLeft = 0
       }
@@ -347,8 +404,8 @@ export default {
       const heightRatio = (imageAttributes.realHeight / imageAttributes.screenHeight)
       var realBoxWidth = widthRatio * bWidth
       var realBoxHeight = heightRatio * bHeight
-      var xCenterPosition = widthRatio * boxPosition.left + (realBoxWidth / 2)
-      var yCenterPosition = heightRatio * boxPosition.top + (realBoxHeight / 2)
+      var xCenterPosition = widthRatio * boxPosition.lefcreateAllLabelsInImagep + (realBoxHeight / 2)
+      var yCenterPosition = widthRatio * boxPosition.lefcreateAllLabelsInImagep + (realBoxWidth / 2)
       return {
         xCenter: xCenterPosition,
         yCenter: yCenterPosition,
@@ -377,6 +434,16 @@ export default {
         return response.data.status
       } catch (error) {
         console.log("Label" , error)
+        throw error
+      }
+    },
+    async changeLabelsInImage (labelPayload, id) {
+      var url ='api/label' + id
+      try {
+        var response = await this.$axios.put(url, labelPayload)
+        return response.data.status
+      } catch (error) {
+        console.log('Edit Label', error)
         throw error
       }
     }
