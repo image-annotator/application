@@ -144,30 +144,8 @@ export default {
         this.makeCurrentBoxActive(this.labelCount)
         this.resetDrawingBox()
       }
-      console.log('huhahuha', Object.keys(this.previouslyCreatedBox)[1], Object.values(this.previouslyCreatedBox)[1])
-      var i = 0
-      var tempArray = []
-      Object.keys(this.boxes).forEach((key) => {
-        console.log(key, this.boxes[key])
-        if (key == Object.keys(this.previouslyCreatedBox)[i] ) {
-          console.log('key', key)
-          console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
-          // console.log('PUT' + i)
-          // delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
-          console.log(this.previouslyCreatedBox)     
-        } else {
-          console.log('key', key)
-          console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
-          console.log('POST' + i)
-          tempArray.push(this.boxes[i+1])
-          console.log('huyhuy',this.boxes[i+1])
-          console.log("asdasd", tempArray[i])        
-        }
-        i++
-      //   for (let idxBox in tempArray) {
-      //     console.log(tempArray[idxBox])
-      //   }
-      })
+      console.log(this.boxes)
+      console.log(this.previouslyCreatedBox)
     },
     closeViewer () {
       this.$router.push('/main/edit')
@@ -241,7 +219,16 @@ export default {
     async saveImage () {
       // Validate all content name first
       if (this.validateAllContents()) {
+        var labelPutPayload = []
         var labelPayload = []
+        var tempArray = []
+        var boxPosition 
+        var bWidth 
+        var bHeight 
+        var realImageAttr 
+        var content_id 
+        var singleBackendObj 
+        var move = 0
         var imageAttributes = {
           screenWidth: this.$refs.image.clientWidth,
           screenHeight: this.$refs.image.clientHeight,
@@ -249,59 +236,61 @@ export default {
           realHeight: this.$refs.image.naturalHeight
         }
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
-        var i = 0
-        var tempArray = []
-        Object.keys(this.boxes).forEach((key) => {
+        console.log('GOGIGU', this.previouslyCreatedBox)
+        for (let key in this.boxes) {
           console.log(key, this.boxes[key])
-          if (key == Object.keys(this.previouslyCreatedBox)[i] ) {
+          if (key == Object.keys(this.previouslyCreatedBox)[key - 1 - move] ) {
             console.log('key', key)
-            console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
-            console.log('PUT' + i)
+            console.log('prevs', Object.keys(this.previouslyCreatedBox)[key - 1 - move] )
+            console.log('PUT' + (key - 1))
             // edit
-            // var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, key, this.boxes)
-            // var bWidth = this.boxes[key].width
-            // var bHeight = this.boxes[key].height
-            // var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
-            // try {
-            //   var content_id = await this.createLabelContent(this.boxes[key].content)
-            //   var singleBackendObj = {
-            //     // TODO: change temporary image_id of 1 to real image_id
-            //     image_id: parseInt(this.image.id),
-            //     label_x_center: realImageAttr.xCenter,
-            //     label_y_center: realImageAttr.yCenter,
-            //     label_width: realImageAttr.width,
-            //     label_height: realImageAttr.height,
-            //     label_content_id: content_id
-            //   }
-            //   labelPayload.push(singleBackendObj)
-            //   console.log('labelPayload: ', labelPayload)
-            //   await this.changeLabelsInImage(labelPayload)
-            // } catch (error) {
-            //   this.showFailedAlert("Error!", error)
-            //   return
-            // }
-            delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[i]]
+            boxPosition = this.getBoxPositionRelativeToImage(imagePosition, key, this.boxes)
+            bWidth = this.boxes[key].width
+            bHeight = this.boxes[key].height
+            realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
+            try {
+              content_id = await this.createLabelContent(this.boxes[key].content)
+              singleBackendObj = {
+                // TODO: change temporary image_id of 1 to real image_id
+                image_id: parseInt(this.image.id),
+                label_x_center: realImageAttr.xCenter,
+                label_y_center: realImageAttr.yCenter,
+                label_width: realImageAttr.width,
+                label_height: realImageAttr.height,
+                label_content_id: content_id
+              }
+              labelPutPayload.push(singleBackendObj)
+              console.log('labelPayload: ', labelPutPayload[0])
+              console.log('BACKEND')
+              console.log(Object.values(this.previouslyCreatedBox)[key - 1 - move])
+              await this.changeLabelsInImage(labelPutPayload[0], Object.values(this.previouslyCreatedBox)[key - 1 - move])
+            } catch (error) {
+              this.showFailedAlert("Error!", error)
+              return
+            }
+            delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[key - 1 - move]]
+            move++
+            labelPutPayload.pop()
             console.log(this.previouslyCreatedBox)   
           } else {
             console.log('key', key)
-            console.log('prevs', Object.keys(this.previouslyCreatedBox)[i] )
-            console.log('POST' + i)
-            tempArray.push(this.boxes[i+1])
-            console.log('huyhuy',this.boxes[i+1])
-            console.log("asdasd", tempArray[i])        
+            console.log('prevs', Object.keys(this.previouslyCreatedBox)[key - 1] )
+            console.log('POST' + (key-1))
+            tempArray.push(this.boxes[key])
+            console.log('huyhuy',this.boxes[key])
+            console.log("asdasd", tempArray[(key - 1)])        
           }
-          i++
-        })
+        }
         // push new label
         if (tempArray != 0) {
           for (let idxBox in tempArray) {
-            var boxPosition = this.getBoxPositionRelativeToImage(imagePosition, idxBox, tempArray)
-            var bWidth = tempArray[idxBox].width
-            var bHeight = tempArray[idxBox].height
-            var realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
+            boxPosition = this.getBoxPositionRelativeToImage(imagePosition, idxBox, tempArray)
+            bWidth = tempArray[idxBox].width
+            bHeight = tempArray[idxBox].height
+            realImageAttr = this.getRealImageAttributes(imageAttributes, boxPosition, bWidth, bHeight)
             try {
-              var content_id = await this.createLabelContent(tempArray[idxBox].content)
-              var singleBackendObj = {
+              content_id = await this.createLabelContent(tempArray[idxBox].content)
+              singleBackendObj = {
                 // TODO: change temporary image_id of 1 to real image_id
                 image_id: parseInt(this.image.id),
                 label_x_center: realImageAttr.xCenter,
@@ -404,8 +393,8 @@ export default {
       const heightRatio = (imageAttributes.realHeight / imageAttributes.screenHeight)
       var realBoxWidth = widthRatio * bWidth
       var realBoxHeight = heightRatio * bHeight
-      var xCenterPosition = widthRatio * boxPosition.lefcreateAllLabelsInImagep + (realBoxHeight / 2)
-      var yCenterPosition = widthRatio * boxPosition.lefcreateAllLabelsInImagep + (realBoxWidth / 2)
+      var xCenterPosition = widthRatio * boxPosition.left + (realBoxWidth / 2)
+      var yCenterPosition = heightRatio * boxPosition.top + (realBoxHeight / 2)
       return {
         xCenter: xCenterPosition,
         yCenter: yCenterPosition,
@@ -438,7 +427,8 @@ export default {
       }
     },
     async changeLabelsInImage (labelPayload, id) {
-      var url ='api/label' + id
+      var url ='api/label/' + id
+      console.log(id)
       try {
         var response = await this.$axios.put(url, labelPayload)
         return response.data.status
