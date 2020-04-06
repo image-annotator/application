@@ -3,34 +3,44 @@
     <div class="ml-4">
       <div class="row">
         <div class="col users-margin">
-            <h5 class="title">Upload Dataset</h5>           
+          <h5 class="title">
+            Upload Dataset
+          </h5>           
         </div>
       </div>
       <br>
       <br>
       <div class="row">
         <div class="col">
-            <h5 class="title sub-title">Add Folder</h5>           
+          <h5 class="title sub-title">
+            Add Folder
+          </h5>           
         </div>
       </div>
       <br>
       <div class="row">
-          <div class="col">
-              <div class="uploader">
-                <vue-dropzone ref="myDropzone" id="dropzone" :options="options" :useCustomSlot="true">
-                  <div class="dropzone-custom-content">
-                    <h6 class="dropzone-custom-title">Drag and Drop Images here to Upload Content!</h6>
-                  </div>
-                </vue-dropzone>
+        <div class="col">
+          <div class="uploader">
+            <vue-dropzone id="dropzone" ref="myDropzone" :options="options" :use-custom-slot="true">
+              <div class="dropzone-custom-content">
+                <h6 class="dropzone-custom-title">
+                  Drag and Drop Images here to Upload Content!
+                </h6>
               </div>
+            </vue-dropzone>
           </div>
+        </div>
       </div>
       <br>
       <div class="row">
-          <div class="col">
-              <button class="btn-action btn-blue" @click="handleUpload">Upload</button>
-              <button class="btn-action btn-white" @click="removeAllFiles">Cancel</button>
-          </div>
+        <div class="col">
+          <button class="btn-action btn-blue" @click="handleUpload">
+            Upload
+          </button>
+          <button class="btn-action btn-white" @click="removeAllFiles">
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
