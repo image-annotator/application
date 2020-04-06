@@ -41,10 +41,12 @@ export default {
   async mounted () {
     this.bContent = this.initialData
     const response = await this.$axios.get('/api/content/?suggestion=').catch((error) => console.error(error))
-    response.data.data.forEach((content) => {
-      this.simpleSuggestionList.push(content['content_name'])
-    })
-    if(this.initialData === '') this.enableForm()
+    if (response.data.data) {
+      response.data.data.forEach((content) => {
+        this.simpleSuggestionList.push(content['content_name'])
+      })
+    }
+    this.enableForm()
     this.$watch(() => {
       if (this.$refs["form"].isInFocus) {
         this.enableForm()

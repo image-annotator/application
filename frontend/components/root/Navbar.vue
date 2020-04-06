@@ -34,6 +34,16 @@
         </div>
       </b-nav-item>
     </div>
+
+    <div v-if="role === 'admin'">
+      <!-- Upload Dataset -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('upload-dataset')">
+        <div id="upload-dataset">
+          Upload Dataset
+        </div>
+      </b-nav-item>
+    </div>
+    
     <div>
       <b-nav-item
         v-b-toggle.collapse-settings
@@ -176,6 +186,9 @@ export default {
       case 'edit-dataset':
         this.$nuxt.$router.replace({ path: '/main/edit'})
         break
+      case 'upload-dataset':
+        this.$nuxt.$router.replace({ path: '/main/upload'})
+        break
       case 'change-username':
         this.$nuxt.$router.replace({ path: '/main/change-username'})
         break
@@ -205,6 +218,8 @@ export default {
         elmtID ='json-outputs'
       } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='edit-dataset'
+      } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
+        elmtID ='upload-dataset'
       } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='change-username'
       } else if ((/^\/main\/change-password(\/|(\?)|$)/.test(browserURL))) {

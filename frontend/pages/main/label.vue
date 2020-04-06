@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col">
           <h5 class="title users-margin"> 
-            Choose Images
+            Label Unlabeled Images
           </h5>
         </div>
       </div>
@@ -22,18 +22,18 @@
         </div>
       </div>
       <br>
-      <b-row>
-        <b-col v-for="image in images" :key="image.id">
+      <b-row v-if="images" :key="updateUI">
+        <b-col v-for="id in Object.keys(images)" :key="id">
           <div id="container">
-            <nuxt-link :to="{ path: '/viewer', query: { url: image.url, id: image.id }}">
-              <Images
-                class="animated fast fadeIn"
-                :src="image.url"
-                :image-i-d="image.id"
-                :image-u-r-l="image.url"
-                :image-name="image.name"
-              />
-            </nuxt-link>
+            <Images
+              class="animated fadeIn"
+              :src="images[id].url"
+              :image-i-d="images[id].id"
+              :image-u-r-l="images[id].url"
+              :image-name="images[id].name"
+              :is-currently-labeled="images[id].isCurrentlyLabeled"
+              @click.native="openViewer(images[id])"
+            />
             <br>
           </div>
         </b-col>
@@ -41,7 +41,7 @@
       <b-pagination
         v-model="page"
         class="mt-3"
-        :total-rows="100"
+        :total-rows="totalRows"
         pills
         :per-page="perPage"
       />
@@ -59,20 +59,29 @@ export default {
   },
   data () {
     return {
-      images: [],
+      images: {},
       keyword: '',
       isViewerActive: false,
       perPage: 12,
-      page: 1
+      totalRows: 0,
+      page: 1,
+      timer: '',
+      updateUI: false
     }
   },
   watch: {
     async page () {
-      await this.getAllImages(this.perPage, this.page, this.keyword)
+      this.images = {}
+      await this.getAllImagesWithLabelStatus()
     }
   },
-  async mounted () {
-    await this.getAllImages(this.perPage, this.page, this.keyword)
+  async created () {
+    this.images = {}
+    await this.getAllImagesWithLabelStatus()
+    this.timer = setInterval(this.getAllImagesWithLabelStatus, 5000)
+  },
+  beforeDestroy () {
+    clearInterval(this.timer)
   },
   methods: {
     async getAllImages(perPage, page, keyword) {
@@ -84,26 +93,85 @@ export default {
           search: keyword
         }
       }).catch((error) => console.error(error))
-      this.images = []
-      response.data.data.forEach((image) => {
-        if (!image.Labeled) {
-          var imageObj = {
-            id: image.ImageID,
-            name: image.Filename,
-            url: backendURL + '/api/' + image.ImagePath
+      console.log("Images: ", response.data.data.images)
+      if (response.data.data.images) {
+        this.totalRows = (response.data.data["total_page"] + 1) * this.perPage
+        response.data.data.images.forEach((image) => {
+          if (!image.Labeled) {
+            var imageObj = {
+              id: image.ImageID,
+              name: image.Filename,
+              url: backendURL + '/api/' + image.ImagePath,
+              isCurrentlyLabeled: false
+            }
+            this.images[image.ImageID] = imageObj
+            console.log("Images: ", this.images)
           }
-          this.images.push(imageObj)
+        })
+      }
+    },
+    async getImageCurrentlyBeingLabelled() {
+      var url = '/api/accesscontrol'
+      const response = await this.$axios.get(url).catch((error) => console.error(error))
+      console.log("Response image labelled: ", response.data.data)
+      if (response.data.data) {
+        response.data.data.forEach(async (imageStatus) => {
+          // Delete access control
+          if (imageStatus["timeout"] < this.getCurrentTime()) {
+            await this.deleteImageAccessControlByImageID(imageStatus["image_id"]).catch((error) => console.error(error))
+          } else {
+            if (this.images[imageStatus["image_id"]]) {
+              this.images[imageStatus["image_id"]].isCurrentlyLabeled = true
+            }
+          }
+        })
+      }
+      this.updateUI = !this.updateUI
+    },
+    async getAllImagesWithLabelStatus() {
+      this.images = {}
+      await this.getAllImages(this.perPage, this.page, this.keyword)
+      await this.getImageCurrentlyBeingLabelled()
+    },
+    getCurrentTime () {
+      var date = new Date()
+      return date.toISOString()
+    },
+    async deleteImageAccessControlByImageID (imageID) {
+      var url = '/api/accesscontrol/' + imageID
+      try {
+        var response = await this.$axios.delete(url)
+        if (this.images[imageID]) {
+          this.images[imageID].isCurrentlyLabeled = false
         }
-      })
+        return response.data.status
+      } catch (error) {
+        console.log("Label" , error)
+        throw error
+      }
+    },
+    async openViewer (image) {
+      console.log(image)
+      if (!image.isCurrentlyLabeled) {
+        var url = '/api/accesscontrol/' + image.id
+        try {
+          await this.$axios.get(url)
+          alert("This image is currently Labeled")
+        } catch (e) {
+          this.$router.push({ path: '/viewer', query: { url: image.url, id: image.id }})
+        }
+      }
     },
     debounceWrapper (e) {
-      console.log("event: ", e)
       this.page = 1
+      this.keyword = e.target.value
+      // alert(this.keyword)
       this.debounceInput(e)
     },
     // Only fires when user stops typing
-    debounceInput: debounce(async function (e) {
-      await this.getAllImages(this.perPage, this.page, e.target.value)
+    debounceInput: debounce(async function () {
+      await this.getAllImagesWithLabelStatus()
+      // await this.getAllImages(this.perPage, this.page, e.target.value)
     }, 500)
   }
 }

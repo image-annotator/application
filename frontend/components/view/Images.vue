@@ -1,8 +1,8 @@
 <template>
-  <article class="blog-card">
-    <img class="post-image" :src="imageURL">
+  <article class="blog-card" :class="{'disable': isCurrentlyLabeled}">
+    <img class="post-image" :class="{'post-image-disabled': isCurrentlyLabeled}" :src="imageURL">
     <div class="article-details">
-      <h3 class="post-title"> 
+      <h3 class="post-title" :class="{'post-title-disabled': isCurrentlyLabeled}"> 
         {{ dataImageName }}
       </h3>
     </div>
@@ -23,6 +23,10 @@ export default {
     imageName: {
       type: String,
       default: ''
+    },
+    isCurrentlyLabeled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -62,11 +66,26 @@ export default {
   cursor: pointer;
 }
 
+.disable {
+  background-color: #F0F0F0;
+  -webkit-box-shadow: 0 0 0 0px rgba(0,0,0,0.0);
+  -moz-box-shadow: 0 0 0 0px rgba(0,0,0,0.0);
+  box-shadow: 0 0 0 0px rgba(0,0,0,0.0);
+}
+
+.blog-card:hover {
+  background: #F0F0F0;
+}
+
 .post-image {
   display: block;
   width: 100%;
   object-fit: cover;
   height: 100%;
+}
+
+.post-image-disabled {
+  opacity: 0.5;
 }
 
 .article-details {
@@ -79,6 +98,10 @@ export default {
   color: #1E889B;
   font-weight: bold;
   margin: 0 0 0 0;
+}
+
+.post-title-disabled {
+  color: #D6D6D6;
 }
 
 </style>

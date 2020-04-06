@@ -83,15 +83,44 @@ export default {
         url: ''
       },
       canDelete: true,
-      labelCount: 0
+      labelCount: 0,
+      timer: ''
     }
+  },
+  async created () {
+    window.addEventListener("beforeunload", async (event) => {
+      await this.closeViewer()
+      event.returnValue= "You have unsaved changes."
+    })
+    await this.startHeartBeat()
+    this.timer = setInterval(this.startHeartBeat, 90000)
   },
   mounted () {
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
   },
+  async beforeDestroy () {
+    // window.removeEventListener("beforeunload", true)
+    await this.closeViewer()
+  },
   methods: {
-    closeViewer () {
+    async startHeartBeat() {
+      var url = '/api/accesscontrol/requestaccess/' + parseInt(this.$route.query.id)
+      // alert(url)
+      try {
+        await this.$axios.get(url).catch((error) => console.error(error))
+      } catch (error) {
+        this.showFailedAlert("An error occured", error)
+        await this.closeViewer()
+      }
+    },
+    async closeViewer () {
+      try {
+        await this.deleteImageAccessControlByImageID(this.image.id)
+      } catch (error) {
+        console.log(error)
+      }
+      clearInterval(this.timer)
       this.$router.push('/main/label')
     },
     onMouseDownHandler (e) {
@@ -197,8 +226,8 @@ export default {
         try {
           console.log("LABEL PAYLOAD: ", labelPayload)
           await this.createAllLabelsInImage(labelPayload)
-          this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
-            this.closeViewer()
+          this.showSuccessAlert("Success!", "Image has been saved!").then(async () => {
+            await this.closeViewer()
           })
         } catch (error) {
           console.log(error)
@@ -288,6 +317,16 @@ export default {
       var url = '/api/label/many'
       try {
         var response = await this.$axios.post(url, labelPayload)
+        return response.data.status
+      } catch (error) {
+        console.log("Label" , error)
+        throw error
+      }
+    },
+    async deleteImageAccessControlByImageID (imageID) {
+      var url = '/api/accesscontrol/' + imageID
+      try {
+        var response = await this.$axios.delete(url)
         return response.data.status
       } catch (error) {
         console.log("Label" , error)
