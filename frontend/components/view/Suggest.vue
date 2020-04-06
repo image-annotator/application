@@ -23,6 +23,12 @@ export default {
   components: {
     VueSimpleSuggest
   },
+  props: {
+    initialData: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       bContent: '',
@@ -33,6 +39,7 @@ export default {
     }
   },
   async mounted () {
+    this.bContent = this.initialData
     const response = await this.$axios.get('/api/content/?suggestion=').catch((error) => console.error(error))
     if (response.data.data) {
       response.data.data.forEach((content) => {
