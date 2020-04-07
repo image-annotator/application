@@ -1,57 +1,67 @@
 <template>
   <div ref="imageWrapper" class="viewer-background">
-    <div class="btn-close-section">
-      <button
-        type="button"
-        class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
-        aria-label="Close"
-        @click="closeViewer()"
-      > 
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
-      <div id="image">
-        <img
-          ref="image"
-          draggable="false"
-          class="image"
-          :src="image.url"
-          @mousedown="onMouseDownHandler"
-          @mousemove="changeBox"
-          @mouseup="stopDrawingBox"
-        >
-        <Box
-          v-if="drawingBox.active"
-          :b-width="drawingBox.width"
-          :b-height="drawingBox.height"
-          :b-top="drawingBox.top"
-          :b-left="drawingBox.left"
-        />
-        <div v-for="i in Object.keys(boxes)" :key="i">
-          {{ i }}
+    <div class="flex-viewer">
+      <Toolbar
+        @onIconClick="setBoxAction($event)"
+      />
+      <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
+        <div id="image">
+          <img
+            ref="image"
+            draggable="false"
+            class="image"
+            :src="image.url"
+            @mousedown="onMouseDownHandler"
+            @mousemove="changeBox"
+            @mouseup="stopDrawingBox"
+          >
           <Box
-            v-if="boxes[i]"
-            :key="i"
-            :b-width="boxes[i].width"
-            :b-height="boxes[i].height"
-            :b-top="boxes[i].top"
-            :b-left="boxes[i].left"
-            :b-active="i === activeBoxIndex"
-            :b-index="parseInt(i)"
-            :b-content="boxes[i].content"
-            :can-delete="canDelete"
-            @onStopResize="changeBoxAttribute($event, i)"
-            @onDelete="deleteBox(i)"
-            @onSelect="makeCurrentBoxActive(i)"
-            @onDisableForm="changeBoxContent($event, i)"
-            @onEnableForm="makeCurrentBoxActive(i)"
+            v-if="drawingBox.active"
+            :b-width="drawingBox.width"
+            :b-height="drawingBox.height"
+            :b-top="drawingBox.top"
+            :b-left="drawingBox.left"
           />
+          <div v-for="i in Object.keys(boxes)" :key="i">
+            <Box
+              v-if="boxes[i]"
+              :key="i"
+              :b-width="boxes[i].width"
+              :b-height="boxes[i].height"
+              :b-top="boxes[i].top"
+              :b-left="boxes[i].left"
+              :b-active="i === activeBoxIndex"
+              :b-index="parseInt(i)"
+              :b-content="boxes[i].content"
+              :can-delete="canDelete"
+              @onStopResize="changeBoxAttribute($event, i)"
+              @onDelete="deleteBox(i)"
+              @onSelect="makeCurrentBoxActive(i)"
+              @onDisableForm="changeBoxContent($event, i)"
+              @onEnableForm="makeCurrentBoxActive(i)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="button-block">
+        <div class="btn-close-section">
+          <button
+            type="button"
+            class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
+            aria-label="Close"
+            @click="closeViewer()"
+          > 
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
       </div>
     </div>
-    <div class="btn-section">
-      <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text" @click="saveImage">
+    <div class="btn-save-section">
+      <button
+        type="button"
+        class="btn-label-no-border btn-lg btn-dark btn-text"
+        @click="saveImage"
+      >
         Save Image
       </button>
     </div>
@@ -60,11 +70,13 @@
 
 <script>
 import Box from '~/components/label/Box'
+import Toolbar from '~/components/label/Toolbar'
 import { Cursors } from '~/mixins/label/getCursorPosition'
 
 export default {
   components: {
-    Box
+    Box,
+    Toolbar
   },
   data () {
     return {
@@ -113,6 +125,9 @@ export default {
         this.showFailedAlert("An error occured", error)
         await this.closeViewer()
       }
+    },
+    setBoxAction (iconName) {
+      console.log("Icon name: ", iconName)
     },
     async closeViewer () {
       try {
@@ -346,7 +361,7 @@ export default {
   }
 
   .viewer-wrapper {
-    height: 87.5vh;
+    /* height: 87.5vh; */
     width: 100vw;
   }
 
@@ -359,10 +374,10 @@ export default {
     justify-content: center;
   }
 
-  .btn-section {
+  .btn-save-section {
     text-align: right;
-    margin-right: 15px;
-    margin-top: -10px;
+    margin-top: -40px;
+    margin-right: 5px;
   }
 
   .btn-text { 
@@ -382,6 +397,20 @@ export default {
 
   .btn-label-no-border {
     border: 0;
+  }
+
+  .btn-lg {
+    width: 115px;
+  }
+
+  .flex-viewer {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .button-block {
+    display: block;
+    height: 100vh;
   }
 
 </style>

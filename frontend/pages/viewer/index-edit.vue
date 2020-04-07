@@ -33,6 +33,7 @@
           <Box
             v-if="boxes[i]"
             :key="i"
+            :suggest-type="'edit'"
             :b-width="boxes[i].width"
             :b-height="boxes[i].height"
             :b-top="boxes[i].top"
@@ -89,6 +90,14 @@ export default {
       isEdited: false
     }
   },
+  async created () {
+    window.addEventListener("beforeunload", async (event) => {
+      await this.closeViewer()
+      event.returnValue= "You have unsaved changes."
+    })
+    await this.startHeartBeat()
+    this.timer = setInterval(this.startHeartBeat, 90000)
+  },
   async mounted () {
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
@@ -96,7 +105,21 @@ export default {
     this.dataReady = false
     this.dataReady = true
   },
+  async beforeDestroy () {
+    // window.removeEventListener("beforeunload", true)
+    await this.closeViewer()
+  },
   methods: {
+    async startHeartBeat() {
+      var url = '/api/accesscontrol/requestaccess/' + parseInt(this.$route.query.id)
+      // alert(url)
+      try {
+        await this.$axios.get(url).catch((error) => console.error(error))
+      } catch (error) {
+        this.showFailedAlert("An error occured", error)
+        await this.closeViewer()
+      }
+    },
     async getAllLabels () {
       var url = '/api/label/imagequery/' + this.image.id
       var response = await this.$axios.get(url).catch( error => console.error(error))
@@ -147,8 +170,24 @@ export default {
       console.log(this.boxes)
       console.log(this.previouslyCreatedBox)
     },
-    closeViewer () {
+    async closeViewer () {
+      try {
+        await this.deleteImageAccessControlByImageID(this.image.id)
+      } catch (error) {
+        console.log(error)
+      }
+      clearInterval(this.timer)
       this.$router.push('/main/edit')
+    },
+    async deleteImageAccessControlByImageID (imageID) {
+      var url = '/api/accesscontrol/' + imageID
+      try {
+        var response = await this.$axios.delete(url)
+        return response.data.status
+      } catch (error) {
+        console.log("Label" , error)
+        throw error
+      }
     },
     onMouseDownHandler (e) {
       if (this.drawingBox.active) {

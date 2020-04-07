@@ -16,7 +16,7 @@
       class="circle"
       :style="{ top: bTop + -6 + 'px', left: bLeft + -6 + 'px'}"
       @mousedown="isLeftCircleActive = true"
-      @mousemove="resizeBox"
+      @mousemove="resizeBoxFromTopLeft"
       @mouseup="onStopResize"
     />
 
@@ -35,7 +35,8 @@
       class="suggestion-form"
       :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth * 0.3 + 'px', width: suggestWidth + 'px'}"
       :class="{'suggest-active': isSuggestActive}"
-      :initialData="bContent"
+      :initial-data="bContent"
+      :suggest-type="suggestType"
       @onEnableForm="handleOnEnableForm"
       @onDisableForm="handleOnDisableForm"
     />
@@ -88,6 +89,10 @@ export default {
       type: String,
       default: ''
     },
+    suggestType: {
+      type: String,
+      default: 'label'
+    },
     canDelete: {
       type: Boolean,
       default: true
@@ -127,7 +132,7 @@ export default {
         this.$emit("onDelete", this.bIndex)
       }
     },
-    resizeBox (e) {
+    resizeBoxFromTopLeft (e) {
       if (this.bActive && this.isLeftCircleActive) {
         this.isOnResize = true
         var prevbLeft = this.bLeft

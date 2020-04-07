@@ -27,6 +27,10 @@ export default {
     initialData: {
       type: String,
       default: ''
+    },
+    suggestType: {
+      type: String,
+      default: 'label'
     }
   },
   data() {
@@ -46,7 +50,11 @@ export default {
         this.simpleSuggestionList.push(content['content_name'])
       })
     }
-    this.enableForm()
+    
+    if (this.suggestType !== 'edit') {
+      this.enableForm()
+    }
+
     this.$watch(() => {
       if (this.$refs["form"].isInFocus) {
         this.enableForm()
