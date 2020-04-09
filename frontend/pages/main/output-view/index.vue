@@ -21,14 +21,13 @@
       <div class="row">
         <div class="col">
           <div class="json-container">
-            <div class="json-data" v-if="type === 'json'">
+            <div v-if="type === 'json'" class="json-data">
               <json-viewer 
-              :value="json"
-              :expand-depth=5
-              >
-            </json-viewer>
+                :value="json"
+                :expand-depth="5"
+              />
             </div>
-            <div id="xml" v-if="type === 'xml'"></div>
+            <div v-if="type === 'xml'" id="xml" />
             <button class="btn-action btn-right" @click="closeOutputViewer()">
               <i class="ml-3 mt-1 fa fa-angle-left" />
               Back
@@ -84,9 +83,9 @@ export default {
   methods:{
     closeOutputViewer() {
       if(this.type === 'json'){
-        this.$router.push('/main/json')
+        this.$router.push('/main/coco')
       }else{
-        this.$router.push('/main/xml')
+        this.$router.push('/main/pascal')
       }
       
     },

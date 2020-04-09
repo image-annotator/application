@@ -19,21 +19,6 @@
       </div>
     </b-nav-item>
 
-    <!-- XML Outputs -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('xml-outputs')">
-      <div id="xml-outputs">
-        XML Outputs
-      </div>
-    </b-nav-item>
-
-    
-    <!-- JSON Outputs -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('json-outputs')">
-      <div id="json-outputs">
-        JSON Outputs
-      </div>
-    </b-nav-item>
-
     <div v-if="role === 'editor' || role === 'admin'">
       <!-- Edit Dataset -->
       <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
@@ -51,40 +36,20 @@
         </div>
       </b-nav-item>
     </div>
-    
-    <div>
-      <b-nav-item
-        v-b-toggle.collapse-settings
-        link-classes="side-bar-color mt-3 ml-4"
-      >
-        <div class="icon-text-wrapper">
-          Settings
-          <i class="ml-3 mt-1 fas fa-caret-down" />
-        </div>
-      </b-nav-item>
 
-      <b-collapse id="collapse-settings" visible role="tabpanel">
-        <!-- Change Username -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-user" />
-            <div id="change-username">
-              Change Username
-            </div>
-          </div>
-        </b-nav-item>
+    <!-- COCO Output -->
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
+      <div id="coco-output">
+        COCO Output
+      </div>
+    </b-nav-item>
 
-        <!-- Change Password -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-cog" />
-            <div id="change-password">
-              Change Password
-            </div>
-          </div>
-        </b-nav-item>
-      </b-collapse>  
-    </div>
+    <!-- Pascal Output -->
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('pascal-output')">
+      <div id="pascal-output">
+        Pascal VOC Output
+      </div>
+    </b-nav-item>
 
     <div v-if="role === 'admin'">
       <!-- User Management -->
@@ -140,6 +105,40 @@
         </b-nav-item>
       </b-collapse>
     </div>
+    
+    <div>
+      <b-nav-item
+        v-b-toggle.collapse-settings
+        link-classes="side-bar-color mt-3 ml-4"
+      >
+        <div class="icon-text-wrapper">
+          Settings
+          <i class="ml-3 mt-1 fas fa-caret-down" />
+        </div>
+      </b-nav-item>
+
+      <b-collapse id="collapse-settings" visible role="tabpanel">
+        <!-- Change Username -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-user" />
+            <div id="change-username">
+              Change Username
+            </div>
+          </div>
+        </b-nav-item>
+
+        <!-- Change Password -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
+          <div class="icon-text-wrapper">
+            <i class="mt-1 mr-3 fas fa-cog" />
+            <div id="change-password">
+              Change Password
+            </div>
+          </div>
+        </b-nav-item>
+      </b-collapse>  
+    </div>
   </b-nav>
 </template>
 
@@ -188,11 +187,11 @@ export default {
       case 'label-dataset':
         this.$nuxt.$router.replace({ path: '/main/label'})
         break
-      case 'xml-outputs':
-        this.$nuxt.$router.replace({ path: '/main/xml'})
+      case 'pascal-output':
+        this.$nuxt.$router.replace({ path: '/main/pascal'})
         break
-      case 'json-outputs':
-        this.$nuxt.$router.replace({ path: '/main/json'})
+      case 'coco-output':
+        this.$nuxt.$router.replace({ path: '/main/coco'})
         break
       case 'edit-dataset':
         this.$nuxt.$router.replace({ path: '/main/edit'})
@@ -225,10 +224,10 @@ export default {
       var elmtID = ''
       if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='label-dataset'
-      } else if((/^\/main\/xml(\/|(\?)|$)/.test(browserURL))){
-        elmtID = 'xml-outputs'
-      } else if ((/^\/main\/json(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='json-outputs'
+      } else if((/^\/main\/pascal(\/|(\?)|$)/.test(browserURL))){
+        elmtID = 'pascal-output'
+      } else if ((/^\/main\/coco(\/|(\?)|$)/.test(browserURL))) {
+        elmtID ='coco-output'
       } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='edit-dataset'
       } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
