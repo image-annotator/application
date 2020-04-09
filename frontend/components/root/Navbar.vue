@@ -19,6 +19,14 @@
       </div>
     </b-nav-item>
 
+    <!-- XML Outputs -->
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('xml-outputs')">
+      <div id="xml-outputs">
+        XML Outputs
+      </div>
+    </b-nav-item>
+
+    
     <!-- JSON Outputs -->
     <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('json-outputs')">
       <div id="json-outputs">
@@ -180,6 +188,9 @@ export default {
       case 'label-dataset':
         this.$nuxt.$router.replace({ path: '/main/label'})
         break
+      case 'xml-outputs':
+        this.$nuxt.$router.replace({ path: '/main/xml'})
+        break
       case 'json-outputs':
         this.$nuxt.$router.replace({ path: '/main/json'})
         break
@@ -214,6 +225,8 @@ export default {
       var elmtID = ''
       if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='label-dataset'
+      } else if((/^\/main\/xml(\/|(\?)|$)/.test(browserURL))){
+        elmtID = 'xml-outputs'
       } else if ((/^\/main\/json(\/|(\?)|$)/.test(browserURL))) {
         elmtID ='json-outputs'
       } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
