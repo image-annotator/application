@@ -10,6 +10,7 @@
             ref="image"
             draggable="false"
             class="image"
+            :style="{ cursor: cssCursor}"
             :src="image.url"
             @mousedown="onMouseDownHandler"
             @mousemove="changeBox"
@@ -25,7 +26,6 @@
           <div v-for="i in Object.keys(boxes)" :key="i">
             <Box
               v-if="boxes[i]"
-              :key="i"
               :b-width="boxes[i].width"
               :b-height="boxes[i].height"
               :b-top="boxes[i].top"
@@ -33,6 +33,7 @@
               :b-active="i === activeBoxIndex"
               :b-index="parseInt(i)"
               :b-content="boxes[i].content"
+              :b-action="actionName"
               :can-delete="canDelete"
               @onStopResize="changeBoxAttribute($event, i)"
               @onDelete="deleteBox(i)"
@@ -88,7 +89,9 @@ export default {
         width: 0,
         content: ''
       },
+      actionName: 'add-box',
       activeBoxIndex: -1,
+      cssCursor: 'cell',
       boxes: {},
       image: {
         id: -1,
@@ -118,7 +121,6 @@ export default {
   methods: {
     async startHeartBeat() {
       var url = '/api/accesscontrol/requestaccess/' + parseInt(this.$route.query.id)
-      // alert(url)
       try {
         await this.$axios.get(url).catch((error) => console.error(error))
       } catch (error) {
@@ -127,7 +129,19 @@ export default {
       }
     },
     setBoxAction (iconName) {
-      console.log("Icon name: ", iconName)
+      this.actionName = iconName
+      this.activeBoxIndex = -1
+      switch (iconName) {
+      case 'add-box':
+        this.cssCursor = 'cell'
+        break
+      case 'resize-box':
+        this.cssCursor = 'default'
+        break
+      case 'delete-box':
+        this.cssCursor = 'default'
+        break
+      }
     },
     async closeViewer () {
       try {
@@ -146,13 +160,14 @@ export default {
       }
     },
     startDrawingBox (e) {
-      console.log("Event: ", e)
-      this.drawingBox = {
-        width: 0,
-        height: 0,
-        left: Cursors.getLeftCursor(e),
-        top: Cursors.getTopCursor(e),
-        active: true
+      if (this.actionName === 'add-box') {
+        this.drawingBox = {
+          width: 0,
+          height: 0,
+          left: Cursors.getLeftCursor(e),
+          top: Cursors.getTopCursor(e),
+          active: true
+        }
       }
     },
     changeBox (e) {
@@ -167,10 +182,11 @@ export default {
       this.boxes[idxBox].top = attribute.bTop
       this.boxes[idxBox].width = attribute.bWidth
       this.boxes[idxBox].height = attribute.bHeight
-      console.log("idxBox: ", this.boxes[idxBox])
     },
     makeCurrentBoxActive (activeBoxIndex) {
-      this.activeBoxIndex = activeBoxIndex
+      if (this.actionName === 'resize-box') {
+        this.activeBoxIndex = activeBoxIndex
+      }
     },
     deleteBox (index) {
       delete this.boxes[index]
@@ -223,7 +239,6 @@ export default {
           try {
             var content_id = await this.createLabelContent(this.boxes[idxBox].content)
             var singleBackendObj = {
-              // TODO: change temporary image_id of 1 to real image_id
               image_id: parseInt(this.image.id),
               label_x_center: realImageAttr.xCenter,
               label_y_center: realImageAttr.yCenter,
@@ -232,14 +247,12 @@ export default {
               label_content_id: content_id
             }
             labelPayload.push(singleBackendObj)
-            console.log('labelPayload: ', labelPayload)
           } catch (error) {
             this.showFailedAlert("Error!", error)
             return
           }
         }
         try {
-          console.log("LABEL PAYLOAD: ", labelPayload)
           await this.createAllLabelsInImage(labelPayload)
           this.showSuccessAlert("Success!", "Image has been saved!").then(async () => {
             await this.closeViewer()
