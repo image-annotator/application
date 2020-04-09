@@ -1,5 +1,5 @@
 <template>
-  <div class="box-wrapper">
+  <div v-if="!isDeleted" class="box-wrapper">
     <!-- Identifier Square -->
     <div
       v-if="bIndex !== -1"
@@ -10,19 +10,27 @@
       id: {{ bIndex }}
     </div>
 
+    <div v-if="isDeleteActive">
+      <i
+        class="icon-trash fas fa-trash shadow"
+        :style="{ top: bTop -8 + 'px', left: bLeft + -4 + 'px'}"
+        @click="deleteBox"
+      />
+    </div>
+
     <!-- Top-Left Circle -->
     <div
-      v-if="bActive"
+      v-if="bActive && bAction === 'resize-box'"
       class="circle"
       :style="{ top: bTop + -6 + 'px', left: bLeft + -6 + 'px'}"
       @mousedown="isLeftCircleActive = true"
-      @mousemove="resizeBox"
+      @mousemove="resizeBoxFromTopLeft"
       @mouseup="onStopResize"
     />
 
     <!-- Bottom-Right Circle -->
     <div
-      v-if="bActive"
+      v-if="bActive && bAction === 'resize-box'"
       class="circle"
       :style="{ top: bTop + bHeight + -8 + 'px', left: bLeft + bWidth + -8 + 'px'}"
       @mousedown="isRightCircleActive = true"
@@ -35,15 +43,15 @@
       class="suggestion-form"
       :style="{ top: bTop + -6 + 'px', left: bLeft + bWidth * 0.3 + 'px', width: suggestWidth + 'px'}"
       :class="{'suggest-active': isSuggestActive}"
-      :initialData="bContent"
+      :initial-data="bContent"
+      :suggest-type="suggestType"
       @onEnableForm="handleOnEnableForm"
       @onDisableForm="handleOnDisableForm"
     />
 
     <div
-      class="box"
       :style="{top: bTop + 'px', left: bLeft + 'px', width: bWidth + 'px', height: bHeight + 'px'}"
-      :class="{'active': bActive}"
+      :class="{'active': bActive, 'box': !isDeleteActive, 'box-delete': isDeleteActive}"
       @mousedown="selectBox"
     />
   </div>
@@ -88,6 +96,14 @@ export default {
       type: String,
       default: ''
     },
+    bAction: {
+      type: String,
+      default: 'add-box'
+    },
+    suggestType: {
+      type: String,
+      default: 'label'
+    },
     canDelete: {
       type: Boolean,
       default: true
@@ -98,7 +114,8 @@ export default {
       isLeftCircleActive: false,
       isRightCircleActive: false,
       isOnResize: false,
-      isSuggestActive: false
+      isSuggestActive: false,
+      isDeleted: false
     }
   },
   computed: {
@@ -108,26 +125,22 @@ export default {
       } else {
         return 80
       }
+    },
+    isDeleteActive () {
+      return this.bAction === 'delete-box'
     }
-  },
-  mounted () {
-    window.addEventListener('keyup', (event) => {
-      // Delete key
-      if (this.canDelete && !this.isSuggestActive && (event.keyCode === 8 || event.keyCode === 46)) {
-        this.deleteBox()
-      }
-    })
   },
   methods: {
     selectBox () {
       this.$emit("onSelect", this.bIndex)
     },
     deleteBox () {
-      if (this.bActive) {
+      if (this.isDeleteActive) {
+        this.isDeleted = true
         this.$emit("onDelete", this.bIndex)
       }
     },
-    resizeBox (e) {
+    resizeBoxFromTopLeft (e) {
       if (this.bActive && this.isLeftCircleActive) {
         this.isOnResize = true
         var prevbLeft = this.bLeft
@@ -173,15 +186,19 @@ export default {
 </script>
 
 <style scoped>
-    .box {
+    .box, .box-delete {
         position: absolute;
         border: 3px #F0F801 solid;
         z-index: 3;
     }
 
-    .box:hover, .box.active {
+    .box:hover, .box-delete:hover , .box.active {
       background-color: rgba(144, 238, 144, .3);
       cursor: pointer;
+    }
+
+    .box-delete:hover {
+      background-color: rgba(214, 36, 70, .3);
     }
 
     #bIndex {
@@ -226,6 +243,17 @@ export default {
 
     .suggest-active {
       z-index: 20;
+    }
+
+    .icon-trash {
+      color: red;
+      position: absolute;
+      z-index: 20;
+      cursor: pointer;
+    }
+
+    .icon-trash:hover {
+      color: #F0F801;
     }
 
     

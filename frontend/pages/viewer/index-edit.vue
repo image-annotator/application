@@ -1,57 +1,70 @@
 <template>
   <div ref="imageWrapper" class="viewer-background">
-    <div class="btn-close-section">
-      <button
-        type="button"
-        class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
-        aria-label="Close"
-        @click="closeViewer()"
-      > 
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
-      <div id="image" ref="img">
-        <img
-          v-if="dataReady"
-          ref="image"
-          draggable="false"
-          class="image"
-          :src="image.url"
-          @mousedown="onMouseDownHandler"
-          @mousemove="changeBox"
-          @mouseup="stopDrawingBox"
-        >
-        <Box
-          v-if="drawingBox.active"
-          :b-width="drawingBox.width"
-          :b-height="drawingBox.height"
-          :b-top="drawingBox.top"
-          :b-left="drawingBox.left"
-        />
-        <div v-for="i in Object.keys(boxes)" :key="i">
+    <div class="flex-viewer">
+      <Toolbar
+        @onIconClick="setBoxAction($event)"
+      />
+      <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
+        <div id="image">
+          <img
+            v-if="dataReady"
+            ref="image"
+            draggable="false"
+            class="image"
+            :style="{ cursor: cssCursor}"
+            :src="image.url"
+            @mousedown="onMouseDownHandler"
+            @mousemove="changeBox"
+            @mouseup="stopDrawingBox"
+          >
           <Box
-            v-if="boxes[i]"
-            :key="i"
-            :b-width="boxes[i].width"
-            :b-height="boxes[i].height"
-            :b-top="boxes[i].top"
-            :b-left="boxes[i].left"
-            :b-active="i === activeBoxIndex"
-            :b-index="parseInt(i)"
-            :b-content="boxes[i].content"
-            :can-delete="canDelete"
-            @onStopResize="changeBoxAttribute($event, i)"
-            @onDelete="deleteBox(i)"
-            @onSelect="makeCurrentBoxActive(i)"
-            @onDisableForm="changeBoxContent($event, i)"
-            @onEnableForm="makeCurrentBoxActive(i)"
+            v-if="drawingBox.active"
+            :b-width="drawingBox.width"
+            :b-height="drawingBox.height"
+            :b-top="drawingBox.top"
+            :b-left="drawingBox.left"
           />
+          <div v-for="i in Object.keys(boxes)" :key="i">
+            <Box
+              v-if="boxes[i]"
+              :b-width="boxes[i].width"
+              :b-height="boxes[i].height"
+              :b-top="boxes[i].top"
+              :b-left="boxes[i].left"
+              :b-active="i === activeBoxIndex"
+              :b-index="parseInt(i)"
+              :b-content="boxes[i].content"
+              :b-action="actionName"
+              :can-delete="canDelete"
+              :suggest-type="'edit'"
+              @onStopResize="changeBoxAttribute($event, i)"
+              @onDelete="deleteBox(i)"
+              @onSelect="makeCurrentBoxActive(i)"
+              @onDisableForm="changeBoxContent($event, i)"
+              @onEnableForm="makeCurrentBoxActive(i)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="button-block">
+        <div class="btn-close-section">
+          <button
+            type="button"
+            class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
+            aria-label="Close"
+            @click="closeViewer()"
+          > 
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
       </div>
     </div>
-    <div class="btn-section">
-      <button type="button" class="btn-label-no-border btn-lg btn-dark btn-text" @click="saveImage">
+    <div class="btn-save-section">
+      <button
+        type="button"
+        class="btn-label-no-border btn-lg btn-dark btn-text"
+        @click="saveImage"
+      >
         Save Image
       </button>
     </div>
@@ -60,11 +73,13 @@
 
 <script>
 import Box from '~/components/label/Box'
+import Toolbar from '~/components/label/Toolbar'
 import { Cursors } from '~/mixins/label/getCursorPosition'
 
 export default {
   components: {
-    Box
+    Box,
+    Toolbar
   },
   data () {
     return {
@@ -85,9 +100,18 @@ export default {
       },
       canDelete: true,
       labelCount: 0,
+      timer: '',
       dataReady :true,
       isEdited: false
     }
+  },
+  async created () {
+    window.addEventListener("beforeunload", async (event) => {
+      await this.closeViewer()
+      event.returnValue= "You have unsaved changes."
+    })
+    await this.startHeartBeat()
+    this.timer = setInterval(this.startHeartBeat, 90000)
   },
   async mounted () {
     this.image.url = this.$route.query.url
@@ -96,7 +120,36 @@ export default {
     this.dataReady = false
     this.dataReady = true
   },
+  async beforeDestroy () {
+    // window.removeEventListener("beforeunload", true)
+    await this.closeViewer()
+  },
   methods: {
+    async startHeartBeat() {
+      var url = '/api/accesscontrol/requestaccess/' + parseInt(this.$route.query.id)
+      // alert(url)
+      try {
+        await this.$axios.get(url).catch((error) => console.error(error))
+      } catch (error) {
+        this.showFailedAlert("An error occured", error)
+        await this.closeViewer()
+      }
+    },
+    setBoxAction (iconName) {
+      this.actionName = iconName
+      this.activeBoxIndex = -1
+      switch (iconName) {
+      case 'add-box':
+        this.cssCursor = 'cell'
+        break
+      case 'resize-box':
+        this.cssCursor = 'default'
+        break
+      case 'delete-box':
+        this.cssCursor = 'default'
+        break
+      }
+    },
     async getAllLabels () {
       var url = '/api/label/imagequery/' + this.image.id
       var response = await this.$axios.get(url).catch( error => console.error(error))
@@ -141,14 +194,30 @@ export default {
         this.boxes[this.labelCount] = newBox
         // console.log(newBox.content)
         this.changeBoxContent(newBox.content, this.labelCount)
-        this.makeCurrentBoxActive(this.labelCount)
+        // this.makeCurrentBoxActive(this.labelCount)
         this.resetDrawingBox()
       }
       console.log(this.boxes)
       console.log(this.previouslyCreatedBox)
     },
-    closeViewer () {
+    async closeViewer () {
+      try {
+        await this.deleteImageAccessControlByImageID(this.image.id)
+      } catch (error) {
+        console.log(error)
+      }
+      clearInterval(this.timer)
       this.$router.push('/main/edit')
+    },
+    async deleteImageAccessControlByImageID (imageID) {
+      var url = '/api/accesscontrol/' + imageID
+      try {
+        var response = await this.$axios.delete(url)
+        return response.data.status
+      } catch (error) {
+        console.log("Label" , error)
+        throw error
+      }
     },
     onMouseDownHandler (e) {
       if (this.drawingBox.active) {
@@ -450,7 +519,7 @@ export default {
   }
 
   .viewer-wrapper {
-    height: 87.5vh;
+    /* height: 87.5vh; */
     width: 100vw;
   }
 
@@ -463,10 +532,10 @@ export default {
     justify-content: center;
   }
 
-  .btn-section {
+  .btn-save-section {
     text-align: right;
-    margin-right: 15px;
-    margin-top: -10px;
+    margin-top: -40px;
+    margin-right: 5px;
   }
 
   .btn-text { 
@@ -486,6 +555,20 @@ export default {
 
   .btn-label-no-border {
     border: 0;
+  }
+
+  .btn-lg {
+    width: 115px;
+  }
+
+  .flex-viewer {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .button-block {
+    display: block;
+    height: 100vh;
   }
 
 </style>
