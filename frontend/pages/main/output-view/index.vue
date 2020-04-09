@@ -21,18 +21,14 @@
       <div class="row">
         <div class="col">
           <div class="json-container">
-            <json-viewer v-if="type === 'json'"
+            <div class="json-data" v-if="type === 'json'">
+              <json-viewer 
               :value="json"
               :expand-depth=5
-              boxed
               >
             </json-viewer>
-            <div id="xml" v-if="type === 'xml'"></div>
-            <!-- <div class="json-data">
-              <h6>{{ json }}</h6>
-              
             </div>
-            <br> -->
+            <div id="xml" v-if="type === 'xml'"></div>
             <button class="btn-action btn-right" @click="closeOutputViewer()">
               <i class="ml-3 mt-1 fa fa-angle-left" />
               Back
@@ -228,6 +224,7 @@ export default {
     /* margin-top: 2.8rem; */
     /* padding-left: 1.5rem; */
     padding-right: 1rem;
+    margin-top: 1rem;
   }
 
   .json-container{
@@ -237,14 +234,14 @@ export default {
   }
 
   .json-data{
-      background: #e2e2e2;
       font-family: 'Courier New', Courier, monospace;
       border-radius: 0.5rem;
-      height: 15rem;
-      padding-left: 1.5rem;
-      padding-top: 1rem;
+      height: 20rem;
       overflow-y:scroll;
       word-wrap:break-word;
+        -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+    box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
   }
 
   #xml{
@@ -252,5 +249,8 @@ export default {
     overflow-y: scroll;
     padding-left: 1.5rem;
     padding-top: 1rem;
+      -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+        -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+    box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
   }
 </style>

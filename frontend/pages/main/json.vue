@@ -7,12 +7,14 @@
             Choose Standard
           </h5>
         </div>
-        <div class="col dropdown users-margin">
-          <vue-dropdown
-            :config="config"
-            @setSelectedOption="setNewSelectedOption($event)"
-            >
-          </vue-dropdown>
+        <div class="col dropdown-container users-margin">
+          <div class="standard-dropdown">
+            <vue-dropdown
+              :config="config"
+              @setSelectedOption="setNewSelectedOption($event)"
+              >
+            </vue-dropdown>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -218,34 +220,19 @@ export default {
     padding-right: 1rem;
   }
 
-  /* .select-box select{
-    background: #fff;
-    color: #1E889B;
-    padding-left: 1.5rem;
-    padding-right: 1rem;
-    padding-bottom: 0.3rem;
-    padding-top: 0.3rem;
-    border: none;
-    width: 8rem;
-        -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+
+  .standard-dropdown{
+    background: yellow;
+    width: 200px;
+    overflow-x: hidden;
+    border-radius: 25px;
+    -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
         -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
     box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-    border-radius: 0.3rem;
-    -webkit-appearance: button;
-    outline: none;
   }
 
-  .select-box:before{
-    content:'\f0d7';
-    width: 5rem;
-    background: #1E889B; 
-  } */
-
-  .dropdown {
-    font-size: 0.55rem;
+  .dropdown{
     color: #1E889B;
-    font-family: 'Open Sans Regular';
-    width: 10rem;
   }
 
 </style>
