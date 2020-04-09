@@ -18,18 +18,18 @@
       <div class="row">
         <div class="col-3">
           <h5 class="title users-margin">
-            Complete JSON
+            Complete XML
           </h5>
         </div>
-        <button class="btn-white" @click="downloadJSON()">
-          JSONFile.json
+        <button class="btn-white" @click="downloadXML()">
+          XMLFile.xml
           <i class="ml-3 mt-1 fas fa-download" />
         </button>
       </div>
       <div class="row">
         <div class="col">
           <h5 class="title users-margin"> 
-            JSON per Image
+            XML per Image
           </h5>
         </div>
       </div>
@@ -50,7 +50,7 @@
       <b-row> 
         <b-col v-for="labs in filterImages" :key="labs">
           <div id="container">
-            <nuxt-link :to="{ path: '/main/output-view', query: {type: 'json', id: labs.ImageID, name: labs.Filename, standard: standard}}">
+            <nuxt-link :to="{ path: '/main/output-view', query: {type: 'xml', id: labs.ImageID, name: labs.Filename, standard: standard}}">
               <Images
                 :image-name="labs.Filename"
                 :image-i-d="labs.ImageID"
@@ -80,6 +80,7 @@ import Images from '~/components/view/Images.vue'
 import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
 import  { backendURL } from '~/config.js'
 import VueDropdown from 'vue-dynamic-dropdown'
+import Convert from 'xml-js'
 export default {
   components: {
     Images,
@@ -108,7 +109,7 @@ export default {
       this.standard = event.value.toLowerCase()
       this.config.placeholder = event.value
     }, 
-    async getAllLabel(standard){
+    async getAllLabelJSON(standard){
       var url = '/api/label'
       var response = await this.$axios(url).catch(error => console.log(error))
       if (response && response.status === 200) {
@@ -136,29 +137,36 @@ export default {
             created_at: element.created_at,
             updated_at: element.updated_at
           }
-        if(standard === "coco"){
+        if(standard == "coco"){
           json.bounding_box.x_top_left = x_top_left
           json.bounding_box.y_top_left = y_top_left
           json.bounding_box.width = element.label_width
           json.bounding_box.height = element.label_height
           JSONstandard.push(json)
-        }else if(standard === "pascal"){
+        }else if(standard == "pascal"){
           json.bounding_box.x_top_left = x_top_left
           json.bounding_box.y_top_left = y_top_left
           json.bounding_box.x_bot_right = x_bot_right
           json.bounding_box.y_bot_right = y_bot_right
           JSONstandard.push(json)
         }
-        
       })
       return JSONstandard
     },
-    async downloadJSON() {
-      var filename = 'JSONFile.json'
+    convertToXML(json){
+      var option = {
+        compact: true,
+        spaces: 4
+      }
+      var result = Convert.json2xml(JSON.stringify(json,0,4),option)
+      return result
+    },
+    async downloadXML() {
+      var filename = 'XMLFile.xml'
       var element = document.createElement('a')
-      var label = await this.getAllLabel(this.standard)
-      var text = JSON.stringify(label,0,5)
-      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
+      var label = await this.getAllLabelJSON(this.standard)
+      var xml = this.convertToXML(label)
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xml))
       element.setAttribute('download',filename)
       element.style.display = 'none'
       document.body.appendChild(element)
@@ -217,29 +225,6 @@ export default {
     padding-left: 1.5rem;
     padding-right: 1rem;
   }
-
-  /* .select-box select{
-    background: #fff;
-    color: #1E889B;
-    padding-left: 1.5rem;
-    padding-right: 1rem;
-    padding-bottom: 0.3rem;
-    padding-top: 0.3rem;
-    border: none;
-    width: 8rem;
-        -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-        -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-    box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-    border-radius: 0.3rem;
-    -webkit-appearance: button;
-    outline: none;
-  }
-
-  .select-box:before{
-    content:'\f0d7';
-    width: 5rem;
-    background: #1E889B; 
-  } */
 
   .dropdown {
     font-size: 0.55rem;
