@@ -98,7 +98,7 @@ export default {
       images: {},
       keyword: '',
       isViewerActive: false,
-      perPage: 3,
+      perPage: 12,
       totalRows: 0,
       page: 1,
       timer: '',
@@ -243,6 +243,7 @@ export default {
 
   .slot-margin {
     margin-left: 1.5rem;
+    margin-top: -0.15rem;
   }
 
   .flex-display {

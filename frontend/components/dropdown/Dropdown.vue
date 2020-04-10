@@ -49,15 +49,34 @@ export default {
       var urlGet = '/api/image/datasets'
       const response = await this.$axios.get(urlGet).catch((error) => console.error(error))
       if (response.data.status === "success") {
-        response.data.data.forEach((dataset) => {
-          var key = "value"
-          var obj = {}
-          obj[key] = dataset
-          this.config.options.push(obj)
-        })
+        if (response.data.data) {
+          response.data.data.forEach((dataset) => {
+            var key = "value"
+            var obj = {}
+            obj[key] = dataset
+            this.config.options.push(obj)
+          })
+        }
       }
       if (this.dropdownValue) {
         this.config.placeholder = this.dropdownValue
+      } else {
+        if (!this.isFolderNotExist()) {
+          if (this.isUpload) {
+            this.config.placeholder = this.config.options[1].value
+          } else {
+            this.config.placeholder = this.config.options[0].value
+          }
+          this.dataset = this.config.placeholder
+          this.$emit("onDatasetChanged", this.dataset)
+        }
+      }
+    },
+    isFolderNotExist () {
+      if (this.isUpload) {
+        return this.config.options.length <= 1
+      } else {
+        return this.config.options.length <= 0
       }
     },
     async setNewSelectedOption(selectedOption) {
