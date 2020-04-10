@@ -114,7 +114,7 @@ export default {
   async created () {
     this.images = {}
     await this.getAllImagesWithLabelStatus()
-    this.timer = setInterval(this.getAllImagesWithLabelStatus, 5000)
+    this.timer = setInterval(this.getAllImagesWithLabelStatus, 10000)
   },
   beforeDestroy () {
     clearInterval(this.timer)

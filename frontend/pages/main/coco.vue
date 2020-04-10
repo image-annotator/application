@@ -2,18 +2,32 @@
   <div class="col">
     <div class="ml-4">
       <div class="row">
-        <div class="col-3">
-          <h5 class="title users-margin">
-            Complete JSON
-          </h5>
+        <div class="col">
+          <Dropdown
+            class="margin-dropdown"
+            :dropdown-value="dataset"
+            @onDatasetChanged="changeDataset"
+          />
         </div>
-        <button class="btn-white" @click="downloadJSON()">
-          JSONFile.json
-          <i class="ml-3 mt-1 fas fa-download" />
-        </button>
+      </div>
+      <div :key="updateUI" class="row animated fadeIn">
+        <div class="col">
+          <div style="display: flex">
+            <h5 class="title users-margin">
+              {{ dataset }} COCO file:
+              <span v-if="!dataset" style="margin-left: 20px; font-size: 0.85rem;">
+                Choose Folder First 
+              </span>
+            </h5>
+            <button v-if="dataset" class="btn-white margin-download" @click="downloadJSON()">
+              {{ dataset }}.json
+              <i class="ml-3 mt-1 fas fa-download" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
+    <div v-if="dataset" class="row" style="margin-top: -1.5rem;">
       <Label
         :key="updateUI"
         :is-output-viewer="isOutputViewer"
@@ -22,12 +36,7 @@
         title="JSON Per Image"
         viewer-u-r-l="/main/output-view"
         :output="{type: 'json', standard: standard}"
-      >
-        <Dropdown
-          :dropdown-value="dataset"
-          @onDatasetChanged="changeDataset"
-        />
-      </Label>
+      />
     </div>
   </div>
 </template>
@@ -111,7 +120,7 @@ export default {
       return JSONstandard
     },
     async downloadJSON() {
-      var filename = 'JSONFile.json'
+      var filename = this.dataset + '.json'
       var element = document.createElement('a')
       var label = await this.getAllLabel(this.standard)
       var text = JSON.stringify(label,0,5)
@@ -168,6 +177,10 @@ export default {
     padding-right: 1rem;
   }
 
+  .btn-white:hover {
+    background-color: #F7F7F7;
+  }
+
 
   .standard-dropdown{
     background: yellow;
@@ -181,6 +194,15 @@ export default {
 
   .dropdown{
     color: #1E889B;
+  }
+
+  .margin-download {
+    margin-left: 2.25rem;
+  }
+
+  .margin-dropdown {
+    margin-top: 3.5rem;
+    margin-left: -0.775rem;
   }
 
 </style>

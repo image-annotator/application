@@ -3,18 +3,17 @@
     <div class="ml-4">
       <div class="row">
         <div class="col users-margin">
-          <h5 class="title">
-            Upload Dataset
-          </h5>           
-        </div>
-      </div>
-      <br>
-      <br>
-      <div class="row">
-        <div class="col">
-          <h5 class="title sub-title">
-            Add Folder
-          </h5>           
+          <div style="display: flex">
+            <h5 class="title">
+              Upload Dataset
+            </h5>
+            <div style="margin-left: 2rem; margin-top: -0.4rem;">
+              <Dropdown
+                :is-upload="isUpload"
+                @onDatasetChanged="changeDataset"
+              />
+            </div>
+          </div>
         </div>
       </div>
       <br>
@@ -24,7 +23,7 @@
             <vue-dropzone id="dropzone" ref="myDropzone" :options="options" :use-custom-slot="true">
               <div class="dropzone-custom-content">
                 <h6 class="dropzone-custom-title">
-                  Drag and Drop Images here to Upload Content!
+                  Click or Drag Images Here.
                 </h6>
               </div>
             </vue-dropzone>
@@ -47,22 +46,24 @@
 </template>
 
 <script>
-import vue2Dropzone from 'vue2-dropzone'
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+
+import Dropdown from '~/components/dropdown/Dropdown'
 
 export default {
   components: {
-    vueDropzone : vue2Dropzone
+    Dropdown
   },
   data(){
     return{
       files: null,
+      isUpload: true,
+      dataset: null,
       options: {
         url: "http://localhost:3000/api/image/upload",
         uploadMultiple: true,
         autoQueue: false,
-        thumbnailWidth: 60,
-        thumbnailHeight: 60
+        addRemoveLinks: true,
+        thumbnailWidth: 150
       }
     }
   },
@@ -72,6 +73,9 @@ export default {
     console.log("files",this.files)
   },
   methods:{
+    changeDataset (newDataset) {
+      this.dataset = newDataset
+    },
     formatBytes(bytes,decimals) {
       if(bytes == 0){
         return '0 Bytes'
@@ -176,6 +180,7 @@ export default {
       var file = this.dataURItoBlob(dataURL)
       var formData = new FormData()
       formData.append("image", file, name)
+      formData.append("dataset", this.dataset)
       const config = {
         headers: {'Content-Type':'multipart/form-data'}
       }
@@ -193,14 +198,27 @@ export default {
       }
       return new Blob([ab], {type: mimeString})
     },
+    invalidFolder(){
+      this.$swal.fire({
+        title: "No Folder Selected",
+        icon: "error",
+        text: "Choose folder first!",
+        confirmButtonColor: '#11616F',
+      })
+    },
     async handleUpload(){
       this.files = this.$refs.myDropzone.getAcceptedFiles()
-      if(this.files.length === 0){
-        this.invalidUpload()
-      }else{
-        this.files = []
-        this.validUpload()
+      if (!this.dataset) {
+        this.invalidFolder()
+      } else {
+        if(this.files.length === 0){
+          this.invalidUpload()
+        } else{
+          this.files = []
+          await this.validUpload()
+        }
       }
+      
     }
   }
 }
@@ -271,14 +289,15 @@ export default {
   }
 
   .uploader{
-      width: 75%;
       background: #fff;
       border-radius: 0.5rem;
-      height: 11.7rem;
+      margin-left: -0.6rem;
+      width: 85%;
+      /* height: 11.7rem; */
       padding:0.7rem; 
-      border: 0.2rem solid #1E889B;
+      /* border: 1px solid #1E889B; */
       cursor: pointer;
-      overflow-y: scroll;
+      /* overflow-y: scroll; */
   }
 
   #uploader-container h6{
@@ -290,15 +309,6 @@ export default {
   }
 
   .dropzone-custom-title{
-    margin-top: 0;
-    color: #11616F;
+    color: #c9c9c9;
   }
-
-  #dropzone{
-    background-color: #fff;
-    border: 0.3rem solid #11616F;
-    border-style: dashed;
-    height: auto;
-  }
-
 </style>
