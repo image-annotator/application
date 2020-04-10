@@ -62,6 +62,10 @@ export default {
       type: String,
       default: 'Label Unlabeled Images'
     },
+    isOutputViewer: {
+      type: Boolean,
+      default: false
+    },
     viewerURL: {
       type: String,
       default: '/viewer/'
@@ -69,6 +73,15 @@ export default {
     isLabeled: {
       type: Boolean,
       default: false
+    },
+    output: {
+      type: Object,
+      default: () => {
+        return {
+          type: 'xml',
+          standard: 'pascal'
+        }
+      }
     }
   },
   data () {
@@ -161,16 +174,20 @@ export default {
       }
     },
     async openViewer (image) {
-      console.log(image)
-      if (!image.isCurrentlyLabeled) {
-        var url = '/api/accesscontrol/' + image.id
-        try {
-          await this.$axios.get(url)
-          alert("This image is currently Labeled")
-        } catch (e) {
-          this.$router.push({ path: this.viewerURL, query: { url: image.url, id: image.id }})
+      if (!this.isOutputViewer) {
+        if (!image.isCurrentlyLabeled) {
+          var url = '/api/accesscontrol/' + image.id
+          try {
+            await this.$axios.get(url)
+            alert("This image is currently Labeled")
+          } catch (e) {
+            this.$router.push({ path: this.viewerURL, query: { url: image.url, id: image.id }})
+          }
         }
+      } else {
+        this.$router.push({ path: this.viewerURL, query: {type: this.output.type, id: image.id, name: image.name, standard: this.output.standard}})
       }
+      
     },
     debounceWrapper (e) {
       this.page = 1

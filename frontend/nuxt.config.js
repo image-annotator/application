@@ -34,7 +34,7 @@ export default {
   plugins: [
     '~/plugins/axios',
     { src: '~/plugins/vue-sweetalert2', ssr: false },
-    '~/plugins/vue-annotator'
+    { src: '~/plugins/json-viewer', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules

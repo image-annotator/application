@@ -12,79 +12,46 @@
           <i class="ml-3 mt-1 fas fa-download" />
         </button>
       </div>
-      <div class="row">
-        <div class="col">
-          <h5 class="title users-margin"> 
-            XML per Image
-          </h5>
-        </div>
-      </div>
-      <br>
-      <div class="row form-title-margin">
-        <div class="col">
-          <input
-            id="imagesID"
-            v-model="search"
-            type="text"
-            class="form-control form-border field-length form-content"
-            placeholder="Search for Images ID..."
-            name="imagesID"
-          >
-        </div>
-      </div>
-      <br>
-      <b-row> 
-        <b-col v-for="labs in filterImages" :key="labs">
-          <div id="container">
-            <nuxt-link :to="{ path: '/main/output-view', query: {type: 'xml', id: labs.ImageID, name: labs.Filename, standard: standard}}">
-              <Images
-                :image-name="labs.Filename"
-                :image-i-d="labs.ImageID"
-                :image-u-r-l="backendURL + '/api/' + labs.ImagePath"
-              />
-            </nuxt-link>
-            <br>
-          </div>
-        </b-col>
-      </b-row>
+    </div>
+    <div class="row">
+      <Label
+        :is-output-viewer="isOutputViewer"
+        :is-labeled="isLabeled"
+        title="XML Per Image"
+        viewer-u-r-l="/main/output-view"
+      />
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
-    //   search: ''
-    }
-  }
-}
-</script>
 
 <script>
-import Images from '~/components/view/Images.vue'
 import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
 import  { backendURL } from '~/config.js'
-import VueDropdown from 'vue-dynamic-dropdown'
 import Convert from 'xml-js'
+import Label from '~/components/label/Label'
 export default {
   components: {
-    Images,
-    VueDropdown
+    Label
   },
   mixins: [getAllLabeledImages],
   data () {
     return {
+      isOutputViewer: true,
+      isLabeled: true,
       backendURL: backendURL,
       standard: 'pascal',
-      search: '',
+      search: ''
+    }
+  },
+  computed: {
+    filterImages: function(){
+      return this.labeledImages.filter((labs) => {
+        return labs.Filename.match(this.search)
+      })
     }
   },
   methods: {
-    setNewSelectedOption(event){
-      this.standard = event.value.toLowerCase()
-      this.config.placeholder = event.value
-    }, 
     async getAllLabelJSON(standard){
       var url = '/api/label'
       var response = await this.$axios(url).catch(error => console.log(error))
@@ -149,13 +116,6 @@ export default {
       element.click()
       document.body.removeChild(element)
     } 
-  },
-  computed: {
-      filterImages: function(){
-          return this.labeledImages.filter((labs) => {
-              return labs.Filename.match(this.search);
-          });
-      }
   }
 }
 </script>

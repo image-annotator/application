@@ -12,71 +12,43 @@
           <i class="ml-3 mt-1 fas fa-download" />
         </button>
       </div>
-      <div class="row">
-        <div class="col">
-          <h5 class="title users-margin"> 
-            JSON per Image
-          </h5>
-        </div>
-      </div>
-      <br>
-      <div class="row form-title-margin">
-        <div class="col">
-          <input
-            id="imagesID"
-            v-model="search"
-            type="text"
-            class="form-control form-border field-length form-content"
-            placeholder="Search for Images ID..."
-            name="imagesID"
-          >
-        </div>
-      </div>
-      <br>
-      <b-row> 
-        <b-col v-for="labs in filterImages" :key="labs">
-          <div id="container">
-            <nuxt-link :to="{ path: '/main/output-view', query: {type: 'json', id: labs.ImageID, name: labs.Filename, standard: standard}}">
-              <Images
-                :image-name="labs.Filename"
-                :image-i-d="labs.ImageID"
-                :image-u-r-l="backendURL + '/api/' + labs.ImagePath"
-              />
-            </nuxt-link>
-            <br>
-          </div>
-        </b-col>
-      </b-row>
+    </div>
+    <div class="row">
+      <Label
+        :is-output-viewer="isOutputViewer"
+        :is-labeled="isLabeled"
+        title="JSON Per Image"
+        viewer-u-r-l="/main/output-view"
+        :output="{type: 'json', standard: standard}"
+      />
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  data () {
-    return {
-    //   search: ''
-    }
-  }
-}
-</script>
-
-<script>
-import Images from '~/components/view/Images.vue'
 import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
 import  { backendURL } from '~/config.js'
-import VueDropdown from 'vue-dynamic-dropdown'
+import Label from '~/components/label/Label'
+
 export default {
   components: {
-    Images,
-    VueDropdown
+    Label
   },
   mixins: [getAllLabeledImages],
   data () {
     return {
+      isOutputViewer: true,
+      isLabeled: true,
       backendURL: backendURL,
       standard: 'coco',
-      search: '',
+      search: ''
+    }
+  },
+  computed: {
+    filterImages: function(){
+      return this.labeledImages.filter((labs) => {
+        return labs.Filename.match(this.search)
+      })
     }
   },
   methods: {
@@ -137,13 +109,6 @@ export default {
       element.click()
       document.body.removeChild(element)
     } 
-  },
-  computed: {
-      filterImages: function(){
-          return this.labeledImages.filter((labs) => {
-              return labs.Filename.match(this.search);
-          });
-      }
   }
 }
 </script>

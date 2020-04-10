@@ -12,8 +12,17 @@
       </div>
     </b-nav-item>
 
+    <div v-if="role === 'admin'">
+      <!-- Upload Dataset -->
+      <b-nav-item link-classes="side-bar-color mt-5 ml-4" @click="changeActiveElmtID('upload-dataset')">
+        <div id="upload-dataset">
+          Upload Dataset
+        </div>
+      </b-nav-item>
+    </div>
+
     <!-- Label Dataset -->
-    <b-nav-item link-classes="side-bar-color mt-5 ml-4" @click="changeActiveElmtID('label-dataset')">
+    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('label-dataset')">
       <div id="label-dataset">
         Label Dataset
       </div>
@@ -24,15 +33,6 @@
       <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
         <div id="edit-dataset">
           Edit Dataset
-        </div>
-      </b-nav-item>
-    </div>
-
-    <div v-if="role === 'admin'">
-      <!-- Upload Dataset -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('upload-dataset')">
-        <div id="upload-dataset">
-          Upload Dataset
         </div>
       </b-nav-item>
     </div>
@@ -95,7 +95,7 @@
         </b-nav-item>
 
         <!-- Delete User -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4 mb-5" @click="changeActiveElmtID('delete-user')">
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
           <div class="icon-text-wrapper">
             <i class="mt-1 mr-3 fas fa-trash" />
             <div id="delete-user">
@@ -129,7 +129,7 @@
         </b-nav-item>
 
         <!-- Change Password -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4 mb-5" @click="changeActiveElmtID('change-password')">
           <div class="icon-text-wrapper">
             <i class="mt-1 mr-3 fas fa-cog" />
             <div id="change-password">
@@ -182,7 +182,6 @@ export default {
       this.redirectRoute(elmtID)
     },
     redirectRoute (elmtID) {
-      console.log("elmtID: ", elmtID)
       switch (elmtID) {
       case 'label-dataset':
         this.$nuxt.$router.replace({ path: '/main/label'})
@@ -220,33 +219,44 @@ export default {
       }
     },
     onPathChangeHandler (browserURL) {
-      console.log("Browser: ", browserURL)
       var elmtID = ''
-      if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='label-dataset'
-      } else if((/^\/main\/pascal(\/|(\?)|$)/.test(browserURL))){
-        elmtID = 'pascal-output'
-      } else if ((/^\/main\/coco(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='coco-output'
-      } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='edit-dataset'
-      } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='upload-dataset'
-      } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='change-username'
-      } else if ((/^\/main\/change-password(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='change-password'
-      } else if ((/^\/main\/show-user(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='show-all-users'
-      } else if ((/^\/main\/add-user(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='add-user'
-      } else if ((/^\/main\/edit-user(\/|(\?)|$)/.test(browserURL))) {
-        elmtID ='edit-user'
-      } else if (((/^\/main\/delete-user(\/|(\?)|$)/.test(browserURL)))) {
-        elmtID ='delete-user'
+      console.log("Browser: ", browserURL)
+      if (((/^\/main\/output-view(\/|(\?)|$)/.test(browserURL)))) {
+        var type = this.$route.query.type
+        if (type === 'xml') {
+          elmtID = 'pascal-output'
+        } else {
+          elmtID = 'coco-output'
+        }
+        this.activeElmtID = elmtID
+        this.setClass(elmtID, 'active')
+      } else {
+        if ((/^\/main\/label(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='label-dataset'
+        } else if((/^\/main\/pascal(\/|(\?)|$)/.test(browserURL))){
+          elmtID = 'pascal-output'
+        } else if ((/^\/main\/coco(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='coco-output'
+        } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='edit-dataset'
+        } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='upload-dataset'
+        } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='change-username'
+        } else if ((/^\/main\/change-password(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='change-password'
+        } else if ((/^\/main\/show-user(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='show-all-users'
+        } else if ((/^\/main\/add-user(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='add-user'
+        } else if ((/^\/main\/edit-user(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='edit-user'
+        } else if (((/^\/main\/delete-user(\/|(\?)|$)/.test(browserURL)))) {
+          elmtID ='delete-user'
+        }
+        this.changeActiveElmtID(elmtID)
+        this.setClass(elmtID, 'active')
       }
-      this.changeActiveElmtID(elmtID)
-      this.setClass(elmtID, 'active')
     }
   }
 }
