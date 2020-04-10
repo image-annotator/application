@@ -11,14 +11,19 @@
       <br>
       <div class="row form-title-margin">
         <div class="col">
-          <input
-            id="imagesID"
-            type="text"
-            class="form-control form-border field-length form-content"
-            placeholder="Search for file name..."
-            name="imagesID"
-            @input="debounceWrapper"
-          >
+          <div class="flex-display">
+            <input
+              id="imagesID"
+              type="text"
+              class="form-control form-border field-length form-content"
+              placeholder="Search for file name..."
+              name="imagesID"
+              @input="debounceWrapper"
+            >
+            <div class="slot-margin">
+              <slot />
+            </div>
+          </div>
         </div>
       </div>
       <br>
@@ -74,6 +79,10 @@ export default {
       type: Boolean,
       default: false
     },
+    dataset: {
+      type: String,
+      default: ''
+    },
     output: {
       type: Object,
       default: () => {
@@ -89,7 +98,7 @@ export default {
       images: {},
       keyword: '',
       isViewerActive: false,
-      perPage: 2,
+      perPage: 3,
       totalRows: 0,
       page: 1,
       timer: '',
@@ -118,7 +127,8 @@ export default {
           PerPage: perPage,
           Page: page,
           search: keyword,
-          Labeled: this.isLabeled
+          Labeled: this.isLabeled,
+          Dataset: this.dataset
         }
       }).catch((error) => console.error(error))
       if (response.data.data.images) {
@@ -181,11 +191,11 @@ export default {
             await this.$axios.get(url)
             alert("This image is currently Labeled")
           } catch (e) {
-            this.$router.push({ path: this.viewerURL, query: { url: image.url, id: image.id }})
+            this.$router.push({ path: this.viewerURL, query: { url: image.url, id: image.id, dataset: this.dataset}})
           }
         }
       } else {
-        this.$router.push({ path: this.viewerURL, query: {type: this.output.type, id: image.id, name: image.name, standard: this.output.standard}})
+        this.$router.push({ path: this.viewerURL, query: {type: this.output.type, id: image.id, name: image.name, standard: this.output.standard, dataset: this.dataset }})
       }
       
     },
@@ -230,4 +240,13 @@ export default {
     justify-self: center;
     width: 18rem;
   }
+
+  .slot-margin {
+    margin-left: 1.5rem;
+  }
+
+  .flex-display {
+    display: flex;
+  }
+
 </style>

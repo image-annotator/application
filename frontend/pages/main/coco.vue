@@ -15,12 +15,19 @@
     </div>
     <div class="row">
       <Label
+        :key="updateUI"
         :is-output-viewer="isOutputViewer"
         :is-labeled="isLabeled"
+        :dataset="dataset"
         title="JSON Per Image"
         viewer-u-r-l="/main/output-view"
         :output="{type: 'json', standard: standard}"
-      />
+      >
+        <Dropdown
+          :dropdown-value="dataset"
+          @onDatasetChanged="changeDataset"
+        />
+      </Label>
     </div>
   </div>
 </template>
@@ -29,10 +36,12 @@
 import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
 import  { backendURL } from '~/config.js'
 import Label from '~/components/label/Label'
+import Dropdown from '~/components/dropdown/Dropdown'
 
 export default {
   components: {
-    Label
+    Label,
+    Dropdown
   },
   mixins: [getAllLabeledImages],
   data () {
@@ -41,17 +50,21 @@ export default {
       isLabeled: true,
       backendURL: backendURL,
       standard: 'coco',
-      search: ''
+      search: '',
+      updateUI: false
     }
   },
-  computed: {
-    filterImages: function(){
-      return this.labeledImages.filter((labs) => {
-        return labs.Filename.match(this.search)
-      })
+  mounted () {
+    if (this.$route.query.dataset) {
+      this.dataset = this.$route.query.dataset
+      this.updateUI = !this.updateUI
     }
   },
   methods: {
+    changeDataset (newDataset) {
+      this.dataset = newDataset
+      this.updateUI = !this.updateUI
+    },
     async getAllLabel(standard){
       var url = '/api/label'
       var response = await this.$axios(url).catch(error => console.log(error))
