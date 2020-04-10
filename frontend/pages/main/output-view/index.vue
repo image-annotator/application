@@ -41,16 +41,8 @@
 </template>
 
 <script>
-import JsonViewer from 'vue-json-viewer'
 import Convert from 'xml-js'
-// import XMLFormatter from 'xml-formatter'
 export default {
-//   props: {
-//     imageID
-//   },
-  components: {
-    JsonViewer
-  },
   data () {
     return {
       type: '',
@@ -74,11 +66,10 @@ export default {
     this.standard = this.$route.query.standard
     this.json = await this.getLabelByID(this.standard)
     // this.xml = XMLFormatter(this.convertToXML(),this.config)
-    this.xml = this.convertToXML()
     if(this.type === 'xml'){
+      this.xml = this.convertToXML()
       this.Format()  
     }
-        
   },
   methods:{
     closeOutputViewer() {
@@ -162,7 +153,12 @@ export default {
     Format(){
       var xml = this.xml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g, '&nbsp;').replace(/\n/g,'<br />')
       var mydiv = document.getElementById("xml")
-      mydiv.innerHTML += xml
+      if (mydiv) {
+        console.log("1")
+        mydiv.innerHTML += xml
+        console.log("2")
+      }
+      console.log("3")
     }
   }
 }

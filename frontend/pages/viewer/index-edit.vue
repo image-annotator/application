@@ -91,9 +91,10 @@ export default {
         width: 0,
         content: ''
       },
+      actionName: 'add-box',
       activeBoxIndex: -1,
+      cssCursor: 'cell',
       boxes: {},
-      previouslyCreatedBox: {},
       image: {
         id: -1,
         url: ''
@@ -101,7 +102,8 @@ export default {
       canDelete: true,
       labelCount: 0,
       timer: '',
-      dataReady :true,
+      previouslyCreatedBox: {},
+      dataReady: true,
       isEdited: false
     }
   },
