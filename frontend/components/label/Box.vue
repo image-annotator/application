@@ -1,14 +1,14 @@
 <template>
   <div v-if="!isDeleted" class="box-wrapper">
     <!-- Identifier Square -->
-    <div
+    <!-- <div
       v-if="bIndex !== -1"
       id="bIndex"
       class="shadow"
       :style="{ top: bTop + bHeight + -10 + 'px', left: bLeft + 'px'}"
     >
       id: {{ bIndex }}
-    </div>
+    </div> -->
 
     <div v-if="isDeleteActive">
       <i
