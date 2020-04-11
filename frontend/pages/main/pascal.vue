@@ -2,23 +2,40 @@
   <div class="col">
     <div class="ml-4">
       <div class="row">
-        <div class="col-3">
-          <h5 class="title users-margin">
-            Complete XML
-          </h5>
+        <div class="col">
+          <Dropdown
+            class="margin-dropdown"
+            :dropdown-value="dataset"
+            @onDatasetChanged="changeDataset"
+          />
         </div>
-        <button class="btn-white" @click="downloadXML()">
-          XMLFile.xml
-          <i class="ml-3 mt-1 fas fa-download" />
-        </button>
+      </div>
+      <div :key="updateUI" class="row animated fadeIn">
+        <div class="col">
+          <div style="display: flex">
+            <h5 class="title users-margin">
+              {{ dataset }} Pascal file:
+              <span v-if="!dataset" style="margin-left: 20px; font-size: 0.85rem;">
+                Choose Folder First 
+              </span>
+            </h5>
+            <button v-if="dataset" class="btn-white margin-download" @click="downloadXML()">
+              {{ dataset }}.xml
+              <i class="ml-3 mt-1 fas fa-download" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="row">
+    <div v-if="dataset" class="row" style="margin-top: -1.5rem;">
       <Label
+        :key="updateUI"
         :is-output-viewer="isOutputViewer"
         :is-labeled="isLabeled"
+        :dataset="dataset"
         title="XML Per Image"
         viewer-u-r-l="/main/output-view"
+        :output="{type: 'xml', standard: standard}"
       />
     </div>
   </div>
@@ -26,89 +43,63 @@
 
 
 <script>
-import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
-import  { backendURL } from '~/config.js'
+import datasetMethods from '~/mixins/outputs/datasetMethods'
+import pascalMethods from '~/mixins/outputs/pascalMethods'
 import Convert from 'xml-js'
 import Label from '~/components/label/Label'
+import Dropdown from '~/components/dropdown/Dropdown'
+
 export default {
   components: {
-    Label
+    Label,
+    Dropdown
   },
-  mixins: [getAllLabeledImages],
+  mixins: [datasetMethods, pascalMethods],
   data () {
     return {
       isOutputViewer: true,
       isLabeled: true,
-      backendURL: backendURL,
       standard: 'pascal',
-      search: ''
-    }
-  },
-  computed: {
-    filterImages: function(){
-      return this.labeledImages.filter((labs) => {
-        return labs.Filename.match(this.search)
-      })
+      search: '',
     }
   },
   methods: {
-    async getAllLabelJSON(standard){
-      var url = '/api/label'
-      var response = await this.$axios(url).catch(error => console.log(error))
-      if (response && response.status === 200) {
-        var rawJSON = response.data.data
-        return this.standardJSON(rawJSON, standard)
-      } else {
-        return null
+    async getPascalXML () {
+      this.pascalJSON = {}
+      var newPascalJSON = {"annotation": []}
+      var allImages = await this.getAllImages()
+      if (allImages) {
+        this.imagesAttributes = {}
+        var allLabels = await this.getAllLabel()
+        await this.setImagesAttr(allImages)
+        await this.getObjectsAttr(allLabels)
+
+        for (var key in this.pascalJSON) {
+          newPascalJSON["annotation"].push(this.pascalJSON[key])
+        }
+        return newPascalJSON
       }
     },
-    standardJSON(rawJSON, standard){
-      var JSONstandard = []
-      rawJSON.forEach(element => {
-        var area = element.label_width * element.label_height,
-          x_top_left = element.label_x_center - (0.5 * element.label_width),
-          y_top_left = element.label_y_center - (0.5 * element.label_height),
-          x_bot_right = element.label_x_center + (0.5 * element.label_width),
-          y_bot_right = element.label_y_center - (0.5 * element.label_height),
-          json = {
-            id: element.label_id,
-            image_id: element.image_id,
-            category_id: element.label_content_id,
-            area: area,
-            bounding_box: {
-            },
-            created_at: element.created_at,
-            updated_at: element.updated_at
-          }
-        if(standard == "coco"){
-          json.bounding_box.x_top_left = x_top_left
-          json.bounding_box.y_top_left = y_top_left
-          json.bounding_box.width = element.label_width
-          json.bounding_box.height = element.label_height
-          JSONstandard.push(json)
-        }else if(standard == "pascal"){
-          json.bounding_box.x_top_left = x_top_left
-          json.bounding_box.y_top_left = y_top_left
-          json.bounding_box.x_bot_right = x_bot_right
-          json.bounding_box.y_bot_right = y_bot_right
-          JSONstandard.push(json)
-        }
-      })
-      return JSONstandard
+    async setImagesAttr (allImages) {
+      for (var imageIdx in allImages) {
+        var image = allImages[imageIdx]
+        await this.setSingleImageAttr(image, this.dataset)
+      }
     },
     convertToXML(json){
       var option = {
         compact: true,
-        spaces: 4
+        spaces: 4,
+        attributes_key: 'annotation'
       }
-      var result = Convert.json2xml(JSON.stringify(json,0,4),option)
+      var result = Convert.json2xml(JSON.stringify(json,0,4), option)
       return result
     },
     async downloadXML() {
       var filename = 'XMLFile.xml'
       var element = document.createElement('a')
-      var label = await this.getAllLabelJSON(this.standard)
-      var xml = this.convertToXML(label)
+      var newPascalJSON = await this.getPascalXML()
+      var xml = this.convertToXML(newPascalJSON)
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xml))
       element.setAttribute('download',filename)
       element.style.display = 'none'
@@ -162,6 +153,11 @@ export default {
     padding-right: 1rem;
   }
 
+  .btn-white:hover {
+    background-color: #F7F7F7;
+  }
+
+
   .standard-dropdown{
     background: yellow;
     width: 200px;
@@ -174,6 +170,15 @@ export default {
 
   .dropdown{
     color: #1E889B;
+  }
+
+  .margin-download {
+    margin-left: 2.25rem;
+  }
+
+  .margin-dropdown {
+    margin-top: 3.5rem;
+    margin-left: -0.775rem;
   }
 
 </style>

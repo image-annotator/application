@@ -43,6 +43,7 @@
 
 <script>
 import cocoMethods from '~/mixins/outputs/cocoMethods'
+import datasetMethods from '~/mixins/outputs/datasetMethods'
 import Label from '~/components/label/Label'
 import Dropdown from '~/components/dropdown/Dropdown'
 
@@ -51,28 +52,16 @@ export default {
     Label,
     Dropdown
   },
-  mixins: [cocoMethods],
+  mixins: [cocoMethods, datasetMethods],
   data () {
     return {
-      dataset: '',
       isOutputViewer: true,
       isLabeled: true,
       standard: 'coco',
-      search: '',
-      updateUI: false
-    }
-  },
-  mounted () {
-    if (this.$route.query.dataset) {
-      this.dataset = this.$route.query.dataset
-      this.updateUI = !this.updateUI
+      search: ''
     }
   },
   methods: {
-    changeDataset (newDataset) {
-      this.dataset = newDataset
-      this.updateUI = !this.updateUI
-    },
     async getCOCOJSON () {
       var infoObj = this.getInfoObj()
       var licensesArr = this.getLicensesArr()

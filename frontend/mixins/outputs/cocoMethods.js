@@ -10,10 +10,11 @@ export default {
   mixins: [imageAndLabelMethods],
   methods: {
     async getCategoriesArr (allLabels) {
+      var alreadyCheckedContentID = {}
       var categoriesArr = []
       for (var labelIdx in allLabels) {
         var label = allLabels[labelIdx]
-        if (this.imagesObj[label["image_id"]]) {
+        if (this.imagesObj[label["image_id"]] &&  !alreadyCheckedContentID[label["label_content_id"]]) {
           // Category
           var labelResponse = await this.getLabelContentByID(label["label_content_id"])
           var categoryObj = {
@@ -21,6 +22,7 @@ export default {
             name: labelResponse["content_name"],
             supercategory: ""
           }
+          alreadyCheckedContentID[label["label_content_id"]] = true
           categoriesArr.push(categoryObj)
         }
       }
