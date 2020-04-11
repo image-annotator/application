@@ -99,6 +99,7 @@ export default {
         id: -1,
         url: ''
       },
+      dataset: '',
       canDelete: true,
       labelCount: 0,
       timer: '',
@@ -118,6 +119,7 @@ export default {
   async mounted () {
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
+    this.dataset = this.$route.query.dataset
     await this.drawAllBox()
     this.dataReady = false
     this.dataReady = true
@@ -209,7 +211,7 @@ export default {
         console.log(error)
       }
       clearInterval(this.timer)
-      this.$router.push('/main/edit')
+      this.$router.push({ path: '/main/edit', query: {dataset: this.dataset }})
     },
     async deleteImageAccessControlByImageID (imageID) {
       var url = '/api/accesscontrol/' + imageID

@@ -97,6 +97,7 @@ export default {
         id: -1,
         url: ''
       },
+      dataset: '',
       canDelete: true,
       labelCount: 0,
       timer: ''
@@ -113,6 +114,7 @@ export default {
   mounted () {
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
+    this.dataset = this.$route.query.dataset
   },
   async beforeDestroy () {
     // window.removeEventListener("beforeunload", true)
@@ -150,7 +152,7 @@ export default {
         console.log(error)
       }
       clearInterval(this.timer)
-      this.$router.push('/main/label')
+      this.$router.push({ path: '/main/label', query: {dataset: this.dataset }})
     },
     onMouseDownHandler (e) {
       if (this.drawingBox.active) {

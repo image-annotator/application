@@ -56,7 +56,8 @@ export default {
         stripComments: true,
         collapseContent: true,
         lineSeparator: '\n'
-      }
+      },
+      dataset: ''
     }
   },
   async mounted() {
@@ -64,17 +65,18 @@ export default {
     this.id = this.$route.query.id
     this.name = this.$route.query.name
     this.standard = this.$route.query.standard
+    this.dataset = this.$route.query.dataset
     this.json = await this.getLabelByID(this.standard)
     // this.xml = XMLFormatter(this.convertToXML(),this.config)
     if(this.type === 'xml'){
       this.xml = this.convertToXML()
-      this.Format()  
+      this.Format()
     }
   },
   methods:{
     closeOutputViewer() {
       if(this.type === 'json'){
-        this.$router.push('/main/coco')
+        this.$router.push({path: '/main/coco', query:{ dataset: this.dataset }})
       }else{
         this.$router.push('/main/pascal')
       }
