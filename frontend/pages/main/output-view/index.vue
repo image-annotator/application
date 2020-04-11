@@ -43,8 +43,9 @@
 <script>
 import Convert from 'xml-js'
 import cocoMethods from '~/mixins/outputs/cocoMethods'
+import pascalMethods from '~/mixins/outputs/pascalMethods'
 export default {
-  mixins: [cocoMethods],
+  mixins: [cocoMethods, pascalMethods],
   data () {
     return {
       type: '',
@@ -69,10 +70,12 @@ export default {
     this.standard = this.$route.query.standard
     this.dataset = this.$route.query.dataset
     this.id = this.$route.query.id
-    this.json = await this.getCOCOJSONPerImage()
-    if(this.type === 'xml'){
-      this.xml = this.convertToXML()
-      this.Format()
+
+    if (this.type === 'xml') {
+      this.json = await this.getPascalXMLPerImage()
+      this.format()
+    } else {
+      this.json = await this.getCOCOJSONPerImage()
     }
   },
   methods:{
@@ -81,7 +84,7 @@ export default {
       var licensesArr = this.getLicensesArr()
 
       await this.assignImagesObj(this.id)
-      
+
       var categoriesAndAnnotations = await this.getCategoriesAndAnnotationsArrPerImage()
       var COCOJSON = {
         info: infoObj,
@@ -101,75 +104,71 @@ export default {
         annotations: annotationsArr
       }
     },
+    async getPascalXMLPerImage () {
+      this.pascalJSON = {}
+      var newPascalJSON = {"annotation": []}
+      var allImages = await this.getAllImages()
+      if (allImages) {
+        var label = await this.getLabelByImageID(this.id)
+        await this.setImagesAttr(allImages)
+        await this.getObjectsAttr(label)
+        for (var key in this.pascalJSON) {
+          newPascalJSON["annotation"].push(this.pascalJSON[key])
+        }
+        return newPascalJSON
+      }
+    },
+    async setImagesAttr (allImages) {
+      for (var imageIdx in allImages) {
+        var image = allImages[imageIdx]
+        if (image.ImageID === this.id) {
+          await this.setSingleImageAttr(image, this.dataset)
+        }
+      }
+    },
     closeOutputViewer() {
-      if(this.type === 'json'){
+      if (this.type === 'json'){
         this.$router.push({path: '/main/coco', query:{ dataset: this.dataset }})
-      }else{
+      } else {
         this.$router.push({path: '/main/pascal', query:{ dataset: this.dataset }})
       }
     },
-    standardJSON(rawJSON,standard){
-      var JSONstandard = []
-      rawJSON.forEach(element => {
-        var area = element.label_width * element.label_height,
-          x_top_left = element.label_x_center - (0.5 * element.label_width),
-          y_top_left = element.label_y_center - (0.5 * element.label_height),
-          x_bot_right = element.label_x_center + (0.5 * element.label_width),
-          y_bot_right = element.label_y_center - (0.5 * element.label_height),
-          json = {
-            id: element.label_id,
-            image_id: element.image_id,
-            category_id: element.label_content_id,
-            area: area,
-            bounding_box: {
-            },
-            created_at: element.created_at,
-            updated_at: element.updated_at
-          }
-        if(standard == "coco"){
-          json.bounding_box.x_top_left = x_top_left
-          json.bounding_box.y_top_left = y_top_left
-          json.bounding_box.width = element.label_width
-          json.bounding_box.height = element.label_height
-          JSONstandard.push(json)
-        }else if(standard == "pascal"){
-          json.bounding_box.x_top_left = x_top_left
-          json.bounding_box.y_top_left = y_top_left
-          json.bounding_box.x_bot_right = x_bot_right
-          json.bounding_box.y_bot_right = y_bot_right
-          JSONstandard.push(json)
-        }
-        
-      })
-      return JSONstandard
-    },
-    downloadOutput(){
-      var filename = this.name + '.json'
+    async downloadOutput(){
+      var filename = this.name
       var element = document.createElement('a')
       
-      if(this.type == 'json'){
+      if (this.type == 'json') {
+        this.json = await this.getCOCOJSONPerImage()
+        filename += '.json'
         var text = JSON.stringify(this.json,0,4)
         element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(text))
       }
-      else{
-        element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(this.xml))
+      else {
+        this.json = await this.getPascalXMLPerImage()
+        console.log("XML AWAIT: ", this.json)
+        console.log("CONVERT: ", this.convertToXML(this.json))
+        filename += '.xml'
+        element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(this.convertToXML(this.json)))
       }
-      element.setAttribute('download',filename)
+      element.setAttribute('download', filename)
       element.style.display = 'none'
       document.body.appendChild(element)
       element.click()
       document.body.removeChild(element)
     },
-    convertToXML(){
+    convertToXML(json){
       var option = {
         compact: true,
         spaces: 4
       }
-      var result = Convert.json2xml(JSON.stringify(this.json,0,4),option)
+      var result = Convert.json2xml(JSON.stringify(json,0,4),option)
       return result
     },
-    Format(){
-      var xml = this.xml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g, '&nbsp;').replace(/\n/g,'<br />')
+    format(){
+      var xml = this.convertToXML(this.json)
+      xml = xml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g, '&nbsp;').replace(/\n/g,'<br />')
+      // console.log("xml: ", this.json)
+      // var xml = this.convertToXML(this.json)
       var mydiv = document.getElementById("xml")
       if (mydiv) {
         console.log("1")

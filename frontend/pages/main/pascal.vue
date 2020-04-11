@@ -69,7 +69,6 @@ export default {
       var newPascalJSON = {"annotation": []}
       var allImages = await this.getAllImages()
       if (allImages) {
-        this.imagesAttributes = {}
         var allLabels = await this.getAllLabel()
         await this.setImagesAttr(allImages)
         await this.getObjectsAttr(allLabels)
