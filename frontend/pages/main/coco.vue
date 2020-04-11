@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import getAllLabeledImages from '~/mixins/image/getAllLabeledImages.js'
-import  { backendURL } from '~/config.js'
+import cocoMethods from '~/mixins/outputs/cocoMethods'
 import Label from '~/components/label/Label'
 import Dropdown from '~/components/dropdown/Dropdown'
 
@@ -52,14 +51,12 @@ export default {
     Label,
     Dropdown
   },
-  mixins: [getAllLabeledImages],
+  mixins: [cocoMethods],
   data () {
     return {
       dataset: '',
       isOutputViewer: true,
       isLabeled: true,
-      imagesObj: {},
-      backendURL: backendURL,
       standard: 'coco',
       search: '',
       updateUI: false
@@ -79,7 +76,6 @@ export default {
     async getCOCOJSON () {
       var infoObj = this.getInfoObj()
       var licensesArr = this.getLicensesArr()
-      // Component "global" objects:
       await this.assignImagesObj()
       var categoriesAndAnnotations = await this.getCategoriesAndAnnotationsArr()
       // Convert object to array
@@ -96,64 +92,6 @@ export default {
       }
       return COCOJSON
     },
-    getInfoObj () {
-      var curYear = new Date().getFullYear()
-      var infoObj = {
-        year: curYear,
-        version: "",
-        description: this.dataset,
-        contributor: "",
-        url: "",
-        date_created: ""
-      }
-      return infoObj
-    },
-    getLicensesArr () {
-      var licensesArr = [{
-        id: 1,
-        name: "",
-        url: ""
-      }]
-      return licensesArr
-    },
-    async assignImagesObj () {
-      this.imagesObj = {}
-      var allImages = await this.getAllImages()
-      if (allImages) {
-        allImages.forEach(async (image) => {
-          var url = this.backendURL + '/api/' + image.ImagePath
-          var imageMeta = await this.getImageMeta(url)
-          var singleImageObj = {
-            id: image.ImageID,
-            width: imageMeta.naturalWidth,
-            height: imageMeta.naturalHeight,
-            file_name: image.Filename,
-            license: 1,
-            date_captured: image.UpdatedAt
-          }
-          this.imagesObj[image.ImageID] = singleImageObj
-        })
-      }
-    },
-    async getAllLabel(){
-      var url = '/api/label'
-      var response = await this.$axios(url).catch(error => console.log(error))
-      if (response && response.status === 200) {
-        var rawJSON = response.data.data
-        return rawJSON
-      } else {
-        return null
-      }
-    },
-    async getLabelContentByID (contentID) {
-      var url = '/api/content/' + contentID
-      var response = await this.$axios(url).catch(error => console.log(error))
-      if (response && response.status === 200) {
-        return response.data.data
-      } else {
-        return null
-      }
-    },
     async getCategoriesAndAnnotationsArr () {
       var allLabels = await this.getAllLabel()
       var categoriesArr = await this.getCategoriesArr(allLabels)
@@ -161,69 +99,6 @@ export default {
       return {
         categories: categoriesArr,
         annotations: annotationsArr
-      }
-    },
-    async getCategoriesArr (allLabels) {
-      var categoriesArr = []
-      for (var labelIdx in allLabels) {
-        var label = allLabels[labelIdx]
-        if (this.imagesObj[label["image_id"]]) {
-          // Category
-          var labelResponse = await this.getLabelContentByID(label["label_content_id"])
-          var categoryObj = {
-            id: label["label_content_id"],
-            name: labelResponse["content_name"],
-            supercategory: ""
-          }
-          categoriesArr.push(categoryObj)
-        }
-      }
-      return categoriesArr
-    },
-    async getAnnotationsArr (allLabels) {
-      var annotationsArr = []
-      for (var labelIdx in allLabels) {
-        var label = allLabels[labelIdx]
-        if (this.imagesObj[label["image_id"]]) {
-          // Annotations
-          var x_top_left = Math.round(label.label_x_center - (0.5 * label.label_width))
-          var y_top_left = Math.round(label.label_y_center - (0.5 * label.label_height))
-          var annotationObj = {
-            area: Math.round(label.label_width * label.label_height),
-            iscrowd: 0,
-            image_id: label.image_id,
-            bbox: [x_top_left, y_top_left, Math.round(label.label_width), Math.round(label.label_height)],
-            category_id: label.label_content_id,
-            id: label.label_id
-          }
-          annotationsArr.push(annotationObj)
-        }
-      }
-      return annotationsArr
-    },
-    async getImageMeta(url) {
-      return new Promise((resolve, reject) => {
-        let img = new Image()
-        img.onload = () => resolve(img)
-        img.onerror = reject
-        img.src = url
-      })
-    },
-    async getAllImages() {
-      var url = '/api/image'
-      const response = await this.$axios.get(url, {
-        params: {
-          PerPage: 999999,
-          Page: 1,
-          search: "",
-          Labeled: this.isLabeled,
-          Dataset: this.dataset
-        }
-      }).catch((error) => console.error(error))
-      if (response.data.data) {
-        return response.data.data.images
-      } else {
-        return null
       }
     },
     async downloadJSON() {

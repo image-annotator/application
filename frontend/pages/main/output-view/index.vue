@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col">
           <button class="btn-action btn-white" @click="downloadOutput()">
-            {{ type.toUpperCase() }}File.{{ type }}
+            {{ name }}.{{ type }}
             <i class="ml-3 mt-1 fas fa-download" />
           </button>
         </div>
@@ -42,7 +42,9 @@
 
 <script>
 import Convert from 'xml-js'
+import cocoMethods from '~/mixins/outputs/cocoMethods'
 export default {
+  mixins: [cocoMethods],
   data () {
     return {
       type: '',
@@ -57,39 +59,53 @@ export default {
         collapseContent: true,
         lineSeparator: '\n'
       },
-      dataset: ''
+      dataset: '',
+      imagesObj: {}
     }
   },
   async mounted() {
     this.type = this.$route.query.type
-    this.id = this.$route.query.id
     this.name = this.$route.query.name
     this.standard = this.$route.query.standard
     this.dataset = this.$route.query.dataset
-    this.json = await this.getLabelByID(this.standard)
-    // this.xml = XMLFormatter(this.convertToXML(),this.config)
+    this.id = this.$route.query.id
+    this.json = await this.getCOCOJSONPerImage()
     if(this.type === 'xml'){
       this.xml = this.convertToXML()
       this.Format()
     }
   },
   methods:{
+    async getCOCOJSONPerImage () {
+      var infoObj = this.getInfoObj()
+      var licensesArr = this.getLicensesArr()
+
+      await this.assignImagesObj(this.id)
+      
+      var categoriesAndAnnotations = await this.getCategoriesAndAnnotationsArrPerImage()
+      var COCOJSON = {
+        info: infoObj,
+        licenses: licensesArr,
+        images: [this.imagesObj[this.id]],
+        categories: categoriesAndAnnotations.categories,
+        annotations: categoriesAndAnnotations.annotations
+      }
+      return COCOJSON
+    },
+    async getCategoriesAndAnnotationsArrPerImage () {
+      var allLabelsPerImage = await this.getLabelByImageID(this.id)
+      var categoriesArr = await this.getCategoriesArr(allLabelsPerImage)
+      var annotationsArr = await this.getAnnotationsArr(allLabelsPerImage)
+      return {
+        categories: categoriesArr,
+        annotations: annotationsArr
+      }
+    },
     closeOutputViewer() {
       if(this.type === 'json'){
         this.$router.push({path: '/main/coco', query:{ dataset: this.dataset }})
       }else{
-        this.$router.push('/main/pascal')
-      }
-      
-    },
-    async getLabelByID(standard){
-      var url = 'api/label/imagequery/'+ this.id
-      var response = await this.$axios(url).catch(error => console.log(error))
-      if(response && response.status === 200){
-        var rawJSON = response.data.data
-        return this.standardJSON(rawJSON,standard)
-      }else{
-        return null
+        this.$router.push({path: '/main/pascal', query:{ dataset: this.dataset }})
       }
     },
     standardJSON(rawJSON,standard){
@@ -128,7 +144,7 @@ export default {
       return JSONstandard
     },
     downloadOutput(){
-      var filename = this.name.split('.',1)+'_JSONFile.json'
+      var filename = this.name + '.json'
       var element = document.createElement('a')
       
       if(this.type == 'json'){
