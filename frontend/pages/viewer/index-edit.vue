@@ -291,6 +291,7 @@ export default {
           this.boxes[this.labelCount] = newBox
           this.makeCurrentBoxActive(this.labelCount)
           this.resetDrawingBox()
+          this.boxesCount++
         }
       }
     },
@@ -340,7 +341,7 @@ export default {
               }
               for (let prevKey in this.previouslyCreatedBox) {
                 if(Object.keys(this.previouslyCreatedBox)[prevKey] == Object.keys(this.deletedBoxKey)[delKey]) {
-                  delete this.previouslyCreatedBox[Object.keys(this.deletedBoxKey)[prevKey - 1]]
+                  delete this.previouslyCreatedBox[Object.keys(this.deletedBoxKey)[prevKey]]
                 }
                 console.log(this.previouslyCreatedBox)
               }
