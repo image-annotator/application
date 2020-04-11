@@ -175,7 +175,7 @@ export default {
 
   .margin-dropdown {
     margin-top: 3.5rem;
-    margin-left: -0.775rem;
+    margin-left: -0.1rem;
   }
 
 </style>

@@ -3,27 +3,27 @@
     <div class="ml-4">
       <div class="row">
         <div class="col">
-          <h5 class="title users-margin"> 
-            {{ title }}
-          </h5>
+          <div class="flex-display">
+            <h5 class="title users-margin"> 
+              {{ title }}
+            </h5>
+            <div class="slot-margin">
+              <slot />
+            </div>
+          </div>
         </div>
       </div>
       <br>
       <div class="row form-title-margin">
         <div class="col">
-          <div class="flex-display">
-            <input
-              id="imagesID"
-              type="text"
-              class="form-control form-border field-length form-content"
-              placeholder="Search for file name..."
-              name="imagesID"
-              @input="debounceWrapper"
-            >
-            <div class="slot-margin">
-              <slot />
-            </div>
-          </div>
+          <input
+            id="imagesID"
+            type="text"
+            class="form-control form-border field-length form-content"
+            placeholder="Search for file name..."
+            name="imagesID"
+            @input="debounceWrapper"
+          >
         </div>
       </div>
       <br>
@@ -242,8 +242,8 @@ export default {
   }
 
   .slot-margin {
-    margin-left: 1.5rem;
-    margin-top: -0.15rem;
+    margin-left: 2.25rem;
+    margin-top: 3.25rem;
   }
 
   .flex-display {
