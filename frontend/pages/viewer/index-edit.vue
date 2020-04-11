@@ -105,7 +105,11 @@ export default {
       timer: '',
       previouslyCreatedBox: {},
       dataReady: true,
-      isEdited: false
+      isEdited: false,
+      boxesCount: 0,
+      deletedBoxesCount: 0,
+      deletedBoxes: {},
+      deletedBoxKey: {}
     }
   },
   async created () {
@@ -192,17 +196,19 @@ export default {
           height: screenImagesAttr.height,
           left: screenImagesAttr.left,
           top: screenImagesAttr.top,
-          content: contentName
+          content: contentName, 
+          label_id: allLabels[this.labelCount].label_id
         }
         this.labelCount++
         this.boxes[this.labelCount] = newBox
+        this.boxesCount++
         // console.log(newBox.content)
         this.changeBoxContent(newBox.content, this.labelCount)
         // this.makeCurrentBoxActive(this.labelCount)
         this.resetDrawingBox()
       }
-      console.log(this.boxes)
-      console.log(this.previouslyCreatedBox)
+      console.log("ANJAAY", this.boxes)
+      console.log("ANJJJAY2", this.previouslyCreatedBox)
     },
     async closeViewer () {
       try {
@@ -258,6 +264,12 @@ export default {
       this.activeBoxIndex = activeBoxIndex
     },
     deleteBox (index) {
+      console.log("DELETED BOXES", this.boxes[index])
+      console.log("DEL BOX KEY", Object.keys(this.boxes)[index-1])
+      this.deletedBoxesCount++
+      this.deletedBoxKey[this.deletedBoxesCount] = this.boxes[index].label_id
+      console.log("DEL ALL KEY", this.deletedBoxKey)
+      this.deletedBoxes[this.deletedBoxesCount] = this.boxes[index]
       delete this.boxes[index]
       this.activeBoxIndex = -1
     },
@@ -302,6 +314,7 @@ export default {
         var content_id 
         var singleBackendObj 
         var move = 0
+        var countBox = Object.keys(this.boxes).length
         var imageAttributes = {
           screenWidth: this.$refs.image.clientWidth,
           screenHeight: this.$refs.image.clientHeight,
@@ -309,9 +322,34 @@ export default {
           realHeight: this.$refs.image.naturalHeight
         }
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
-        console.log('GOGIGU', this.previouslyCreatedBox)
+        console.log('GOGIGU SAVE', this.previouslyCreatedBox)
+        if(this.boxesCount > countBox) {
+          for (let delKey in this.deletedBoxes) {
+            console.log("AGHUY" + delKey)
+            if (delKey == Object.keys(this.deletedBoxKey)[delKey - 1 - move] ) {
+              // delete
+              console.log("DELETE" + (delKey))
+              console.log("BOX YG DIDELETED", this.deletedBoxes[delKey])
+              try {
+                console.log('BACKEND')
+                console.log(Object.values(this.deletedBoxKey)[delKey - 1 - move])
+                await this.deleteLabelsInImage(Object.values(this.deletedBoxKey)[delKey - 1 - move])
+              } catch (error) {
+                this.showFailedAlert("Error!", error)
+                return
+              }
+              for (let prevKey in this.previouslyCreatedBox) {
+                if(Object.keys(this.previouslyCreatedBox)[prevKey] == Object.keys(this.deletedBoxKey)[delKey]) {
+                  delete this.previouslyCreatedBox[Object.keys(this.deletedBoxKey)[prevKey - 1]]
+                }
+                console.log(this.previouslyCreatedBox)
+              }
+            }
+          }  
+        } 
+
         for (let key in this.boxes) {
-          console.log(key, this.boxes[key])
+          console.log("EDITTT", key, this.boxes[key])
           if (key == Object.keys(this.previouslyCreatedBox)[key - 1 - move] ) {
             console.log('key', key)
             console.log('prevs', Object.keys(this.previouslyCreatedBox)[key - 1 - move] )
@@ -391,6 +429,11 @@ export default {
             return
           }
         } else {
+          console.log("ALL DELETED BOXES", this.deletedBoxes)
+          console.log("BOX COUNT lenght:", this.boxesCount)
+          console.log("COUNT DELETED BOX", countBox)
+          console.log("BOX COUNT", this.boxes)
+          console.log("PREV COUNT", this.previouslyCreatedBox)
           this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
             this.closeViewer()
           })
@@ -509,9 +552,21 @@ export default {
         console.log('Edit Label', error)
         throw error
       }
+    },
+    async deleteLabelsInImage (id) {
+      var url ='api/label/' + id
+      console.log(id)
+      try {
+        var response = await this.$axios.delete(url)
+        return response.data.status
+      } catch (error) {
+        console.log('Delete Label', error)
+        throw error
+      }
     }
   }
 }
+
 </script>
 
 <style scoped>

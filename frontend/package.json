@@ -19,9 +19,12 @@
     "debounce": "^1.2.0",
     "js-cookie": "^2.2.1",
     "nuxt": "^2.0.0",
+    "vue-dynamic-dropdown": "^1.0.12",
+    "vue-json-viewer": "^2.2.11",
     "vue-simple-suggest": "^1.10.1",
     "vue-sweetalert2": "^3.0.1",
-    "vue2-dropzone": "^3.6.0"
+    "vue2-dropzone": "^3.6.0",
+    "xml-js": "^1.6.11"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.27",
