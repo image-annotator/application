@@ -123,7 +123,8 @@ export default {
       if (this.bWidth < 80) {
         return this.bWidth + 5
       } else {
-        return 80
+        console.log("Length: ", this.bContent.length)
+        return Math.max(80, (this.bContent.length) * 8 + 7)
       }
     },
     isDeleteActive () {

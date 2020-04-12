@@ -81,7 +81,7 @@
       <div class="row mt-2">
         <div class="col">
           <button
-            class="btn-border btn-action field-length form-content" @click="handleOnSubmit(new_password, user.passcode, old_password, user.user_id, confirm_new_password)"
+            class="btn-border btn-action field-length form-content" @click="handleOnSubmit(new_password, user.passcode, old_password, confirm_new_password)"
           > 
             <p class="btn-content">
               Change Password
@@ -94,6 +94,7 @@
 </template>
 
 <script>
+import cookies from 'js-cookie'
 import { mapGetters } from 'vuex'
 
 export default {  
@@ -115,10 +116,10 @@ export default {
         icon: 'success'
       })
     },
-    approveConfirmation (new_password, id) {
-      var payloadUsername =""
-
-      var url = 'api/user/' + id
+    approveConfirmation (new_password) {
+      var payloadUsername = this.user.username
+      var auth = cookies.get('Authorization')
+      var url = 'api/user/changecredential/' + auth
       this.$axios.put(url, {
         username: payloadUsername,
         passcode: new_password
@@ -145,15 +146,15 @@ export default {
         text: text
       })
     },
-    handleOnSubmit (newValue, passcode, oldlValue, id, confirmNewValue) {
+    handleOnSubmit (newValue, passcode, oldValue, confirmNewValue) {
       this.isPasswordTrue(),
       this.isConfirmPasswordTrue()
       // Send to backend
-      if ((passcode == oldlValue) && (confirmNewValue == newValue)) {
+      if ((passcode == oldValue) && (confirmNewValue == newValue)) {
         var text = "You will change password"
         this.showConfirmation("Are You Sure?", text).then((result) => {
           if (result.value) {
-            this.approveConfirmation(newValue, id)
+            this.approveConfirmation(newValue)
           } else {
             this.showCancelledAlert()
           }

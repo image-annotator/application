@@ -42,6 +42,11 @@ export default {
       ]
     }
   },
+  watch: {
+    bContent (value) {
+      this.bContent = value.toLowerCase()
+    }
+  },
   async mounted () {
     this.bContent = this.initialData
     const response = await this.$axios.get('/api/content/?suggestion=').catch((error) => console.error(error))
@@ -64,10 +69,13 @@ export default {
     })
   },
   methods: {
+    showInput (event) {
+      console.log("event: ", event)
+    },
     disableForm() {
       this.isDisabled = true
       this.$refs["form"].isInFocus = false
-      // this.$refs["form"].$el.querySelector(".default-input").blur()
+      // this.bContent = this.bContent.toLowerCase()
       this.$emit("onDisableForm", this.bContent)
     },
     enableForm() {
