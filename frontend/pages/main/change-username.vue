@@ -33,9 +33,9 @@
         </p>
       </div>
 
-      <div class="row mt-4">
+      <div class="row mt-2">
         <div class="col">
-          <p class="form-title"> 
+          <p class="form-title">
             New Username 
           </p>
         </div>
@@ -56,7 +56,7 @@
       <div class="row mt-2">
         <div class="col">
           <button
-            class="btn-border btn-action field-length form-content" @click="handleOnSubmit(new_username, user.username, old_username, user.user_id)"
+            class="btn-border btn-action field-length form-content" @click="handleOnSubmit(new_username, user.username, old_username, user.passcode)"
           > 
             <p class="btn-content">
               Change Username
@@ -70,7 +70,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-
+import cookies from 'js-cookie'
 export default {  
   data: function() {
     return {
@@ -90,13 +90,13 @@ export default {
         this.userTrue = false
       }
     },
-    handleOnSubmit (newValue, username, oldValue, user_id) {
+    handleOnSubmit (newValue, username, oldValue, passcode) {
       if(username == oldValue) {
         this.isUsernameTrue()
         var text = "You will change username"
         this.showConfirmation("Are You Sure?", text).then((result) => {
           if (result.value) {
-            this.approveConfirmation(newValue, user_id)
+            this.approveConfirmation(newValue, passcode)
           } else {
             this.showCancelledAlert()
           }
@@ -120,11 +120,12 @@ export default {
         icon: 'success'
       })
     },
-    approveConfirmation (new_username, id) {
+    approveConfirmation (new_username, passcode) {
       var payloadUsername =new_username
-      var url = 'api/user/' + id
+      var url = 'api/user/changecredential/' + cookies.get('Authorization')
       this.$axios.put(url, {
         username: payloadUsername,
+        passcode: passcode
       }).then(
         this.showNewUsername(payloadUsername),
       ).catch(error => console.error(error))

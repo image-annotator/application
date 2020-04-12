@@ -38,13 +38,13 @@ export default {
 
 <style scoped>
   .bg-toolbar {
-    background-color: #F7F7F7;
+    background-color: #474747;
     width: 3.75vw;
   }
 
   .icon {
     font-size: 1.1rem;
-    color: #707070;
+    color: #8e8383;
     margin-top: 27px;
   }
 

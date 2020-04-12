@@ -1,10 +1,13 @@
 <template>
   <article class="blog-card" :class="{'disable': isCurrentlyLabeled}">
     <img class="post-image" :class="{'post-image-disabled': isCurrentlyLabeled}" :src="imageURL">
-    <div class="article-details">
-      <h3 class="post-title" :class="{'post-title-disabled': isCurrentlyLabeled}"> 
+    <div :class="{'article-details': !isCurrentlyLabeled, 'article-labeled': isCurrentlyLabeled}">
+      <h3 class="post-title" :class="{'post-title-disabled': isCurrentlyLabeled, 'data-image-labeled': isCurrentlyLabeled}"> 
         {{ dataImageName }}
       </h3>
+      <h4 v-if="isCurrentlyLabeled" class="labeled-title">
+        This Image Is Currently Being Labeled
+      </h4>
     </div>
   </article>
 </template>
@@ -90,6 +93,22 @@ export default {
 
 .article-details {
   padding: 1.7rem;
+}
+
+.article-labeled {
+  margin-top: 0.5rem;
+  padding-top: 0.275rem;
+  padding-left: 0.5rem;
+}
+
+.data-image-labeled {
+  margin-top: 0.5rem;
+}
+
+.labeled-title {
+  font-size: 0.73rem;
+  color: #1E889B;
+  margin-top: 0.4rem;
 }
 
 .post-title {

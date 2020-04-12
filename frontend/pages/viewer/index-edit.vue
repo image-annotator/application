@@ -179,33 +179,35 @@ export default {
     async drawAllBox () {
       var allLabels = await this.getAllLabels()
       console.log(allLabels)
-      var labeledCount = Object.keys(allLabels).length
-      var imageAttributes = {
-        screenWidth: this.$refs.image.clientWidth,
-        screenHeight: this.$refs.image.clientHeight,
-        realWidth: this.$refs.image.naturalWidth,
-        realHeight: this.$refs.image.naturalHeight
-      }
-      while(labeledCount > this.labelCount){
-        this.previouslyCreatedBox[this.labelCount + 1] = allLabels[this.labelCount].label_id
-        var contentName = await this.getContentName(allLabels[this.labelCount].label_content_id)
-        console.log(contentName)
-        var screenImagesAttr = this.getScreenAttributes(imageAttributes, allLabels[this.labelCount].label_width, allLabels[this.labelCount].label_height, allLabels[this.labelCount].label_x_center, allLabels[this.labelCount].label_y_center)
-        let newBox = {
-          width: screenImagesAttr.width,
-          height: screenImagesAttr.height,
-          left: screenImagesAttr.left,
-          top: screenImagesAttr.top,
-          content: contentName, 
-          label_id: allLabels[this.labelCount].label_id
+      if (allLabels) {
+        var labeledCount = Object.keys(allLabels).length
+        var imageAttributes = {
+          screenWidth: this.$refs.image.clientWidth,
+          screenHeight: this.$refs.image.clientHeight,
+          realWidth: this.$refs.image.naturalWidth,
+          realHeight: this.$refs.image.naturalHeight
         }
-        this.labelCount++
-        this.boxes[this.labelCount] = newBox
-        this.boxesCount++
-        // console.log(newBox.content)
-        this.changeBoxContent(newBox.content, this.labelCount)
-        // this.makeCurrentBoxActive(this.labelCount)
-        this.resetDrawingBox()
+        while(labeledCount > this.labelCount){
+          this.previouslyCreatedBox[this.labelCount + 1] = allLabels[this.labelCount].label_id
+          var contentName = await this.getContentName(allLabels[this.labelCount].label_content_id)
+          console.log(contentName)
+          var screenImagesAttr = this.getScreenAttributes(imageAttributes, allLabels[this.labelCount].label_width, allLabels[this.labelCount].label_height, allLabels[this.labelCount].label_x_center, allLabels[this.labelCount].label_y_center)
+          let newBox = {
+            width: screenImagesAttr.width,
+            height: screenImagesAttr.height,
+            left: screenImagesAttr.left,
+            top: screenImagesAttr.top,
+            content: contentName, 
+            label_id: allLabels[this.labelCount].label_id
+          }
+          this.labelCount++
+          this.boxes[this.labelCount] = newBox
+          this.boxesCount++
+          // console.log(newBox.content)
+          this.changeBoxContent(newBox.content, this.labelCount)
+          // this.makeCurrentBoxActive(this.labelCount)
+          this.resetDrawingBox()
+        }
       }
       console.log("ANJAAY", this.boxes)
       console.log("ANJJJAY2", this.previouslyCreatedBox)
@@ -585,7 +587,7 @@ export default {
 
   .viewer-background {
     height: 100vh;
-    background-color: #E4E4E4;
+    background-color: #262626;
   }
 
   .center-horizontal {
@@ -615,6 +617,12 @@ export default {
 
   .btn-label-no-border {
     border: 0;
+    color: white;
+    background-color: #474747;
+  }
+
+  .btn-label-no-border:hover {
+    background-color: #8e8383;
   }
 
   .btn-lg {

@@ -60,7 +60,7 @@
     <div class="btn-save-section">
       <button
         type="button"
-        class="btn-label-no-border btn-lg btn-dark btn-text"
+        class="btn-label-no-border btn-lg btn-light btn-text"
         @click="saveImage"
       >
         Save Image
@@ -138,7 +138,7 @@ export default {
         this.cssCursor = 'cell'
         break
       case 'resize-box':
-        this.cssCursor = 'default'
+        this.cssCursor = 'pointer'
         break
       case 'delete-box':
         this.cssCursor = 'default'
@@ -382,7 +382,7 @@ export default {
 
   .viewer-background {
     height: 100vh;
-    background-color: #E4E4E4;
+    background-color: #262626;
   }
 
   .center-horizontal {
@@ -412,6 +412,12 @@ export default {
 
   .btn-label-no-border {
     border: 0;
+    color: white;
+    background-color: #474747;
+  }
+
+  .btn-label-no-border:hover {
+    background-color: #8e8383;;
   }
 
   .btn-lg {
