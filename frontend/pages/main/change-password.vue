@@ -11,7 +11,7 @@
       <div class="row mt-4">
         <div class="col">
           <p class="form-title"> 
-            Password 
+            Current Password 
           </p>
         </div>
       </div>
@@ -47,13 +47,13 @@
             v-model="new_password"
             type="password"
             class="form-control form-border field-length form-content"
-            placeholder="Type new username..."
+            placeholder="Type new password..."
             name="new_username"
           >
         </div>
       </div>
 
-      <div class="row mt-4">
+      <div class="row mt-2">
         <div class="col">
           <p class="form-title"> 
             Confirm New Password 
@@ -150,7 +150,7 @@ export default {
       this.isConfirmPasswordTrue()
       // Send to backend
       if ((passcode == oldlValue) && (confirmNewValue == newValue)) {
-        var text = "You wull change password"
+        var text = "You will change password"
         this.showConfirmation("Are You Sure?", text).then((result) => {
           if (result.value) {
             this.approveConfirmation(newValue, id)

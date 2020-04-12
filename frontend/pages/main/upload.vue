@@ -208,7 +208,7 @@ export default {
     },
     async handleUpload(){
       this.files = this.$refs.myDropzone.getAcceptedFiles()
-      if (!this.dataset) {
+      if (!this.dataset || this.dataset === "Choose Folder") {
         this.invalidFolder()
       } else {
         if(this.files.length === 0){

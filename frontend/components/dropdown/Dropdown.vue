@@ -1,11 +1,13 @@
 <template>
   <div :key="dataReady">
-    <vue-dropdown
-      ref="dropdown"
-      class="dropdown"
-      :config="config"
-      @setSelectedOption="setNewSelectedOption($event)"
-    />
+    <b-dropdown :text="dataset">
+      <b-dropdown-item
+        v-for="(item, idx) in config.options" :key="idx"
+        @click.native="setNewSelectedOption(item)"
+      > 
+        {{ item.value }}
+      </b-dropdown-item>
+    </b-dropdown>
   </div>
 </template>
 
@@ -25,13 +27,8 @@ export default {
     return {
       config: {
         options: [],
-        width: 200,
-        placeholder: "Choose folder",
-        backgroundColor: "white",
-        textColor: "#1E889B",
-        border: ""
       },
-      folder: [],
+      dataset: '',
       dataReady: false
     }
   },
@@ -42,6 +39,18 @@ export default {
       })
     }
     await this.getOptions()
+    if (this.dropdownValue) {
+      this.dataset = this.dropdownValue
+    } else {
+      this.dataset = "Choose Folder"
+      console.log("Dataset: ", this.dataset)
+      if (!this.isFolderNotExist()) {
+        if (!this.isUpload) {
+          this.dataset = this.config.options[0].value
+        }
+      }
+      this.$emit("onDatasetChanged", this.dataset)
+    }
     this.dataReady = true
   },
   methods: {
@@ -58,19 +67,6 @@ export default {
           })
         }
       }
-      if (this.dropdownValue) {
-        this.config.placeholder = this.dropdownValue
-      } else {
-        if (!this.isFolderNotExist()) {
-          if (this.isUpload) {
-            this.config.placeholder = this.config.options[1].value
-          } else {
-            this.config.placeholder = this.config.options[0].value
-          }
-          this.dataset = this.config.placeholder
-          this.$emit("onDatasetChanged", this.dataset)
-        }
-      }
     },
     isFolderNotExist () {
       if (this.isUpload) {
@@ -80,7 +76,6 @@ export default {
       }
     },
     async setNewSelectedOption(selectedOption) {
-      this.config.placeholder = selectedOption.value
       this.dataset = selectedOption.value
       if (this.dataset === "Add New Folder") {
         this.createNewFolder()
@@ -89,29 +84,36 @@ export default {
     },
     createNewFolder() {
       this.$swal.fire({
-        title: "New folder name",
+        title: "New folder name: ",
         input:'text',
         inputValidator: (value) => {
           if (!value) {
             return 'You need to write something!'
           } else {
-            this.config.placeholder = value
             this.dataset = value
             this.$emit("onDatasetChanged", this.dataset)
           }
         },
         confirmButtonColor: '#11616F',
         showCancelButton: true
-      }) 
+      }).then((result) => {
+        console.log("Result: ", result)
+        if (!result.value) {
+          this.dataset = "Choose Folder"
+          console.log("Dataset: ", this.dataset)
+        }
+      })
     },
   }
 }
 </script>
 
-<style scoped>
-  .dropdown {
-    -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-    -moz-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
-    box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
+<style>
+  .dropdown .btn {
+    background-color: #1E889B;
+    color: white;
+    font-family: "Open Sans Bold";
+    border: 0;
+    border-radius: 7px;
   }
 </style>

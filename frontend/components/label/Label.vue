@@ -3,27 +3,27 @@
     <div class="ml-4">
       <div class="row">
         <div class="col">
-          <h5 class="title users-margin"> 
-            {{ title }}
-          </h5>
+          <div class="flex-display">
+            <h5 class="title users-margin"> 
+              {{ title }}
+            </h5>
+            <div class="slot-margin">
+              <slot />
+            </div>
+          </div>
         </div>
       </div>
       <br>
       <div class="row form-title-margin">
         <div class="col">
-          <div class="flex-display">
-            <input
-              id="imagesID"
-              type="text"
-              class="form-control form-border field-length form-content"
-              placeholder="Search for file name..."
-              name="imagesID"
-              @input="debounceWrapper"
-            >
-            <div class="slot-margin">
-              <slot />
-            </div>
-          </div>
+          <input
+            id="imagesID"
+            type="text"
+            class="form-control form-border field-length form-content"
+            placeholder="Search for file name..."
+            name="imagesID"
+            @input="debounceWrapper"
+          >
         </div>
       </div>
       <br>
@@ -43,6 +43,14 @@
           </div>
         </b-col>
       </b-row>
+      <div
+        v-if="Object.keys(images).length === 0"
+        id="container" class="no-image-height animated fast fadeIn"
+      >
+        <p class="no-image">
+          No Images Found
+        </p>
+      </div>
       <b-pagination
         v-model="page"
         class="mt-3"
@@ -114,7 +122,15 @@ export default {
   async created () {
     this.images = {}
     await this.getAllImagesWithLabelStatus()
-    this.timer = setInterval(this.getAllImagesWithLabelStatus, 10000)
+    if (!this.isOutputViewer) {
+      this.timer = setInterval(this.getAllImagesWithLabelStatus, 10000)
+    } else {
+      if (Object.keys(this.images).length === 0) {
+        this.$emit("onEmpty", true)
+      } else {
+        this.$emit("onEmpty", false)
+      }
+    }
   },
   beforeDestroy () {
     clearInterval(this.timer)
@@ -143,6 +159,7 @@ export default {
           this.images[image.ImageID] = imageObj
         })
       }
+      
     },
     async getImageCurrentlyBeingLabelled() {
       var url = '/api/accesscontrol'
@@ -164,7 +181,9 @@ export default {
     async getAllImagesWithLabelStatus() {
       this.images = {}
       await this.getAllImages(this.perPage, this.page, this.keyword)
-      await this.getImageCurrentlyBeingLabelled()
+      if (!this.isOutputViewer) {
+        await this.getImageCurrentlyBeingLabelled()
+      }
     },
     getCurrentTime () {
       var date = new Date()
@@ -242,12 +261,21 @@ export default {
   }
 
   .slot-margin {
-    margin-left: 1.5rem;
-    margin-top: -0.15rem;
+    margin-left: 2.25rem;
+    margin-top: 3.25rem;
   }
 
   .flex-display {
     display: flex;
+  }
+
+  .no-image {
+    font-family: "Open Sans Bold";
+    color: #D6D6D6;
+  }
+
+  .no-image-height {
+    height: 2.5rem;
   }
 
 </style>

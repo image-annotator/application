@@ -119,6 +119,7 @@ export default {
     handleSuccessResponse (response) {
       // Set cookie
       cookies.remove('Authorization')
+      console.log('Authorization', response.data.data.cookie)
       cookies.set('Authorization', response.data.data.cookie)
       this.$router.push('/main/label')
     },

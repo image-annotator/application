@@ -10,7 +10,7 @@
           />
         </div>
       </div>
-      <div :key="updateUI" class="row animated fadeIn">
+      <div :key="updateUI" class="row animated fadeIn" style="margin-top: -1rem;">
         <div class="col">
           <div style="display: flex">
             <h5 class="title users-margin">
@@ -18,8 +18,11 @@
               <span v-if="!dataset" style="margin-left: 20px; font-size: 0.85rem;">
                 Choose Folder First 
               </span>
+              <span v-else-if="empty" style="margin-left: 20px; font-size: 0.85rem;">
+                No Images Found
+              </span>
             </h5>
-            <button v-if="dataset" class="btn-white margin-download" @click="downloadJSON()">
+            <button v-if="dataset && !empty" class="btn-white margin-download" @click="downloadJSON()">
               {{ dataset }}.json
               <i class="ml-3 mt-1 fas fa-download" />
             </button>
@@ -36,6 +39,7 @@
         title="JSON Per Image"
         viewer-u-r-l="/main/output-view"
         :output="{type: 'json', standard: standard}"
+        @onEmpty="handleOnEmpty"
       />
     </div>
   </div>
@@ -95,7 +99,6 @@ export default {
       var element = document.createElement('a')
       // var label = await this.getAllLabel(this.standard)
       var COCOJSON = await this.getCOCOJSON()
-      console.log("COCO: ", COCOJSON)
       var text = JSON.stringify(COCOJSON, 0, 5)
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text))
       element.setAttribute('download',filename)
@@ -175,7 +178,7 @@ export default {
 
   .margin-dropdown {
     margin-top: 3.5rem;
-    margin-left: -0.775rem;
+    margin-left: -0.1rem;
   }
 
 </style>

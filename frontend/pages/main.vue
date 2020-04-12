@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
       <Navbar :username="user.username" :role="user.role" />
-      <nuxt-child />
+      <nuxt-child style="margin-left: 250px;" />
     </div>
   </div>
 </template>

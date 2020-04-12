@@ -10,7 +10,7 @@
           />
         </div>
       </div>
-      <div :key="updateUI" class="row animated fadeIn">
+      <div :key="updateUI" class="row animated fadeIn" style="margin-top: -1rem;">
         <div class="col">
           <div style="display: flex">
             <h5 class="title users-margin">
@@ -18,8 +18,11 @@
               <span v-if="!dataset" style="margin-left: 20px; font-size: 0.85rem;">
                 Choose Folder First 
               </span>
+              <span v-else-if="empty" style="margin-left: 20px; font-size: 0.85rem;">
+                No Images Found
+              </span>
             </h5>
-            <button v-if="dataset" class="btn-white margin-download" @click="downloadXML()">
+            <button v-if="dataset && !empty" class="btn-white margin-download" @click="downloadXML()">
               {{ dataset }}.xml
               <i class="ml-3 mt-1 fas fa-download" />
             </button>
@@ -36,6 +39,7 @@
         title="XML Per Image"
         viewer-u-r-l="/main/output-view"
         :output="{type: 'xml', standard: standard}"
+        @onEmpty="handleOnEmpty"
       />
     </div>
   </div>
@@ -177,7 +181,7 @@ export default {
 
   .margin-dropdown {
     margin-top: 3.5rem;
-    margin-left: -0.775rem;
+    margin-left: -0.1rem;
   }
 
 </style>

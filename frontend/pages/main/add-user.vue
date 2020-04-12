@@ -1,5 +1,5 @@
 <template>
-  <div class="col center center-inside-add-user">
+  <div class="col">
     <div class="ml-4">
       <div class="row">
         <div class="col">
