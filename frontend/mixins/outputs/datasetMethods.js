@@ -2,7 +2,8 @@ export default {
   data () {
     return {
       dataset: '',
-      updateUI: false
+      updateUI: false,
+      empty: false
     }
   },
   mounted () {
@@ -15,6 +16,10 @@ export default {
     changeDataset (newDataset) {
       this.dataset = newDataset
       this.updateUI = !this.updateUI
+    },
+    handleOnEmpty (isEmpty) {
+      this.empty = isEmpty
+      console.log("this empty: ", this.empty)
     }
   }
 }

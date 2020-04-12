@@ -1,148 +1,160 @@
 <template>
-  <b-nav vertical class="side-bar-layout side-bar-bg side-bar-font side-bar-padding">
-    <!-- User profile info -->
-    <b-nav-item link-classes="side-bar-color mt-5 ml-4">
-      <!-- Username -->
-      <div id="user-name">
-        {{ username }}
-      </div>
-      <!-- Role -->
-      <div id="role">
-        Role: {{ role.charAt(0).toUpperCase() + role.slice(1) }}
-      </div>
-    </b-nav-item>
-
-    <div v-if="role === 'admin'">
-      <!-- Upload Dataset -->
-      <b-nav-item link-classes="side-bar-color mt-5 ml-4" @click="changeActiveElmtID('upload-dataset')">
-        <div id="upload-dataset">
-          Upload Dataset
+  <b-sidebar class="side-bar-layout side-bar-bg side-bar-font side-bar-padding">
+    <b-nav vertical>
+      <!-- User profile info -->
+      <b-nav-item link-classes="side-bar-color mt-5 ml-4">
+        <!-- Username -->
+        <div id="user-name">
+          {{ username }}
         </div>
-      </b-nav-item>
-    </div>
-
-    <!-- Label Dataset -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('label-dataset')">
-      <div id="label-dataset">
-        Label Dataset
-      </div>
-    </b-nav-item>
-
-    <div v-if="role === 'editor' || role === 'admin'">
-      <!-- Edit Dataset -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
-        <div id="edit-dataset">
-          Edit Dataset
-        </div>
-      </b-nav-item>
-    </div>
-
-    <!-- COCO Output -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
-      <div id="coco-output">
-        COCO Output
-      </div>
-    </b-nav-item>
-
-    <!-- Pascal Output -->
-    <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('pascal-output')">
-      <div id="pascal-output">
-        Pascal VOC Output
-      </div>
-    </b-nav-item>
-
-    <div v-if="role === 'admin'">
-      <!-- User Management -->
-      <b-nav-item
-        v-b-toggle.collapse-user-management
-        link-classes="side-bar-color mt-3 ml-4"
-      >
-        <div class="icon-text-wrapper">
-          User Management
-          <i class="ml-3 mt-1 fas fa-caret-down" />
+        <!-- Role -->
+        <div id="role">
+          <div v-if="role">
+            Role: {{ role.charAt(0).toUpperCase() + role.slice(1) }}
+          </div>
         </div>
       </b-nav-item>
 
-      <b-collapse id="collapse-user-management" visible role="tabpanel">
-        <!-- Show All Users -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('show-all-users')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-users" />
-            <div id="show-all-users">
-              Show All Users
-            </div>
-          </div>
-        </b-nav-item>
-
-        <!-- Add User -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('add-user')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-plus-circle" />
-            <div id="add-user">
-              Add User
-            </div>
-          </div>
-        </b-nav-item>
-
-        <!-- Edit User -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-user')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-pen" />
-            <div id="edit-user">
-              Edit User
-            </div>
-          </div>
-        </b-nav-item>
-
-        <!-- Delete User -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-trash" />
-            <div id="delete-user">
-              Delete User
-            </div>
-          </div>
-        </b-nav-item>
-      </b-collapse>
-    </div>
-    
-    <div>
-      <b-nav-item
-        v-b-toggle.collapse-settings
-        link-classes="side-bar-color mt-3 ml-4"
-      >
-        <div class="icon-text-wrapper">
-          Settings
-          <i class="ml-3 mt-1 fas fa-caret-down" />
+      <!-- Logout -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="logout()">
+        <div style="font-size: 0.77rem;">
+          Logout
         </div>
       </b-nav-item>
 
-      <b-collapse id="collapse-settings" visible role="tabpanel">
-        <!-- Change Username -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-username')">
+      <div v-if="role === 'admin'">
+        <!-- Upload Dataset -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('upload-dataset')">
+          <div id="upload-dataset">
+            Upload Dataset
+          </div>
+        </b-nav-item>
+      </div>
+
+      <!-- Label Dataset -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('label-dataset')">
+        <div id="label-dataset">
+          Label Dataset
+        </div>
+      </b-nav-item>
+
+      <div v-if="role === 'editor' || role === 'admin'">
+        <!-- Edit Dataset -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-dataset')">
+          <div id="edit-dataset">
+            Edit Dataset
+          </div>
+        </b-nav-item>
+      </div>
+
+      <!-- COCO Output -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
+        <div id="coco-output">
+          COCO Output
+        </div>
+      </b-nav-item>
+
+      <!-- Pascal Output -->
+      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('pascal-output')">
+        <div id="pascal-output">
+          Pascal VOC Output
+        </div>
+      </b-nav-item>
+
+      <div v-if="role === 'admin'">
+        <!-- User Management -->
+        <b-nav-item
+          v-b-toggle.collapse-user-management
+          link-classes="side-bar-color mt-3 ml-4"
+        >
           <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-user" />
-            <div id="change-username">
-              Change Username
-            </div>
+            User Management
+            <i class="ml-3 mt-1 fas fa-caret-down" />
           </div>
         </b-nav-item>
 
-        <!-- Change Password -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4 mb-5" @click="changeActiveElmtID('change-password')">
-          <div class="icon-text-wrapper">
-            <i class="mt-1 mr-3 fas fa-cog" />
-            <div id="change-password">
-              Change Password
+        <b-collapse id="collapse-user-management" visible role="tabpanel">
+          <!-- Show All Users -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('show-all-users')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-users" />
+              <div id="show-all-users">
+                Show All Users
+              </div>
             </div>
+          </b-nav-item>
+
+          <!-- Add User -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('add-user')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-plus-circle" />
+              <div id="add-user">
+                Add User
+              </div>
+            </div>
+          </b-nav-item>
+
+          <!-- Edit User -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('edit-user')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-pen" />
+              <div id="edit-user">
+                Edit User
+              </div>
+            </div>
+          </b-nav-item>
+
+          <!-- Delete User -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-trash" />
+              <div id="delete-user">
+                Delete User
+              </div>
+            </div>
+          </b-nav-item>
+        </b-collapse>
+      </div>
+      
+      <div>
+        <b-nav-item
+          v-b-toggle.collapse-settings
+          link-classes="side-bar-color mt-3 ml-4"
+        >
+          <div class="icon-text-wrapper">
+            Settings
+            <i class="ml-3 mt-1 fas fa-caret-down" />
           </div>
         </b-nav-item>
-      </b-collapse>  
-    </div>
-  </b-nav>
+
+        <b-collapse id="collapse-settings" visible role="tabpanel">
+          <!-- Change Password -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('change-password')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-cog" />
+              <div id="change-password">
+                Change Password
+              </div>
+            </div>
+          </b-nav-item>
+          
+          <!-- Change Username -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4 mb-5" @click="changeActiveElmtID('change-username')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-user" />
+              <div id="change-username">
+                Change Username
+              </div>
+            </div>
+          </b-nav-item>
+        </b-collapse>  
+      </div>
+    </b-nav>
+  </b-sidebar>
 </template>
 
 <script>
+import cookies from 'js-cookie'
 export default {
   props: {
     username: {
@@ -257,6 +269,10 @@ export default {
         this.changeActiveElmtID(elmtID)
         this.setClass(elmtID, 'active')
       }
+    },
+    logout () {
+      cookies.remove('Authorization')
+      this.$nuxt.$router.replace({ path: '/'})
     }
   }
 }
@@ -264,16 +280,27 @@ export default {
 
 <style scoped>
   .side-bar-layout {
+    /* height: 100%; */
     height: auto;
     left: 0;
 
-    min-height: 100vh;
+    /* min-height: 100vh; */
     width: 250px;
 
     padding-right: 30px;
 
     overflow-y: scroll;
-    position: relative;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
+
+  .side-bar-layout::-webkit-scrollbar {
+    display: none;
+  }
+
+  .side-bar-layout {
+      -ms-overflow-style: none;
   }
 
   .side-bar-bg {

@@ -1,7 +1,7 @@
 <template>
   <Label
     :key="dataset"
-    title="Label Labeled Images"
+    title="Edit Labeled Images"
     viewer-u-r-l="/viewer/index-edit"
     :is-labeled="isLabeled"
     :dataset="dataset"
