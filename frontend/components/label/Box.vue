@@ -12,7 +12,7 @@
 
     <div v-if="isDeleteActive">
       <i
-        class="icon-trash fas fa-trash shadow"
+        class="icon-trash fas fa-times shadow"
         :style="{ top: bTop -8 + 'px', left: bLeft + -4 + 'px'}"
         @click="deleteBox"
       />
@@ -189,17 +189,13 @@ export default {
 <style scoped>
     .box, .box-delete {
         position: absolute;
-        border: 3px #F0F801 solid;
+        border: 3px #219DFF solid;
         z-index: 3;
     }
 
-    .box:hover, .box-delete:hover , .box.active {
-      background-color: rgba(144, 238, 144, .3);
+    .box:hover, .box-delete, .box.active {
+      background-color: rgba(30, 136, 155, .3);
       cursor: pointer;
-    }
-
-    .box-delete:hover {
-      background-color: rgba(214, 36, 70, .3);
     }
 
     #bIndex {
@@ -247,14 +243,20 @@ export default {
     }
 
     .icon-trash {
-      color: red;
+      color: white;
+      background-color: #FA6159;
+
+      font-size: 0.75rem;
+
+      border-radius: 5px;
+      padding: 5px;
       position: absolute;
-      z-index: 20;
+      z-index: 30;
       cursor: pointer;
     }
 
     .icon-trash:hover {
-      color: #F0F801;
+      background-color: red;
     }
 
     

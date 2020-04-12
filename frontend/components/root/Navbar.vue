@@ -1,5 +1,5 @@
 <template>
-  <b-sidebar class="side-bar-layout side-bar-bg side-bar-font side-bar-padding">
+  <b-nav class="side-bar-layout side-bar-bg side-bar-font side-bar-padding">
     <b-nav vertical>
       <!-- User profile info -->
       <b-nav-item link-classes="side-bar-color mt-5 ml-4">
@@ -150,7 +150,7 @@
         </b-collapse>  
       </div>
     </b-nav>
-  </b-sidebar>
+  </b-nav>
 </template>
 
 <script>
