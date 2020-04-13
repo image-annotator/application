@@ -1,0 +1,11 @@
+stages:
+  - build
+
+lint:
+  stage: build
+  tags:
+    - label-1
+  script:
+    - 'cd frontend'
+    - 'yarn install'
+    - 'node_modules/eslint/bin/eslint.js --ext vue .'

@@ -1,3 +1,4 @@
+import { backendURL } from "./config.js"
 
 export default {
   mode: 'universal',
@@ -23,11 +24,18 @@ export default {
   ** Global CSS
   */
   css: [
+    '@/assets/css/fonts.css',
+    '@/assets/css/main.css',
+    '@/static/fontawesome-free-5.9.0-web/css/all.css'
   ],
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/axios',
+    { src: '~/plugins/vue-sweetalert2', ssr: false },
+    { src: '~/plugins/json-viewer', ssr: false },
+    { src: '~/plugins/vue-dropzone', ssr: false }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -40,7 +48,19 @@ export default {
   modules: [
     // Doc: https://bootstrap-vue.js.org
     'bootstrap-vue/nuxt',
+    '@nuxtjs/axios'
   ],
+  router: {
+    middleware: ['auth']
+  },
+  axios: {
+    // See https://github.com/nuxt-community/axios-module#options
+    baseURL: backendURL
+  },
+  server: {
+    port: 3000, // default: 3000
+    host: '0.0.0.0' // default: localhost
+  },
   /*
   ** Build configuration
   */
@@ -49,6 +69,15 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      // Run ESLint on save
+      if (ctx.isDev && ctx.isClient) {
+        config.module.rules.push({
+          enforce: "pre",
+          test: /\.(js|vue)$/,
+          loader: "eslint-loader",
+          exclude: /(node_modules)/
+        })
+      }
     }
   }
 }

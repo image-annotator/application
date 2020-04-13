@@ -1,0 +1,242 @@
+.table {
+    font-size: 0.83rem;
+}
+
+.table-width {
+    width: calc(80vw - 60px);
+    max-width: 1000px;
+
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+    .table-width {
+        width: calc(80vw - 260px);
+    }
+}
+
+.title {
+    font-family: 'Open Sans Bold';
+    color: #1E889B;
+    letter-spacing: 0.035rem;
+}
+
+.users-margin {
+    margin-top: 3.7rem;
+}
+
+.paragraph {
+    font-size: 0.8rem;
+    max-width: 70vw;
+}
+
+.sub-title {
+    font-size: 1rem;
+    /* font-weight: 300; */
+}
+
+/* Forms */
+
+.form-title, .form-content, .btn-content, .form-error {
+    font-size: 0.85rem;
+    color: #1E889B;
+    letter-spacing: 0.025rem;
+
+    font-family: 'Open Sans Regular';
+  }
+
+  .form-error {
+    color: red;
+    font-size: 0.7rem;
+    font-family: 'Open Sans Bold';
+  }
+
+  .btn-content {
+    color: white;
+    margin-top: 5px; 
+    margin-left: -5px;
+  }
+
+  .form-title-margin {
+    margin-top: -5px;
+  }
+
+.field-length {
+    width: 16.5rem;
+    height: 2.25rem;
+    padding-left: 1rem;
+    margin-bottom: 0.65rem;
+}
+
+.form-border, .btn-border, .form-border-error {
+    border-radius: 8px;
+    border: 1px solid #1E889B;
+}
+
+.form-border-error {
+    border: 1px solid red;
+}
+
+/* Buttons */
+
+.btn-action {
+    cursor: pointer;
+    background-color: #1E889B;
+    height: 2.3rem;
+}
+
+.btn-disabled {
+    background-color: gray;
+}
+
+.btn-action:hover {
+    background-color: #23B1CB;
+}
+
+/* Center */
+.center {
+    align-items: center;
+    display: flex;
+  }
+
+  .center-inside {
+    margin-left: calc(50vw - 8.25rem);
+  }
+
+  .center-inside-add-user {
+    margin-left: calc(50vw - 300px);
+    margin-top: -160px;
+  }
+
+
+.page-item .page-link {
+    color: #1E889B !important;
+    border: 1px #d6d6d6 solid !important;
+}
+
+.page-item.active .page-link {  
+    background-color:#1E889B !important;  
+    color: white !important;
+
+    border: 0 !important;
+}
+
+.page-item.disabled .page-link {
+    background-color:#f6f6f6 !important;
+    border: 0 !important;
+}
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+  background-color: #E9F4F6;
+
+}
+/* Font color of table */
+.table-striped>tbody,  .table-striped>thead {
+  color:#1E889B;
+}
+
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  -webkit-animation-name: fadeIn;
+  animation-name: fadeIn;
+}
+
+.animated {
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.animated.infinite {
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+.animated.delay-1s {
+  -webkit-animation-delay: 1s;
+  animation-delay: 1s;
+}
+
+.animated.delay-2s {
+  -webkit-animation-delay: 2s;
+  animation-delay: 2s;
+}
+
+.animated.delay-3s {
+  -webkit-animation-delay: 3s;
+  animation-delay: 3s;
+}
+
+.animated.delay-4s {
+  -webkit-animation-delay: 4s;
+  animation-delay: 4s;
+}
+
+.animated.delay-5s {
+  -webkit-animation-delay: 5s;
+  animation-delay: 5s;
+}
+
+.animated.fast {
+  -webkit-animation-duration: 800ms;
+  animation-duration: 800ms;
+}
+
+.animated.faster {
+  -webkit-animation-duration: 500ms;
+  animation-duration: 500ms;
+}
+
+.animated.slow {
+  -webkit-animation-duration: 2s;
+  animation-duration: 2s;
+}
+
+.animated.slower {
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+}
+
+@media (print), (prefers-reduced-motion: reduce) {
+  .animated {
+    -webkit-animation-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    -webkit-transition-duration: 1ms !important;
+    transition-duration: 1ms !important;
+    -webkit-animation-iteration-count: 1 !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  /* display: none; <- Crashes Chrome on hover */
+  -webkit-appearance: none;
+  margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+  -moz-appearance:textfield; /* Firefox */
+}

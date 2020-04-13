@@ -1,72 +1,167 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        frontend
-      </h1>
-      <h2 class="subtitle">
-        Image Labeling Program for ITB
-      </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+  <div class="container-fluid">
+    <div class="row bg-auth center">
+      <div class="col center-inside">
+        <!-- Username -->
+        <div class="row">
+          <div class="col">
+            <h5 class="form-title font-auth"> 
+              Username
+            </h5>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col">
+            <input
+              v-model="usernameForm.name"
+              type="text"
+              :class="['form-control', 'field-length', 'form-content', usernameForm.isDirty && isUsernameFormEmpty ? 'form-border-error': 'form-border']"
+              placeholder="Type username..."
+              name="username"
+              @focus="usernameForm.isDirty = true"
+            >
+            <div v-if="isUsernameFormEmpty && usernameForm.isDirty">
+              <p class="form-error"> 
+                Username cannot be empty.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Passcode -->
+        <div class="row mt-2">
+          <div class="col">
+            <h5 class="form-title font-auth"> 
+              Passcode
+            </h5>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col">
+            <input
+              v-model="passcodeForm.name"
+              type="password"
+              :class="['form-control', 'field-length', 'form-content', passcodeForm.isDirty && isPasscodeFormEmpty ? 'form-border-error': 'form-border']"
+              placeholder="Type passcode..."
+              name="passcode"
+              @focus="passcodeForm.isDirty = true"
+            >
+            <div v-if="isPasscodeFormEmpty && passcodeForm.isDirty">
+              <p class="form-error"> 
+                Passcode cannot be empty.
+              </p>
+            </div>
+          </div>
+        </div>
+        <!-- Button -->
+        <div class="row mt-2">
+          <div class="col">
+            <button
+              :class="['btn-border', 'btn-action', 'field-length', 'form-content']" @click="handleOnLogin()"
+            > 
+              <p class="btn-content">
+                Login
+              </p>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
+import cookies from 'js-cookie'
 
 export default {
-  components: {
-    Logo
+  data () {
+    return {
+      usernameForm: {
+        name: '',
+        isDirty: ''
+      },
+      passcodeForm: {
+        name: '',
+        isDirty: ''
+      }
+    }
+  },
+  computed: {
+    isUsernameFormEmpty () {
+      return this.usernameForm.name === ''
+    },
+    isPasscodeFormEmpty () {
+      return this.passcodeForm.name === ''
+    }
+  },
+  methods: {
+    async handleOnLogin () {
+      if (!this.isUsernameFormEmpty && !this.isPasscodeFormEmpty) {
+        var payload = {
+          "username": this.usernameForm.name,
+          "passcode": this.passcodeForm.name
+        }
+        var url = '/api/user/login'
+        const response = await this.$axios.post(url, payload).catch(error => console.error(error))
+        
+        this.handleResponse(response) 
+      } else {
+        this.usernameForm.isDirty = true
+        this.passcodeForm.isDirty = true
+      }
+    },
+    handleResponse (response) {
+      if (response && response.status === 200) {
+        this.handleSuccessResponse(response)
+      } else {
+        this.handleIncorrectResponse()
+      }
+    },
+    handleSuccessResponse (response) {
+      // Set cookie
+      cookies.remove('Authorization')
+      
+      cookies.set('Authorization', response.data.data.cookie)
+      this.$router.push('/main/label')
+    },
+    handleIncorrectResponse () {
+      this.$swal.fire({
+        title: "Wrong Credentials",
+        icon: 'error',
+        text: 'Please fill your credentials again.'
+      })
+    }   
   }
 }
 </script>
 
-<style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
+<style scoped>
+  .bg-auth {
+    background-color: #005362;
+    height: 100vh;
+  }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
+  .font-auth {
+    color: white;
+  }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
+  .form-error {
+    color: white;
+    font-family: "Open Sans Regular";
+  }
 
-.links {
-  padding-top: 15px;
-}
+  .form-border-error {
+    border: 1px solid white;
+  }
+
+  .btn-border {
+    border: 1px solid white;
+  }
+
+  .btn-action {
+    background-color: #005362;
+  }
+
+  .btn-action:hover {
+    background-color: #11616F;
+  }
 </style>
