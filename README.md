@@ -55,7 +55,11 @@ A step by step series of examples that tell you how to get a development env run
    ```
 8. Type your computer IPv4 private IP in the browser:
 
-   
+### How to use
+1. Type this in the login page:
+    - username: **adminone**
+    - password: **password**
+
 ### Frequent Use Guide
 
 1. After a successful installation you only need to run this command in the 'labeling/frontend' directory:
