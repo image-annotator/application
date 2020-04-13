@@ -42,7 +42,7 @@ A step by step series of examples that tell you how to get a development env run
    
 5. Open 'config.js' file with the editor of your choice.
 6. Change host variable with your computer IPv4 private IP in the 'config.js' below:
-
+   ![](screenshots/config.png)
    To get private IP in MacOS, please see this website:
     https://www.wikihow.com/Find-Your-IP-Address-on-a-Mac
 
@@ -53,7 +53,11 @@ A step by step series of examples that tell you how to get a development env run
    ```
    ./install
    ```
-8. Type your computer IPv4 private IP in the browser:
+8. Make sure that you have run backend server: https://gitlab.informatika.org/if3250-labeling-project/label-1-backend
+    ![](screenshots/login.png)
+
+9. Type your computer IPv4 private IP in the browser. Make sure you have run backend server first:
+    
 
 ### How to use
 1. Type this in the login page:
