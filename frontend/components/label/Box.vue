@@ -123,7 +123,7 @@ export default {
       if (this.bWidth < 80) {
         return this.bWidth + 5
       } else {
-        console.log("Length: ", this.bContent.length)
+        
         return Math.max(80, (this.bContent.length) * 8 + 7)
       }
     },

@@ -179,7 +179,7 @@ export default {
     },
     async drawAllBox () {
       var allLabels = await this.getAllLabels()
-      console.log(allLabels)
+      
       if (allLabels) {
         var labeledCount = Object.keys(allLabels).length
         var imageAttributes = {
@@ -191,7 +191,7 @@ export default {
         while(labeledCount > this.labelCount){
           this.previouslyCreatedBox[this.labelCount + 1] = allLabels[this.labelCount].label_id
           var contentName = await this.getContentName(allLabels[this.labelCount].label_content_id)
-          console.log(contentName)
+          
           var screenImagesAttr = this.getScreenAttributes(imageAttributes, allLabels[this.labelCount].label_width, allLabels[this.labelCount].label_height, allLabels[this.labelCount].label_x_center, allLabels[this.labelCount].label_y_center)
           let newBox = {
             width: screenImagesAttr.width,
@@ -204,20 +204,20 @@ export default {
           this.labelCount++
           this.boxes[this.labelCount] = newBox
           this.boxesCount++
-          // console.log(newBox.content)
+          // 
           this.changeBoxContent(newBox.content, this.labelCount)
           // this.makeCurrentBoxActive(this.labelCount)
           this.resetDrawingBox()
         }
       }
-      console.log("ANJAAY", this.boxes)
-      console.log("ANJJJAY2", this.previouslyCreatedBox)
+      
+      
     },
     async closeViewer () {
       try {
         await this.deleteImageAccessControlByImageID(this.image.id)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
       clearInterval(this.timer)
       this.$router.push({ path: '/main/edit', query: {dataset: this.dataset }})
@@ -228,7 +228,7 @@ export default {
         var response = await this.$axios.delete(url)
         return response.data.status
       } catch (error) {
-        console.log("Label" , error)
+        console.error(error)
         throw error
       }
     },
@@ -240,7 +240,7 @@ export default {
       }
     },
     startDrawingBox (e) {
-      console.log("Event: ", e)
+      
       this.drawingBox = {
         width: 0,
         height: 0,
@@ -261,17 +261,17 @@ export default {
       this.boxes[idxBox].top = attribute.bTop
       this.boxes[idxBox].width = attribute.bWidth
       this.boxes[idxBox].height = attribute.bHeight
-      console.log("idxBox: ", this.boxes[idxBox])
+      
     },
     makeCurrentBoxActive (activeBoxIndex) {
       this.activeBoxIndex = activeBoxIndex
     },
     deleteBox (index) {
-      console.log("DELETED BOXES", this.boxes[index])
-      console.log("DEL BOX KEY", Object.keys(this.boxes)[index-1])
+      
+      
       this.deletedBoxesCount++
       this.deletedBoxKey[this.deletedBoxesCount] = this.boxes[index].label_id
-      console.log("DEL ALL KEY", this.deletedBoxKey)
+      
       this.deletedBoxes[this.deletedBoxesCount] = this.boxes[index]
       delete this.boxes[index]
       this.activeBoxIndex = -1
@@ -326,17 +326,11 @@ export default {
           realHeight: this.$refs.image.naturalHeight
         }
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
-        console.log('GOGIGU SAVE', this.previouslyCreatedBox)
         if(this.boxesCount > countBox) {
           for (let delKey in this.deletedBoxes) {
-            console.log("AGHUY" + delKey)
+            
             if (delKey == Object.keys(this.deletedBoxKey)[delKey - 1 - move] ) {
-              // delete
-              console.log("DELETE" + (delKey))
-              console.log("BOX YG DIDELETED", this.deletedBoxes[delKey])
               try {
-                console.log('BACKEND')
-                console.log(Object.values(this.deletedBoxKey)[delKey - 1 - move])
                 await this.deleteLabelsInImage(Object.values(this.deletedBoxKey)[delKey - 1 - move])
               } catch (error) {
                 this.showFailedAlert("Error!", error)
@@ -346,18 +340,13 @@ export default {
                 if(Object.keys(this.previouslyCreatedBox)[prevKey] == Object.keys(this.deletedBoxKey)[delKey]) {
                   delete this.previouslyCreatedBox[Object.keys(this.deletedBoxKey)[prevKey]]
                 }
-                console.log(this.previouslyCreatedBox)
               }
             }
           }  
         } 
 
         for (let key in this.boxes) {
-          console.log("EDITTT", key, this.boxes[key])
           if (key == Object.keys(this.previouslyCreatedBox)[key - 1 - move] ) {
-            console.log('key', key)
-            console.log('prevs', Object.keys(this.previouslyCreatedBox)[key - 1 - move] )
-            console.log('PUT' + (key - 1))
             // edit
             boxPosition = this.getBoxPositionRelativeToImage(imagePosition, key, this.boxes)
             bWidth = this.boxes[key].width
@@ -375,9 +364,6 @@ export default {
                 label_content_id: content_id
               }
               labelPutPayload.push(singleBackendObj)
-              console.log('labelPayload: ', labelPutPayload[0])
-              console.log('BACKEND')
-              console.log(Object.values(this.previouslyCreatedBox)[key - 1 - move])
               await this.changeLabelsInImage(labelPutPayload[0], Object.values(this.previouslyCreatedBox)[key - 1 - move])
             } catch (error) {
               this.showFailedAlert("Error!", error)
@@ -386,14 +372,9 @@ export default {
             delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[key - 1 - move]]
             move++
             labelPutPayload.pop()
-            console.log(this.previouslyCreatedBox)   
+            
           } else {
-            console.log('key', key)
-            console.log('prevs', Object.keys(this.previouslyCreatedBox)[key - 1] )
-            console.log('POST' + (key-1))
             tempArray.push(this.boxes[key])
-            console.log('huyhuy',this.boxes[key])
-            console.log("asdasd", tempArray[(key - 1)])        
           }
         }
         // push new label
@@ -415,29 +396,22 @@ export default {
                 label_content_id: content_id
               }
               labelPayload.push(singleBackendObj)
-              console.log('labelPayload: ', labelPayload)
             } catch (error) {
               this.showFailedAlert("Error!", error)
               return
             }
           }
           try {
-            console.log("LABEL PAYLOAD: ", labelPayload)
             await this.createAllLabelsInImage(labelPayload)
             this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
               this.closeViewer()
             })
           } catch (error) {
-            console.log(error)
+            console.error(error)
             this.showFailedAlert("Error!", error)
             return
           }
         } else {
-          console.log("ALL DELETED BOXES", this.deletedBoxes)
-          console.log("BOX COUNT lenght:", this.boxesCount)
-          console.log("COUNT DELETED BOX", countBox)
-          console.log("BOX COUNT", this.boxes)
-          console.log("PREV COUNT", this.previouslyCreatedBox)
           this.showSuccessAlert("Success!", "Image has been saved!").then(() => {
             this.closeViewer()
           })
@@ -532,7 +506,7 @@ export default {
         var content_id = response.data.data['label_contents_id']
         return content_id
       } catch (error) {
-        console.log("Content: ", error)
+        console.error(error)
         throw error
       }
     },
@@ -542,29 +516,28 @@ export default {
         var response = await this.$axios.post(url, labelPayload)
         return response.data.status
       } catch (error) {
-        console.log("Label" , error)
+        console.error(error)
         throw error
       }
     },
     async changeLabelsInImage (labelPayload, id) {
       var url ='api/label/' + id
-      console.log(id)
       try {
         var response = await this.$axios.put(url, labelPayload)
         return response.data.status
       } catch (error) {
-        console.log('Edit Label', error)
+        console.error(error)
         throw error
       }
     },
     async deleteLabelsInImage (id) {
       var url ='api/label/' + id
-      console.log(id)
+      
       try {
         var response = await this.$axios.delete(url)
         return response.data.status
       } catch (error) {
-        console.log('Delete Label', error)
+        console.error(error)
         throw error
       }
     }

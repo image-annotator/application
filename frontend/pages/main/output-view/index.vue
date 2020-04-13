@@ -145,8 +145,8 @@ export default {
       }
       else {
         this.json = await this.getPascalXMLPerImage()
-        console.log("XML AWAIT: ", this.json)
-        console.log("CONVERT: ", this.convertToXML(this.json))
+        
+        
         filename += '.xml'
         element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(this.convertToXML(this.json)))
       }
@@ -167,15 +167,15 @@ export default {
     format(){
       var xml = this.convertToXML(this.json)
       xml = xml.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/ /g, '&nbsp;').replace(/\n/g,'<br />')
-      // console.log("xml: ", this.json)
+      // 
       // var xml = this.convertToXML(this.json)
       var mydiv = document.getElementById("xml")
       if (mydiv) {
-        console.log("1")
+        
         mydiv.innerHTML += xml
-        console.log("2")
+        
       }
-      console.log("3")
+      
     }
   }
 }

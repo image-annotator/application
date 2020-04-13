@@ -19,7 +19,7 @@ export default {
     },
     handleOnEmpty (isEmpty) {
       this.empty = isEmpty
-      console.log("this empty: ", this.empty)
+      
     }
   }
 }

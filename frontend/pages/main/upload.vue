@@ -70,7 +70,7 @@ export default {
   mounted(){
     var instance =  this.$refs.myDropzone.dropzone
     this.files = instance.files
-    console.log("files",this.files)
+    
   },
   methods:{
     changeDataset (newDataset) {
@@ -89,7 +89,7 @@ export default {
     },
     onFileSelected(event){
       this.files = event.target.files
-      console.log("masuk",this.files)
+      
     },
     removeAllFiles(){
       this.files = this.$refs.myDropzone.getAcceptedFiles()
@@ -130,7 +130,7 @@ export default {
         onOpen: () => {
           this.$swal.stopTimer()
           Array.from(this.files).forEach(file =>{
-            console.log("Size: ",file.dataURL)
+            
             if(this.upload(file, file.name)){
               count += 1
             }
@@ -146,7 +146,7 @@ export default {
             }
           })
           if(count === total){
-            console.log("Uploaded : ", count)
+            
             this.$swal.resumeTimer()
           }
         }
@@ -170,7 +170,7 @@ export default {
               }
             }
           })
-          console.log("size total: ",size)
+          
         }
       })
     },
@@ -184,7 +184,7 @@ export default {
       const config = {
         headers: {'Content-Type':'multipart/form-data'}
       }
-      var response = await this.$axios.post(url, formData, config).catch(error => console.log(error))
+      var response = await this.$axios.post(url, formData, config).catch(error => console.error(error))
       return(response && response.status === 200)
     },
     dataURItoBlob(dataURI) {

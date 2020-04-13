@@ -2,7 +2,7 @@ export default {
   methods: {
     async getLabelContentByID (contentID) {
       var url = '/api/content/' + contentID
-      var response = await this.$axios(url).catch(error => console.log(error))
+      var response = await this.$axios(url).catch(error => console.error(error))
       if (response && response.status === 200) {
         return response.data.data
       } else {
@@ -11,7 +11,7 @@ export default {
     },
     async getAllLabel(){
       var url = '/api/label'
-      var response = await this.$axios(url).catch(error => console.log(error))
+      var response = await this.$axios(url).catch(error => console.error(error))
       if (response && response.status === 200) {
         return response.data.data
       } else {
@@ -20,7 +20,7 @@ export default {
     },
     async getLabelByImageID (imageID) {
       var url = '/api/label/imagequery/' + imageID
-      var response = await this.$axios(url).catch(error => console.log(error))
+      var response = await this.$axios(url).catch(error => console.error(error))
       if (response && response.status === 200) {
         return response.data.data
       } else {

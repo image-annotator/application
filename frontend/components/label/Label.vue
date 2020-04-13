@@ -152,7 +152,7 @@ export default {
         this.timer = setTimeout(async () => {
           await this.getAllImagesWithLabelStatus()
           this.callGetImagesRepeatedly()
-        }, 5000)
+        }, 20000)
       }
     },
     async getAllImages(perPage, page, keyword) {
@@ -217,7 +217,7 @@ export default {
         }
         return response.data.status
       } catch (error) {
-        console.log("Label" , error)
+        console.error(error)
         throw error
       }
     },

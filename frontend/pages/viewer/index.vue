@@ -151,7 +151,7 @@ export default {
       try {
         await this.deleteImageAccessControlByImageID(this.image.id)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
       clearInterval(this.timer)
       this.$router.push({ path: '/main/label', query: {dataset: this.dataset }})
@@ -262,7 +262,7 @@ export default {
             await this.closeViewer()
           })
         } catch (error) {
-          console.log(error)
+          console.error(error)
           this.showFailedAlert("Error!", error)
           return
         }
@@ -341,7 +341,7 @@ export default {
         var content_id = response.data.data['label_contents_id']
         return content_id
       } catch (error) {
-        console.log("Content: ", error)
+        console.error(error)
         throw error
       }
     },
@@ -351,7 +351,7 @@ export default {
         var response = await this.$axios.post(url, labelPayload)
         return response.data.status
       } catch (error) {
-        console.log("Label" , error)
+        console.error(error)
         throw error
       }
     },
@@ -361,7 +361,7 @@ export default {
         var response = await this.$axios.delete(url)
         return response.data.status
       } catch (error) {
-        console.log("Label" , error)
+        console.error(error)
         throw error
       }
     }

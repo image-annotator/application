@@ -8,7 +8,7 @@ export default {
     async getAllUsers () {
       var url = '/api/user'
       var response = await this.$axios(url).catch(error => console.error(error))
-      console.log("response: ", response)
+      
       if (response && response.status === 200) {
         return response.data.data
       } else {

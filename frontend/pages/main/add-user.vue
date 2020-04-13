@@ -92,7 +92,7 @@ export default {
         }
         var url = '/api/user/register'
         // Send to backend
-        var response = await this.$axios.post(url, payload).catch(error => console.log(error))
+        var response = await this.$axios.post(url, payload).catch(error => console.error(error))
         if (response && response.status === 200) {
           this.showInfo(this.username, response.data.data.passcode)
         } else {

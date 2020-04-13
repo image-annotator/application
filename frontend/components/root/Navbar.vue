@@ -182,8 +182,8 @@ export default {
   },
   watch: {
     activeElmtID (newElmtID, oldElmtID) {
-      console.log("newElmtID: ", newElmtID)
-      console.log("oldElmtID: ", oldElmtID)
+      
+      
       this.setClass(oldElmtID, '')
       this.setClass(newElmtID, 'active')
     }
@@ -191,7 +191,7 @@ export default {
   mounted () {
     this.onPathChangeHandler(window.location.pathname)
     // this.activeElmtID = 'label-dataset'
-    // console.log(/^\/main\/label(\/|(\?)|$)/.test(window.location.pathname))
+    // 
   },
   methods: {
     setClass (elmtID, className) {
@@ -244,7 +244,7 @@ export default {
     },
     onPathChangeHandler (browserURL) {
       var elmtID = ''
-      console.log("Browser: ", browserURL)
+      
       if (((/^\/main\/output-view(\/|(\?)|$)/.test(browserURL)))) {
         var type = this.$route.query.type
         if (type === 'xml') {

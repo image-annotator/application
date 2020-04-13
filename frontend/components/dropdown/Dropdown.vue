@@ -43,7 +43,7 @@ export default {
       this.dataset = this.dropdownValue
     } else {
       this.dataset = "Choose Folder"
-      console.log("Dataset: ", this.dataset)
+      
       if (!this.isFolderNotExist()) {
         if (!this.isUpload) {
           this.dataset = this.config.options[0].value
@@ -97,10 +97,10 @@ export default {
         confirmButtonColor: '#11616F',
         showCancelButton: true
       }).then((result) => {
-        console.log("Result: ", result)
+        
         if (!result.value) {
           this.dataset = "Choose Folder"
-          console.log("Dataset: ", this.dataset)
+          
         }
       })
     },

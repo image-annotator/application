@@ -7,7 +7,7 @@ export default async function ({ req, route, redirect, store, $axios }) {
 
   var userData = await getUserInfo({ req, $axios })
   var isUserLoggedIn = !!userData
-  console.log("userData: ", userData)
+  
 
   // Then test the url
   var urlRequiresNonAuth = route.fullPath === '/'

@@ -69,9 +69,6 @@ export default {
     })
   },
   methods: {
-    showInput (event) {
-      console.log("event: ", event)
-    },
     disableForm() {
       this.isDisabled = true
       this.$refs["form"].isInFocus = false

@@ -102,7 +102,7 @@ export default {
         }
         var url = '/api/user/login'
         const response = await this.$axios.post(url, payload).catch(error => console.error(error))
-        console.log("Response: ", response)
+        
         this.handleResponse(response) 
       } else {
         this.usernameForm.isDirty = true
@@ -119,7 +119,7 @@ export default {
     handleSuccessResponse (response) {
       // Set cookie
       cookies.remove('Authorization')
-      console.log('Authorization', response.data.data.cookie)
+      
       cookies.set('Authorization', response.data.data.cookie)
       this.$router.push('/main/label')
     },
