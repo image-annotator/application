@@ -1,7 +1,9 @@
 <template>
-  <Label :key="dataset" :dataset="dataset">
-    <Dropdown :dropdown-value="dataset" @onDatasetChanged="changeDataset" />
-  </Label>
+  <client-only>
+    <Label :key="dataset" :dataset="dataset">
+      <Dropdown :dropdown-value="dataset" @onDatasetChanged="changeDataset" />
+    </Label>
+  </client-only>
 </template>
 
 <script>

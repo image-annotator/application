@@ -1,81 +1,82 @@
 <template>
-  <div ref="imageWrapper" class="viewer-background">
-    <div class="flex-viewer">
-      <Toolbar
-        @onIconClick="setBoxAction($event)"
-      />
-      <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
-        <div id="image">
-          <img
-            v-if="dataReady"
-            ref="image"
-            draggable="false"
-            class="image"
-            :style="{ cursor: cssCursor}"
-            :src="image.url"
-            @mousedown="onMouseDownHandler"
-            @mousemove="changeBox"
-            @mouseup="stopDrawingBox"
-          >
-          <Box
-            v-if="drawingBox.active"
-            :b-width="drawingBox.width"
-            :b-height="drawingBox.height"
-            :b-top="drawingBox.top"
-            :b-left="drawingBox.left"
-          />
-          <div v-for="i in Object.keys(boxes)" :key="i">
+  <client-only>
+    <div ref="imageWrapper" class="viewer-background">
+      <div class="flex-viewer">
+        <Toolbar
+          @onIconClick="setBoxAction($event)"
+        />
+        <div class="viewer-wrapper center center-horizontal" @mousedown="stopDrawingBox">
+          <div id="image">
+            <img
+              v-if="dataReady"
+              ref="image"
+              draggable="false"
+              class="image"
+              :style="{ cursor: cssCursor}"
+              :src="image.url"
+              @mousedown="onMouseDownHandler"
+              @mousemove="changeBox"
+              @mouseup="stopDrawingBox"
+            >
             <Box
-              v-if="boxes[i]"
-              :b-width="boxes[i].width"
-              :b-height="boxes[i].height"
-              :b-top="boxes[i].top"
-              :b-left="boxes[i].left"
-              :b-active="i === activeBoxIndex"
-              :b-index="parseInt(i)"
-              :b-content="boxes[i].content"
-              :b-action="actionName"
-              :can-delete="canDelete"
-              :suggest-type="'edit'"
-              @onStopResize="changeBoxAttribute($event, i)"
-              @onDelete="deleteBox(i)"
-              @onSelect="makeCurrentBoxActive(i)"
-              @onDisableForm="changeBoxContent($event, i)"
-              @onEnableForm="makeCurrentBoxActive(i)"
+              v-if="drawingBox.active"
+              :b-width="drawingBox.width"
+              :b-height="drawingBox.height"
+              :b-top="drawingBox.top"
+              :b-left="drawingBox.left"
             />
+            <div v-for="i in Object.keys(boxes)" :key="i">
+              <Box
+                v-if="boxes[i]"
+                :b-width="boxes[i].width"
+                :b-height="boxes[i].height"
+                :b-top="boxes[i].top"
+                :b-left="boxes[i].left"
+                :b-active="i === activeBoxIndex"
+                :b-index="parseInt(i)"
+                :b-content="boxes[i].content"
+                :b-action="actionName"
+                :can-delete="canDelete"
+                :suggest-type="'edit'"
+                @onStopResize="changeBoxAttribute($event, i)"
+                @onDelete="deleteBox(i)"
+                @onSelect="makeCurrentBoxActive(i)"
+                @onDisableForm="changeBoxContent($event, i)"
+                @onEnableForm="makeCurrentBoxActive(i)"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="button-block">
+          <div class="btn-close-section">
+            <button
+              type="button"
+              class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
+              aria-label="Close"
+              @click="closeViewer()"
+            > 
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
         </div>
       </div>
-      <div class="button-block">
-        <div class="btn-close-section">
-          <button
-            type="button"
-            class="btn-label-no-border btn-sm btn-light btn-close-text mt-2"
-            aria-label="Close"
-            @click="closeViewer()"
-          > 
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
+      <div class="btn-save-section">
+        <button
+          type="button"
+          class="btn-label-no-border btn-lg btn-dark btn-text"
+          @click="saveImage"
+        >
+          Save Image
+        </button>
       </div>
     </div>
-    <div class="btn-save-section">
-      <button
-        type="button"
-        class="btn-label-no-border btn-lg btn-dark btn-text"
-        @click="saveImage"
-      >
-        Save Image
-      </button>
-    </div>
-  </div>
+  </client-only>
 </template>
 
 <script>
 import Box from '~/components/label/Box'
 import Toolbar from '~/components/label/Toolbar'
 import { Cursors } from '~/mixins/label/getCursorPosition'
-
 export default {
   components: {
     Box,
@@ -112,15 +113,15 @@ export default {
       deletedBoxKey: {}
     }
   },
-  async created () {
+  async mounted () {
+
     window.addEventListener("beforeunload", async (event) => {
       await this.closeViewer()
       event.returnValue= "You have unsaved changes."
     })
     await this.startHeartBeat()
     this.timer = setInterval(this.startHeartBeat, 90000)
-  },
-  async mounted () {
+
     this.image.url = this.$route.query.url
     this.image.id = this.$route.query.id
     this.dataset = this.$route.query.dataset

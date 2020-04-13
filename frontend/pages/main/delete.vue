@@ -2,9 +2,10 @@
   <client-only>
     <Label
       :key="dataset"
-      title="Edit Labeled Images"
+      title="Delete Labeled Images"
       viewer-u-r-l="/viewer/index-edit"
       :is-labeled="isLabeled"
+      :is-delete="isDelete"
       :dataset="dataset"
     >
       <Dropdown :dropdown-value="dataset" @onDatasetChanged="changeDataset" />
@@ -22,6 +23,7 @@ export default {
   },
   data () {
     return {
+      isDelete: true,
       isLabeled: true,
       dataset: ''
     }

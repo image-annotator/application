@@ -1,5 +1,5 @@
 <template>
-  <article class="blog-card" :class="{'disable': isCurrentlyLabeled}">
+  <article class="blog-card" :class="{'disable': isCurrentlyLabeled, 'blog-card': !isDelete, 'blog-delete': isDelete}">
     <img class="post-image" :class="{'post-image-disabled': isCurrentlyLabeled}" :src="imageURL">
     <div :class="{'article-details': !isCurrentlyLabeled, 'article-labeled': isCurrentlyLabeled}">
       <h3 class="post-title" :class="{'post-title-disabled': isCurrentlyLabeled, 'data-image-labeled': isCurrentlyLabeled}"> 
@@ -30,6 +30,10 @@ export default {
     isCurrentlyLabeled: {
       type: Boolean,
       default: false
+    },
+    isDelete: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -53,7 +57,7 @@ export default {
 </script>
 
 <style scoped>
-.blog-card {
+.blog-card, .blog-delete {
   background: #fff;
 
   -webkit-box-shadow: 2px 5px 5px 0px rgba(0,0,0,0.15);
@@ -68,6 +72,13 @@ export default {
 
   cursor: pointer;
 }
+.blog-card:hover {
+  background: #F0F0F0;
+}
+
+.blog-delete:hover {
+  background: rgb(255, 0, 0, 0.3);
+}
 
 .disable {
   background-color: #F0F0F0;
@@ -76,9 +87,7 @@ export default {
   box-shadow: 0 0 0 0px rgba(0,0,0,0.0);
 }
 
-.blog-card:hover {
-  background: #F0F0F0;
-}
+
 
 .post-image {
   display: block;

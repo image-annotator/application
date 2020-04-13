@@ -47,6 +47,15 @@
         </b-nav-item>
       </div>
 
+      <div v-if="role === 'editor' || role === 'admin'">
+        <!-- Delete Dataset -->
+        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-dataset')">
+          <div id="delete-dataset">
+            Delete Dataset
+          </div>
+        </b-nav-item>
+      </div>
+
       <!-- COCO Output -->
       <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
         <div id="coco-output">
@@ -207,6 +216,9 @@ export default {
       case 'edit-dataset':
         this.$nuxt.$router.replace({ path: '/main/edit'})
         break
+      case 'delete-dataset':
+        this.$nuxt.$router.replace({ path: '/main/delete'})
+        break
       case 'upload-dataset':
         this.$nuxt.$router.replace({ path: '/main/upload'})
         break
@@ -251,6 +263,8 @@ export default {
           elmtID ='coco-output'
         } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
           elmtID ='edit-dataset'
+        } else if ((/^\/main\/delete(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='delete-dataset'
         } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
           elmtID ='upload-dataset'
         } else if ((/^\/main\/change-username(\/|(\?)|$)/.test(browserURL))) {

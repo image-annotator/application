@@ -35,7 +35,6 @@ export default {
     '~/plugins/axios',
     { src: '~/plugins/vue-sweetalert2', ssr: false },
     { src: '~/plugins/json-viewer', ssr: false },
-    { src: '~/plugins/vue-dynamic-dropdown', ssr: false },
     { src: '~/plugins/vue-dropzone', ssr: false }
   ],
   /*
