@@ -1,42 +1,12 @@
 <template>
-  <client-only>
-    <Label
-      :key="dataset"
-      title="Delete Labeled Images"
-      viewer-u-r-l="/viewer/index-edit"
-      :is-labeled="isLabeled"
-      :is-delete="isDelete"
-      :dataset="dataset"
-    >
-      <Dropdown :dropdown-value="dataset" @onDatasetChanged="changeDataset" />
-    </Label>
-  </client-only>
+  <Delete />
 </template>
 
 <script>
-import Label from '~/components/label/Label'
-import Dropdown from '~/components/dropdown/Dropdown'
+import Delete from '~/components/delete/Delete'
 export default {
   components: {
-    Label,
-    Dropdown
-  },
-  data () {
-    return {
-      isDelete: true,
-      isLabeled: true,
-      dataset: ''
-    }
-  },
-  mounted () {
-    if (this.$route.query.dataset) {
-      this.dataset = this.$route.query.dataset
-    }
-  },
-  methods: {
-    changeDataset (newDataset) {
-      this.dataset = newDataset
-    }
+    Delete
   }
 }
 </script>

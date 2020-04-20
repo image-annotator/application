@@ -110,12 +110,6 @@ export default {
     vfileAdded () {
       console.log(this.$refs.myDropzone.options)
       this.filesCount++
-      // if (this.filesCount > 0) {
-      //   this.options.previewsContainer = false
-      // } else {
-      //   this.$refs.myDropzone.options.previewsContainer = null
-      // }
-      
     },
     vremoved() {
       this.filesCount--
