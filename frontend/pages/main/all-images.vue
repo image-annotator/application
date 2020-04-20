@@ -14,19 +14,12 @@
         <div class="col">
           <div style="display: flex">
             <h5 class="title users-margin">
-              {{ dataset }} all images:
-              <span v-if="!dataset" style="margin-left: 20px; font-size: 0.85rem;">
+              {{ dataset }} All Images:
+              <span v-if="dataset === 'Choose Folder'" style="margin-left: 20px; font-size: 0.85rem;">
                 Choose Folder First 
               </span>
-              <span v-else-if="empty" style="margin-left: 20px; font-size: 0.85rem;">
-                No Images Found
-              </span>
             </h5>
-            <button
-              v-if="dataset && !empty"
-              class="btn-white margin-download"
-              @click="downloadZIP()"
-            >
+            <button v-if="dataset !=='Choose Folder'" class="btn-white margin-download" @click="downloadZIP()">
               {{ dataset }}.zip
               <i class="ml-3 mt-1 fas fa-download" />
             </button>
@@ -48,10 +41,10 @@ export default {
   mixins: [datasetMethods],
   data () {
     return {
-    //   isOutputViewer: true,
-    //   isLabeled: true,
-    //   standard: 'coco',
-    //   search: ''
+      isOutputViewer: true,
+      isLabeled: false,
+      standard: 'coco',
+      search: ''
     }
   },
   methods: {

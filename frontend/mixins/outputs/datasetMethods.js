@@ -19,7 +19,6 @@ export default {
     },
     handleOnEmpty (isEmpty) {
       this.empty = isEmpty
-      
     }
   }
 }
