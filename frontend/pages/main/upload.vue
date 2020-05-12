@@ -140,7 +140,7 @@ export default {
         this.filesCount = 0
       }
     },
-    invalidUpload(){
+    invalidUpload() {
       this.$swal.fire({
         title: "No Image Selected",
         icon: "error",
@@ -167,14 +167,14 @@ export default {
         }
       })
     },
-    showErrorUploadPopUp () {
+    showErrorUploadPopUp (errorText) {
       return this.$swal.fire({
         title: 'Error!',
-        text: 'Cannot Upload File.',
+        text: errorText,
         icon: 'error'
       })
     },
-    validUpload(){
+    validUpload() {
       this.files = this.$refs.myDropzone.getAcceptedFiles()
       // var total = this.files.length
       var count = 0
@@ -186,31 +186,23 @@ export default {
         allowEscapeKey: false,
         onOpen: async () => {
           this.$swal.showLoading()
-          var isUploadedAll = true
           for (var idxFile = 0; idxFile < this.files.length; idxFile++) {
             var file = this.files[idxFile]
             if (await this.upload(file, file.name)) {
-              count += 1;size += file.size
+              count += 1; size += file.size
               this.$refs.myDropzone.removeFile(file)
               this.filesCount--
             } else {
-              isUploadedAll = false
               break
             }
           }
-
-          if (!isUploadedAll) {
-            await this.showErrorUploadPopUp()
-          }
-
           if (count !== 0) {
             this.showSuccessUploadPopUp(count, size)
           }
-
         }
       })
     },
-    async upload(f, name){
+    async upload(f, name) {
       var url = "/api/image/upload"
       var formData = new FormData()
       formData.append("image", f, name)
@@ -218,8 +210,13 @@ export default {
       const config = {
         headers: {'Content-Type':'multipart/form-data'}
       }
-      var response = await this.$axios.post(url, formData, config).catch(error => console.error(error))
-      return(response && response.status === 200)
+      var response = await this.$axios.post(url, formData, config).catch(async (error) => {
+        console.log('data: ', error)
+        console.error(error.response)
+        await this.showErrorUploadPopUp(error.response.data.error)
+      })
+      console.log('response: ', response)
+      return (response && response.status === 200)
     },
     invalidFolder(){
       this.$swal.fire({
@@ -232,17 +229,16 @@ export default {
     async handleUpload(){
       this.files = await this.$refs.myDropzone.getAcceptedFiles()
       console.log("Files: ", this.files)
-      if (!this.dataset || this.dataset === "Choose Folder") {
+      if (!this.dataset || this.dataset === 'Choose Folder') {
         this.invalidFolder()
       } else {
-        if(this.files.length === 0){
+        if (this.files.length === 0){
           this.invalidUpload()
         } else {
           this.files = []
           await this.validUpload()
         }
       }
-      
     }
   }
 }
