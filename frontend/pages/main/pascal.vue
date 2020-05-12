@@ -76,7 +76,7 @@ export default {
         var allLabels = await this.getAllLabel()
         await this.setImagesAttr(allImages)
         await this.getObjectsAttr(allLabels)
-
+        console.log('pascal: ', this.pascalJSON)
         for (var key in this.pascalJSON) {
           newPascalJSON["annotation"].push(this.pascalJSON[key])
         }
