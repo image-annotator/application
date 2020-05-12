@@ -11,28 +11,31 @@ export default {
   mixins: [imageAndLabelMethods],
   methods: {
     async getObjectsAttr (allLabels) {
-      var objectsAttr = {}
+      console.log('labels: ', allLabels)
+      // var objectsAttr = {}
       for (var labelIdx in allLabels) {
         var label = allLabels[labelIdx]
         if (this.pascalJSON[label["image_id"]]) {
           var labelResponse = await this.getLabelContentByID(label["label_content_id"])
-          // If exists, push to the bounding box
-          if (objectsAttr[label["label_content_id"]]) {
-            objectsAttr[label["label_content_id"]].boundingBox.push(this.getBoundingBoxAttr(label))
-            this.pascalJSON[label["image_id"]].object.pop()
-            this.pascalJSON[label["image_id"]].object.push(objectsAttr[label["label_content_id"]])
-          } else {
-            // Else, Construct new Obj
-            var objectAttr = {
-              name: labelResponse["content_name"],
-              pose: "Unspecified",
-              truncated: 0,
-              difficult: 0,
-              boundingBox: [this.getBoundingBoxAttr(label)]
-            }
-            objectsAttr[label["label_content_id"]] = objectAttr
-            this.pascalJSON[label["image_id"]].object.push(objectsAttr[label["label_content_id"]])
+          var objectAttr = {
+            name: labelResponse["content_name"],
+            pose: "Unspecified",
+            truncated: 0,
+            difficult: 0,
+            boundingBox: this.getBoundingBoxAttr(label)
           }
+          this.pascalJSON[label["image_id"]].object.push(objectAttr)
+          // // If exists, push to the bounding box
+          // if (objectsAttr[label["label_content_id"]]) {
+          //   objectsAttr[label["label_content_id"]].boundingBox.push(this.getBoundingBoxAttr(label))
+          //   this.pascalJSON[label["image_id"]].object.pop()
+          //   this.pascalJSON[label["image_id"]].object.push(objectsAttr[label["label_content_id"]])
+          // } else {
+          //   // Else, Construct new Obj
+            
+          //   objectsAttr[label["label_content_id"]] = objectAttr
+            
+          // }
         }
       }
     },

@@ -48,27 +48,85 @@
       </div>
 
       <div v-if="role === 'editor' || role === 'admin'">
-        <!-- Delete Dataset -->
-        <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-dataset')">
-          <div id="delete-dataset">
+        <b-nav-item
+          v-b-toggle.collapse-delete
+          link-classes="side-bar-color mt-3 ml-4"
+        >
+          <div class="icon-text-wrapper">
             Delete Dataset
+            <i class="ml-3 mt-1 fas fa-caret-down" />
           </div>
         </b-nav-item>
+
+        <b-collapse id="collapse-delete" visible role="tabpanel">
+          <!-- Delete Dataset -->
+          <b-nav-item link-classes="side-bar-color mb-2 mt-3 ml-4" @click="changeActiveElmtID('delete-dataset')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-trash" />
+              <div id="delete-dataset">
+                Unlabeled Dataset
+              </div>
+            </div>
+          </b-nav-item>
+
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-labeled-dataset')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-tag" />
+              <div id="delete-labeled-dataset">
+                Labeled Dataset
+              </div>
+            </div>
+          </b-nav-item>
+        </b-collapse>
       </div>
 
-      <!-- COCO Output -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
-        <div id="coco-output">
-          COCO Output
-        </div>
-      </b-nav-item>
+      <div>
+        <b-nav-item
+          v-b-toggle.collapse-outputs
+          link-classes="side-bar-color mt-3 ml-4"
+        >
+          <div class="icon-text-wrapper">
+            Download Result
+            <i class="ml-3 mt-1 fas fa-caret-down" />
+          </div>
+        </b-nav-item>
 
-      <!-- Pascal Output -->
-      <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('pascal-output')">
-        <div id="pascal-output">
-          Pascal VOC Output
-        </div>
-      </b-nav-item>
+        <b-collapse id="collapse-outputs" visible role="tabpanel">
+          <!-- COCO Output -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('coco-output')">
+            <div class="icon-text-wrapper">
+              <div class="mr-3 output-icon">
+                {  }
+              </div>
+              <div id="coco-output">
+                COCO File
+              </div>
+            </div>
+          </b-nav-item>
+
+          <!-- Pascal Output -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('pascal-output')">
+            <div class="icon-text-wrapper">
+              <div class="mr-3 output-icon">
+                &lt; &gt;
+              </div>
+              <div id="pascal-output" style="margin-left: -5px;">
+                Pascal VOC File
+              </div>
+            </div>
+          </b-nav-item>
+
+          <!-- All Images Output -->
+          <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('all-images')">
+            <div class="icon-text-wrapper">
+              <i class="mt-1 mr-3 fas fa-image" />
+              <div id="all-images">
+                All Images
+              </div>
+            </div>
+          </b-nav-item>
+        </b-collapse>
+      </div>
 
       <div v-if="role === 'admin'">
         <!-- User Management -->
@@ -112,7 +170,7 @@
               </div>
             </div>
           </b-nav-item>
-
+          
           <!-- Delete User -->
           <b-nav-item link-classes="side-bar-color mt-3 ml-4" @click="changeActiveElmtID('delete-user')">
             <div class="icon-text-wrapper">
@@ -124,6 +182,7 @@
           </b-nav-item>
         </b-collapse>
       </div>
+
       
       <div>
         <b-nav-item
@@ -213,11 +272,17 @@ export default {
       case 'coco-output':
         this.$nuxt.$router.replace({ path: '/main/coco'})
         break
+      case 'all-images':
+        this.$nuxt.$router.replace({ path: '/main/all-images'})
+        break
       case 'edit-dataset':
         this.$nuxt.$router.replace({ path: '/main/edit'})
         break
       case 'delete-dataset':
         this.$nuxt.$router.replace({ path: '/main/delete'})
+        break
+      case 'delete-labeled-dataset':
+        this.$nuxt.$router.replace({ path: '/main/delete-labeled'})
         break
       case 'upload-dataset':
         this.$nuxt.$router.replace({ path: '/main/upload'})
@@ -263,6 +328,10 @@ export default {
           elmtID ='coco-output'
         } else if ((/^\/main\/edit(\/|(\?)|$)/.test(browserURL))) {
           elmtID ='edit-dataset'
+        } else if ((/^\/main\/all-images(\/|(\?)|$)/.test(browserURL))) {
+          elmtID = 'all-images'
+        } else if ((/^\/main\/delete-labeled(\/|(\?)|$)/.test(browserURL))) {
+          elmtID ='delete-labeled-dataset'
         } else if ((/^\/main\/delete(\/|(\?)|$)/.test(browserURL))) {
           elmtID ='delete-dataset'
         } else if ((/^\/main\/upload(\/|(\?)|$)/.test(browserURL))) {
@@ -350,6 +419,10 @@ export default {
 
   .side-bar-color:hover {
     background-color: #166472;
+  }
+
+  .output-icon {
+    margin-top: -1px; font-family: 'Open Sans Bold';
   }
 
 </style>

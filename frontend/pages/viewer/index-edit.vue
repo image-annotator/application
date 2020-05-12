@@ -179,7 +179,7 @@ export default {
     },
     async drawAllBox () {
       var allLabels = await this.getAllLabels()
-      
+      console.log('labeleeees: ', allLabels)
       if (allLabels) {
         var labeledCount = Object.keys(allLabels).length
         var imageAttributes = {
@@ -204,6 +204,7 @@ export default {
           this.labelCount++
           this.boxes[this.labelCount] = newBox
           this.boxesCount++
+          console.log('prev: ', this.boxes)
           // 
           this.changeBoxContent(newBox.content, this.labelCount)
           // this.makeCurrentBoxActive(this.labelCount)
@@ -328,7 +329,6 @@ export default {
         const imagePosition = this.getImagePositionRelativeToScreen(imageAttributes)
         if(this.boxesCount > countBox) {
           for (let delKey in this.deletedBoxes) {
-            
             if (delKey == Object.keys(this.deletedBoxKey)[delKey - 1 - move] ) {
               try {
                 await this.deleteLabelsInImage(Object.values(this.deletedBoxKey)[delKey - 1 - move])
@@ -344,7 +344,6 @@ export default {
             }
           }  
         } 
-
         for (let key in this.boxes) {
           if (key == Object.keys(this.previouslyCreatedBox)[key - 1 - move] ) {
             // edit
@@ -372,7 +371,6 @@ export default {
             delete this.previouslyCreatedBox[Object.keys(this.previouslyCreatedBox)[key - 1 - move]]
             move++
             labelPutPayload.pop()
-            
           } else {
             tempArray.push(this.boxes[key])
           }
@@ -387,7 +385,6 @@ export default {
             try {
               content_id = await this.createLabelContent(tempArray[idxBox].content)
               singleBackendObj = {
-                // TODO: change temporary image_id of 1 to real image_id
                 image_id: parseInt(this.image.id),
                 label_x_center: realImageAttr.xCenter,
                 label_y_center: realImageAttr.yCenter,
@@ -396,6 +393,7 @@ export default {
                 label_content_id: content_id
               }
               labelPayload.push(singleBackendObj)
+              console.log('Label Payload: ', labelPayload)
             } catch (error) {
               this.showFailedAlert("Error!", error)
               return

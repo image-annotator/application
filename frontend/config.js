@@ -1,5 +1,5 @@
 // Environment Variables
-var host = "http://192.168.1.5"
+var host = "http://192.168.18.6"
 var backendPort = "8081"
 var frontendPort = "80"
 // For development

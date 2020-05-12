@@ -52,6 +52,8 @@ import pascalMethods from '~/mixins/outputs/pascalMethods'
 import Convert from 'xml-js'
 import Label from '~/components/label/Label'
 import Dropdown from '~/components/dropdown/Dropdown'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
 
 export default {
   components: {
@@ -70,17 +72,22 @@ export default {
   methods: {
     async getPascalXML () {
       this.pascalJSON = {}
-      var newPascalJSON = {"annotation": []}
       var allImages = await this.getAllImages()
       if (allImages) {
+        // Generate zip file
+        var zip = new JSZip()
+        // Get information about labels
         var allLabels = await this.getAllLabel()
+        // These methods are available in mixins
         await this.setImagesAttr(allImages)
         await this.getObjectsAttr(allLabels)
-
         for (var key in this.pascalJSON) {
-          newPascalJSON["annotation"].push(this.pascalJSON[key])
+          var xml = this.convertToXML(this.pascalJSON[key])
+          zip.file(this.pascalJSON[key].filename + '.xml', xml)
         }
-        return newPascalJSON
+        zip.generateAsync({type:'blob'}).then((content) => {
+          saveAs(content, this.dataset)
+        })
       }
     },
     async setImagesAttr (allImages) {
@@ -99,16 +106,7 @@ export default {
       return result
     },
     async downloadXML() {
-      var filename = 'XMLFile.xml'
-      var element = document.createElement('a')
-      var newPascalJSON = await this.getPascalXML()
-      var xml = this.convertToXML(newPascalJSON)
-      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(xml))
-      element.setAttribute('download',filename)
-      element.style.display = 'none'
-      document.body.appendChild(element)
-      element.click()
-      document.body.removeChild(element)
+      await this.getPascalXML()
     } 
   }
 }

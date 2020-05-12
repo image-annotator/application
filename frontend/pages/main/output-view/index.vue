@@ -12,7 +12,7 @@
       <div class="row">
         <div class="col">
           <button class="btn-action btn-white" @click="downloadOutput()">
-            {{ name }}.{{ type }}
+            {{ name }}
             <i class="ml-3 mt-1 fas fa-download" />
           </button>
         </div>
@@ -95,15 +95,6 @@ export default {
       }
       return COCOJSON
     },
-    async getCategoriesAndAnnotationsArrPerImage () {
-      var allLabelsPerImage = await this.getLabelByImageID(this.id)
-      var categoriesArr = await this.getCategoriesArr(allLabelsPerImage)
-      var annotationsArr = await this.getAnnotationsArr(allLabelsPerImage)
-      return {
-        categories: categoriesArr,
-        annotations: annotationsArr
-      }
-    },
     async getPascalXMLPerImage () {
       this.pascalJSON = {}
       var newPascalJSON = {"annotation": []}
@@ -112,10 +103,20 @@ export default {
         var label = await this.getLabelByImageID(this.id)
         await this.setImagesAttr(allImages)
         await this.getObjectsAttr(label)
+        console.log('pascal: ', this.pascalJSON)
         for (var key in this.pascalJSON) {
           newPascalJSON["annotation"].push(this.pascalJSON[key])
         }
         return newPascalJSON
+      }
+    },
+    async getCategoriesAndAnnotationsArrPerImage () {
+      var allLabelsPerImage = await this.getLabelByImageID(this.id)
+      var categoriesArr = await this.getCategoriesArr(allLabelsPerImage)
+      var annotationsArr = await this.getAnnotationsArr(allLabelsPerImage)
+      return {
+        categories: categoriesArr,
+        annotations: annotationsArr
       }
     },
     async setImagesAttr (allImages) {
@@ -145,8 +146,6 @@ export default {
       }
       else {
         this.json = await this.getPascalXMLPerImage()
-        
-        
         filename += '.xml'
         element.setAttribute('href', 'data:text/json;charset=utf-8,' + encodeURIComponent(this.convertToXML(this.json)))
       }
@@ -171,11 +170,8 @@ export default {
       // var xml = this.convertToXML(this.json)
       var mydiv = document.getElementById("xml")
       if (mydiv) {
-        
         mydiv.innerHTML += xml
-        
       }
-      
     }
   }
 }

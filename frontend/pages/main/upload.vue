@@ -20,10 +20,17 @@
       <div class="row">
         <div class="col">
           <div class="uploader">
-            <vue-dropzone id="dropzone" ref="myDropzone" :options="options" :use-custom-slot="true">
+            <vue-dropzone
+              id="dropzone"
+              ref="myDropzone"
+              :options="options"
+              :use-custom-slot="true"
+              @vdropzone-file-added="vfileAdded"
+              @vdropzone-removed-file="vremoved"
+            >
               <div class="dropzone-custom-content">
                 <h6 class="dropzone-custom-title">
-                  Click or Drag Images Here.
+                  {{ desc }}
                 </h6>
               </div>
             </vue-dropzone>
@@ -48,6 +55,7 @@
 <script>
 
 import Dropdown from '~/components/dropdown/Dropdown'
+import { backendURL } from '~/config.js'
 
 export default {
   components: {
@@ -55,26 +63,56 @@ export default {
   },
   data(){
     return{
-      files: null,
+      files: [],
+      filesCount: 0,
       isUpload: true,
       dataset: null,
       options: {
-        url: "http://localhost:3000/api/image/upload",
+        url: backendURL + '/api/image/upload',
+        autoProcessQueue: false,
         uploadMultiple: true,
-        autoQueue: false,
+        previewsContainer: false,
+        maxFileSizeInMB: 200,
         addRemoveLinks: true,
         thumbnailWidth: 150
       }
     }
   },
-  mounted(){
-    var instance =  this.$refs.myDropzone.dropzone
-    this.files = instance.files
-    
+  computed: {
+    desc () {
+      if (this.filesCount <= 0) {
+        return "Click or Drag Images Here."
+      } else {
+        return this.filesCount + " Images ready to be uploaded! Please click upload."
+      }
+    }
   },
   methods:{
+    template: function () {
+      return `<div class="dz-preview dz-file-preview">
+                <div class="dz-image">
+                    <div data-dz-thumbnail-bg></div>
+                </div>
+                <div class="dz-details">
+                    <div class="dz-size"><span data-dz-size></span></div>
+                    <div class="dz-filename"><span data-dz-name></span></div>
+                </div>
+                <div class="dz-progress"><span class="dz-upload" data-dz-uploadprogress></span></div>
+                <div class="dz-error-message"><span data-dz-errormessage></span></div>
+                <div class="dz-success-mark"><i class="fa fa-check"></i></div>
+                <div class="dz-error-mark"><i class="fa fa-close"></i></div>
+            </div>
+        `
+    },
     changeDataset (newDataset) {
       this.dataset = newDataset
+    },
+    vfileAdded () {
+      console.log(this.$refs.myDropzone.options)
+      this.filesCount++
+    },
+    vremoved() {
+      this.filesCount--
     },
     formatBytes(bytes,decimals) {
       if(bytes == 0){
@@ -87,25 +125,22 @@ export default {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
       }
     },
-    onFileSelected(event){
-      this.files = event.target.files
-      
-    },
-    removeAllFiles(){
+    removeAllFiles() {
       this.files = this.$refs.myDropzone.getAcceptedFiles()
-      if(this.files.length === 0){
+      if (this.files.length === 0){
         this.$swal.fire({
           title: "Failed Remove Files",
           icon: "error",
           text: "No Files",
           confirmButtonColor: '#11616F',
         }) 
-      }else{
+      } else {
         this.$refs.myDropzone.removeAllFiles()
         this.files = []
+        this.filesCount = 0
       }
     },
-    invalidUpload(){
+    invalidUpload() {
       this.$swal.fire({
         title: "No Image Selected",
         icon: "error",
@@ -113,9 +148,35 @@ export default {
         confirmButtonColor: '#11616F',
       })
     },
-    validUpload(){
+    showSuccessUploadPopUp (numberOfUploadedFiles, fileSize) {
+      this.$swal.fire({
+        title: "Success",
+        icon: 'success',
+        confirmButtonColor: '#11616F',
+        html: 'Uploaded <b id="count"></b> images (<b id="size"></b>)',
+        onBeforeOpen: () => {
+          const content = this.$swal.getContent()
+          if(content){
+            const countText = content.querySelector('#count')
+            const sizeText = content.querySelector('#size')
+            if(countText && sizeText){
+              countText.textContent = numberOfUploadedFiles
+              sizeText.textContent = this.formatBytes(fileSize)
+            }
+          }
+        }
+      })
+    },
+    showErrorUploadPopUp (errorText) {
+      return this.$swal.fire({
+        title: 'Error!',
+        text: errorText,
+        icon: 'error'
+      })
+    },
+    validUpload() {
       this.files = this.$refs.myDropzone.getAcceptedFiles()
-      var total = this.files.length
+      // var total = this.files.length
       var count = 0
       var size = 0
       this.$swal.fire({
@@ -123,80 +184,39 @@ export default {
         html: '<b class="count"></b> of <b class="total"></b>',
         allowOutsideClick: false,
         allowEscapeKey: false,
-        timer: 1000,
-        onBeforeOpen: () =>{
+        onOpen: async () => {
           this.$swal.showLoading()
-        },
-        onOpen: () => {
-          this.$swal.stopTimer()
-          Array.from(this.files).forEach(file =>{
-            
-            if(this.upload(file, file.name)){
-              count += 1
+          for (var idxFile = 0; idxFile < this.files.length; idxFile++) {
+            var file = this.files[idxFile]
+            if (await this.upload(file, file.name)) {
+              count += 1; size += file.size
+              this.$refs.myDropzone.removeFile(file)
+              this.filesCount--
+            } else {
+              break
             }
-            size += file.size
-            const content = this.$swal.getContent()
-            if(content){
-              const countText = content.querySelector('.count')
-              const totalText = content.querySelector('.total')
-              if(countText && totalText){
-                countText.textContent = count
-                totalText.textContent = total
-              }
-            }
-          })
-          if(count === total){
-            
-            this.$swal.resumeTimer()
           }
-        }
-      }).then((result) =>{
-        if(result){
-          this.removeAllFiles()
-          this.$swal.fire({
-            title: "Success",
-            icon: 'success',
-            confirmButtonColor: '#11616F',
-            html: 'Uploaded <b id="count"></b> images (<b id="size"></b>)',
-            onBeforeOpen: () => {
-              const content = this.$swal.getContent()
-              if(content){
-                const countText = content.querySelector('#count')
-                const sizeText = content.querySelector('#size')
-                if(countText && sizeText){
-                  countText.textContent = count
-                  sizeText.textContent = this.formatBytes(size)
-                }
-              }
-            }
-          })
-          
+          if (count !== 0) {
+            this.showSuccessUploadPopUp(count, size)
+          }
         }
       })
     },
-    async upload(f, name){
+    async upload(f, name) {
       var url = "/api/image/upload"
-      var dataURL = f.dataURL
-      var file = this.dataURItoBlob(dataURL)
       var formData = new FormData()
-      formData.append("image", file, name)
+      formData.append("image", f, name)
       formData.append("dataset", this.dataset)
       const config = {
         headers: {'Content-Type':'multipart/form-data'}
       }
-      var response = await this.$axios.post(url, formData, config).catch(error => console.error(error))
-      return(response && response.status === 200)
-    },
-    dataURItoBlob(dataURI) {
-      var byteString = atob(dataURI.split(',')[1])
-      var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
-
-      var ab = new ArrayBuffer(byteString.length)
-      var ia = new Uint8Array(ab)
-      for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i)
-      }
-      return new Blob([ab], {type: mimeString})
+      var response = await this.$axios.post(url, formData, config).catch(async (error) => {
+        console.log('data: ', error)
+        console.error(error.response)
+        await this.showErrorUploadPopUp(error.response.data.error)
+      })
+      console.log('response: ', response)
+      return (response && response.status === 200)
     },
     invalidFolder(){
       this.$swal.fire({
@@ -207,18 +227,18 @@ export default {
       })
     },
     async handleUpload(){
-      this.files = this.$refs.myDropzone.getAcceptedFiles()
-      if (!this.dataset || this.dataset === "Choose Folder") {
+      this.files = await this.$refs.myDropzone.getAcceptedFiles()
+      console.log("Files: ", this.files)
+      if (!this.dataset || this.dataset === 'Choose Folder') {
         this.invalidFolder()
       } else {
-        if(this.files.length === 0){
+        if (this.files.length === 0){
           this.invalidUpload()
-        } else{
+        } else {
           this.files = []
           await this.validUpload()
         }
       }
-      
     }
   }
 }
