@@ -29,7 +29,7 @@
         </div>
         <br>
         <b-row v-if="images" :key="updateUI">
-          <b-col v-for="id in Object.keys(images)" :key="id">
+          <b-col v-for="id in Object.keys(images)" :key="id" cols="4">
             <div id="container">
               <Images
                 class="animated fadeIn"

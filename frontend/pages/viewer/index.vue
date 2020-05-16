@@ -262,8 +262,8 @@ export default {
             await this.closeViewer()
           })
         } catch (error) {
-          console.error(error)
-          this.showFailedAlert("Error!", error)
+          console.error(error.response)
+          this.showFailedAlert("Error!", error.response.data.error)
           return
         }
       }
